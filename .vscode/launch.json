@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-Ds2Application<ds-2>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.epiis.DS_B_2P.Ds2Application",
+            "projectName": "ds-2",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
