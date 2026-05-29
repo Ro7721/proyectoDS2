@@ -1,0 +1,13 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import "tailwindcss";
+
+@theme {
+    --color-brand: #3A9E5F;
+    --font-sans: Inter, system-ui, sans-serif;
+}
+
+/* Tus clases personalizadas */
+@utility btn-primary {
+    @apply bg-brand hover:bg-[#2e7d4a] text-white font-medium px-6 py-3 rounded-xl transition;
+}

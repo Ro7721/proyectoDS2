@@ -1,0 +1,40 @@
+<div class="h-screen w-full bg-[#6f8f87] flex items-center justify-center p-4 sm:p-6 overflow-hidden">
+    <div
+        class="w-full max-w-6xl h-full lg:max-h-[800px] bg-white rounded-[20px] overflow-hidden shadow-2xl grid grid-cols-1 lg:grid-cols-2">
+
+        <!-- LEFT SIDE -->
+        <div
+            class="hidden lg:flex bg-gradient-to-br from-[#dff8e8] to-[#c7f5dc] flex-col items-center justify-center p-12 relative">
+
+            <!-- Logo -->
+            <div class="absolute top-8 left-8 flex items-center gap-2">
+
+                <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white font-bold">
+                    ✓
+                </div>
+
+                <span class="font-semibold text-xl">
+                    Eunjent
+                </span>
+
+            </div>
+
+            <!-- Title -->
+            <h1 class="text-4xl xl:text-5xl font-bold text-gray-800 mb-10 text-center">
+                Aprende lo que quieras, en cualquier momento
+            </h1>
+
+            <!-- Image -->
+            <img src="assets/study.png" alt="study" class="w-[320px] xl:w-[420px] object-contain" />
+
+        </div>
+
+        <!-- RIGHT -->
+        <div class="flex flex-col bg-white overflow-y-auto h-full relative">
+            <div class="m-auto w-full">
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+
+    </div>
+</div>

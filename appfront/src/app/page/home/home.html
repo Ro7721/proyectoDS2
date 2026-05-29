@@ -1,0 +1,104 @@
+<div class="min-h-screen flex items-center justify-center p-0 lg:p-4 xl:p-8 bg-[#9FB3A8]">
+    <div class="w-full max-w-[1400px] bg-white lg:rounded-[28px] shadow-2xl overflow-hidden min-h-screen lg:min-h-0">
+
+        <!-- NAVBAR -->
+        <header class="px-6 lg:px-16 py-5 flex items-center justify-between relative z-50">
+            <div class="flex items-center gap-2">
+                <mat-icon style="color: #3A9E5F">home</mat-icon>
+                <span class="text-[22px] font-bold text-[#3A9E5F] tracking-tight">EduLearn</span>
+            </div>
+
+            <!-- Desktop Menu -->
+            <nav class="hidden lg:flex items-center gap-10 absolute left-1/2 -translate-x-1/2">
+                <a routerLink="/catalog" class="text-[15px] text-gray-700 hover:text-[#3A9E5F] transition">Courses</a>
+                <a class="text-[15px] text-gray-700 hover:text-[#3A9E5F] transition cursor-pointer">Teachers</a>
+                <a class="text-[15px] text-gray-700 hover:text-[#3A9E5F] transition cursor-pointer">Pricing</a>
+                <a class="text-[15px] text-gray-700 hover:text-[#3A9E5F] transition cursor-pointer">Pricing</a>
+                <a routerLink="/auth/login"
+                    class="text-[15px] text-gray-700 hover:text-[#3A9E5F] transition ml-4">Login</a>
+            </nav>
+
+            <div class="flex items-center gap-3">
+                <button class="hidden md:block text-gray-500 hover:text-[#3A9E5F] p-2">
+                    <mat-icon>notifications</mat-icon>
+                </button>
+                <button class="hidden md:block text-gray-500 hover:text-[#3A9E5F] p-2">
+                    <mat-icon>search</mat-icon>
+                </button>
+                <a routerLink="/auth/register"
+                    class="hidden sm:block bg-[#3A9E5F] hover:bg-[#2e7d4a] text-white px-6 py-2.5 rounded-full text-[15px] font-medium transition shadow-sm">
+                    Sign Up
+                </a>
+
+                <!-- Hamburger -->
+                <button (click)="toggleMenu()" class="lg:hidden p-2 text-gray-700">
+                    <mat-icon *ngIf="!isMenuOpen">menu</mat-icon>
+                    <mat-icon *ngIf="isMenuOpen">close</mat-icon>
+                </button>
+            </div>
+        </header>
+
+        <!-- Mobile Menu -->
+        <div *ngIf="isMenuOpen"
+            class="lg:hidden absolute top-[72px] left-0 right-0 bg-white border-t shadow-lg z-40 mx-0 lg:mx-4">
+            <nav class="px-6 py-4 space-y-4">
+                <a routerLink="/catalog" (click)="toggleMenu()" class="block py-2 text-gray-700">Cursos</a>
+                <a (click)="toggleMenu()" class="block py-2 text-gray-700">Docentes</a>
+                <a (click)="toggleMenu()" class="block py-2 text-gray-700">Precios</a>
+                <a routerLink="/login" (click)="toggleMenu()" class="block py-2 text-gray-700">Iniciar Sesión</a>
+                <a routerLink="/login" (click)="toggleMenu()"
+                    class="block w-full text-center bg-[#3A9E5F] text-white py-3 rounded-xl mt-4">Registrarse</a>
+            </nav>
+        </div>
+
+        <!-- HERO -->
+        <section class="px-6 lg:px-16 pt-8 lg:pt-12 pb-12">
+            <div class="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+                <div class="order-2 lg:order-1 text-center lg:text-left">
+                    <h1
+                        class="text-[38px] sm:text-[48px] lg:text-[56px] font-bold leading-[1.1] text-gray-900 tracking-tight">
+                        Aprende lo que quieras,<br>en cualquier momento
+                    </h1>
+                    <p
+                        class="mt-5 lg:mt-6 text-[16px] lg:text-[17px] leading-relaxed text-gray-600 max-w-[480px] mx-auto lg:mx-0">
+                        Descubre, desarrolla y domina lo que más te apasiona con nuestros cursos diseñados para inspirar
+                        tu crecimiento. Desde fundamentos hasta habilidades avanzadas, tu viaje de aprendizaje comienza
+                        aquí.
+                    </p>
+                    <div
+                        class="mt-8 lg:mt-10 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+                        <a routerLink="/login"
+                            class="w-full sm:w-auto bg-[#3A9E5F] hover:bg-[#2e7d4a] text-white px-8 py-3.5 rounded-xl font-medium shadow-md hover:shadow-lg transition text-center">
+                            Empieza a Aprender
+                        </a>
+                        <a routerLink="/catalog"
+                            class="text-[#3A9E5F] bg-green-100 px-8 py-3.5 rounded-xl hover:bg-[#2e7d4a] hover:text-white font-medium shadow-md hover:shadow-lg transition text-center">
+                            Explorar Cursos
+                        </a>
+                    </div>
+                </div>
+
+                <div class="order-1 lg:order-2 relative">
+                    <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?w=900" alt="Student learning"
+                        class="w-full h-[300px] sm:h-[400px] lg:h-auto object-cover rounded-2xl lg:rounded-3xl">
+                </div>
+            </div>
+        </section>
+
+        <!-- POPULAR COURSES -->
+        <section class="px-6 lg:px-16 pb-12 lg:pb-16">
+            <h2 class="text-[26px] lg:text-[32px] font-bold text-gray-900 mb-6 lg:mb-8">Cursos Populares</h2>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5">
+                <a *ngFor="let course of popularCourses" [routerLink]="['/courses', course.id]"
+                    class="group block overflow-hidden rounded-2xl bg-gray-100 aspect-[4/3] relative">
+                    <img [src]="course.img" [alt]="course.title"
+                        class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    <div
+                        class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition">
+                    </div>
+                </a>
+            </div>
+        </section>
+
+    </div>
+</div>
