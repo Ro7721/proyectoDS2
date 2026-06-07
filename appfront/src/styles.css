@@ -1,6 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import "tailwindcss";
+@import "primeicons/primeicons.css";
 
 @theme {
     --color-brand: #3A9E5F;
