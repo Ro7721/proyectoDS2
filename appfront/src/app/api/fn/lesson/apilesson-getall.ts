@@ -8,18 +8,12 @@ import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
 
-export interface CreateUser$Params {
-      body?: {
-'email'?: string;
-'firstName'?: string;
-'lastName'?: string;
-'password'?: string;
-'role'?: string;
-}
+export interface ApilessonGetall$Params {
+      body?: any
 }
 
-export function createUser(http: HttpClient, rootUrl: string, params?: CreateUser$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-  const rb = new RequestBuilder(rootUrl, createUser.PATH, 'post');
+export function apilessonGetall(http: HttpClient, rootUrl: string, params?: ApilessonGetall$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  const rb = new RequestBuilder(rootUrl, apilessonGetall.PATH, 'get');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -34,4 +28,4 @@ export function createUser(http: HttpClient, rootUrl: string, params?: CreateUse
   );
 }
 
-createUser.PATH = '/users/create';
+apilessonGetall.PATH = '/lessons/list';

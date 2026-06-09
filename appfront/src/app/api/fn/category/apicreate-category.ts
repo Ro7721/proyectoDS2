@@ -8,12 +8,15 @@ import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
 
-export interface GetallCategory$Params {
-      body?: any
+export interface ApicreateCategory$Params {
+      body?: {
+'description'?: string;
+'name'?: string;
+}
 }
 
-export function getallCategory(http: HttpClient, rootUrl: string, params?: GetallCategory$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-  const rb = new RequestBuilder(rootUrl, getallCategory.PATH, 'get');
+export function apicreateCategory(http: HttpClient, rootUrl: string, params?: ApicreateCategory$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  const rb = new RequestBuilder(rootUrl, apicreateCategory.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -28,4 +31,4 @@ export function getallCategory(http: HttpClient, rootUrl: string, params?: Getal
   );
 }
 
-getallCategory.PATH = '/categories/list';
+apicreateCategory.PATH = '/categories/insert';

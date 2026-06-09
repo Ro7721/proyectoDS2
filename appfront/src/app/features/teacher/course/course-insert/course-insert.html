@@ -1,0 +1,263 @@
+<p-toast position="top-right" [breakpoints]="{'576px': {width: '100%', right: '0', left: '0'}}" />
+
+<!-- Spinner overlay -->
+<div *ngIf="loading" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+  <div class="flex flex-col items-center gap-4 rounded-2xl bg-white px-12 py-8 shadow-2xl">
+    <p-progressSpinner styleClass="w-12 h-12" strokeWidth="4" animationDuration=".8s" />
+    <p class="text-sm font-medium text-gray-500">Guardando...</p>
+  </div>
+</div>
+
+<!-- Página completa -->
+<div class="flex min-h-screen w-full flex-col bg-gray-50">
+
+  <!-- Header -->
+  <div class="border-b border-gray-200 bg-white px-8 py-5">
+    <h1 class="text-xl font-bold text-gray-900">Crear curso</h1>
+    <p class="mt-0.5 text-sm text-gray-500">Completa los datos y agrega las lecciones</p>
+  </div>
+
+  <!-- Contenido principal: 2 columnas que ocupan todo el espacio -->
+  <div class="flex flex-1 divide-x divide-gray-200">
+
+    <!-- ===== COLUMNA IZQUIERDA: DATOS DEL CURSO ===== -->
+    <div class="flex w-full flex-col lg:w-[480px] lg:flex-none xl:w-[520px]">
+
+      <!-- Se usa el FormGroup courseForm -->
+      <form [formGroup]="courseForm" class="flex flex-col flex-1">
+
+        <!-- Sección: Portada -->
+        <div class="border-b border-gray-100 bg-white px-8 py-6">
+          <p class="mb-3 text-xs font-semibold uppercase tracking-widest text-green-600">Portada</p>
+
+          <div *ngIf="!coverImagePreview"
+            class="group flex h-52 w-full cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 transition-all hover:border-green-400 hover:bg-green-50"
+            (click)="coverInput.click()" (dragover)="$event.preventDefault()" (drop)="onCoverDrop($event)">
+            <div
+              class="flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-gray-200 group-hover:ring-green-300">
+              <i class="pi pi-cloud-upload text-xl text-gray-400 group-hover:text-green-500"></i>
+            </div>
+            <div class="text-center">
+              <p class="text-sm font-medium text-gray-600 group-hover:text-green-700">Haz clic o arrastra una imagen</p>
+              <p class="mt-0.5 text-xs text-gray-400">PNG, JPG, WEBP · Máx 5 MB</p>
+            </div>
+          </div>
+
+          <div *ngIf="coverImagePreview"
+            class="group relative h-52 w-full cursor-pointer overflow-hidden rounded-xl border border-gray-200"
+            (click)="coverInput.click()">
+            <img [src]="coverImagePreview" alt="Portada" class="h-full w-full object-cover" />
+            <div
+              class="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+              <i class="pi pi-camera text-xl text-white"></i>
+              <span class="text-sm font-semibold text-white">Cambiar imagen</span>
+            </div>
+          </div>
+
+          <input #coverInput type="file" accept="image/*" class="hidden" (change)="onCoverInputChange($event)" />
+        </div>
+
+        <!-- Sección: Información básica -->
+        <div class="border-b border-gray-100 bg-white px-8 py-6">
+          <p class="mb-4 text-xs font-semibold uppercase tracking-widest text-green-600">Información básica</p>
+
+          <div class="flex flex-col gap-5">
+
+            <!-- Título -->
+            <div class="flex flex-col gap-1.5">
+              <label class="text-sm font-medium text-gray-700"
+                [ngClass]="{'text-red-500': courseForm.get('courseTitle')?.invalid && courseForm.get('courseTitle')?.touched}">
+                Título del curso <span class="text-red-400">*</span>
+              </label>
+              <input pInputText formControlName="courseTitle" placeholder="Ej: Diseño Web con Tailwind CSS"
+                class="w-full"
+                [ngClass]="{'border-red-400': courseForm.get('courseTitle')?.invalid && courseForm.get('courseTitle')?.touched}" />
+            </div>
+
+            <!-- Descripción -->
+            <div class="flex flex-col gap-1.5">
+              <label class="text-sm font-medium text-gray-700"
+                [ngClass]="{'text-red-500': courseForm.get('courseDescription')?.invalid && courseForm.get('courseDescription')?.touched}">
+                Descripción <span class="text-red-400">*</span>
+              </label>
+              <textarea pTextarea formControlName="courseDescription" rows="4"
+                placeholder="Describe el contenido y objetivos del curso..." class="w-full resize-none"
+                [ngClass]="{'border-red-400': courseForm.get('courseDescription')?.invalid && courseForm.get('courseDescription')?.touched}">
+              </textarea>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Sección: Categoría / Nivel / Precio -->
+        <div class="border-b border-gray-100 bg-white px-8 py-6">
+          <p class="mb-4 text-xs font-semibold uppercase tracking-widest text-green-600">Configuración</p>
+
+          <div class="flex flex-col gap-5">
+
+            <!-- Categoría y Nivel -->
+            <div class="grid grid-cols-2 gap-4">
+              <div class="flex flex-col gap-1.5">
+                <label class="text-sm font-medium text-gray-700">
+                  Categoría <span class="text-red-400">*</span>
+                </label>
+                <p-select formControlName="selectedCategoryId" [options]="categories" optionLabel="name"
+                  optionValue="idCategory" placeholder="Seleccionar" class="w-full" />
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <label class="text-sm font-medium text-gray-700">
+                  Nivel <span class="text-red-400">*</span>
+                </label>
+                <p-select formControlName="courseLevel" [options]="levelOptions" optionLabel="label" optionValue="value"
+                  placeholder="Seleccionar" class="w-full" />
+              </div>
+            </div>
+
+            <!-- Precio -->
+            <div class="flex flex-col gap-1.5">
+              <label class="text-sm font-medium text-gray-700">
+                Precio (USD) <span class="text-red-400">*</span>
+              </label>
+              <p-inputNumber formControlName="coursePrice" mode="currency" currency="USD" locale="en-US" [min]="0"
+                placeholder="0.00" class="w-full" [inputStyle]="{'width':'100%'}" />
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Acciones -->
+        <div class="mt-auto border-t border-gray-200 bg-white px-8 py-5">
+          <div class="flex gap-3">
+            <button type="button" (click)="saveCourse('DRAFT')" [disabled]="loading"
+              class="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-700 transition-all hover:border-gray-400 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50">
+              <i class="pi pi-save text-sm"></i> Guardar borrador
+            </button>
+            <button type="button" (click)="saveCourse('PUBLISHED')" [disabled]="loading"
+              class="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl bg-green-500 px-5 py-3 text-sm font-semibold text-white transition-all hover:bg-green-600 active:scale-[.98] disabled:cursor-not-allowed disabled:opacity-50">
+              <i class="pi pi-send text-sm"></i> Publicar curso
+            </button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- ===== COLUMNA DERECHA: LECCIONES ===== -->
+    <div class="flex flex-1 flex-col bg-gray-50">
+
+      <!-- Header lecciones -->
+      <div class="flex items-center justify-between border-b border-gray-200 bg-white px-8 py-5">
+        <div>
+          <h2 class="flex items-center gap-2 text-base font-bold text-gray-800">
+            <i class="pi pi-play-circle text-green-500"></i> Lecciones
+          </h2>
+          <p class="mt-0.5 text-xs text-gray-400">{{ lessons.length }} lección(es) agregada(s)</p>
+        </div>
+        <button (click)="openAddLesson()"
+          class="flex cursor-pointer items-center gap-2 rounded-xl border border-green-500 bg-white px-4 py-2.5 text-sm font-semibold text-green-600 transition-all hover:bg-green-500 hover:text-white">
+          <i class="pi pi-plus text-xs"></i> Agregar lección
+        </button>
+      </div>
+
+      <!-- Cuerpo lecciones -->
+      <div class="flex-1 overflow-y-auto px-8 py-6">
+
+        <!-- Estado vacío -->
+        <div *ngIf="lessons.length === 0"
+          class="flex h-full min-h-[320px] flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed border-gray-200 bg-white">
+          <div class="flex h-16 w-16 items-center justify-center rounded-full bg-gray-50 ring-1 ring-gray-200">
+            <i class="pi pi-inbox text-3xl text-gray-300"></i>
+          </div>
+          <div class="text-center">
+            <p class="font-semibold text-gray-500">Sin lecciones aún</p>
+            <p class="mt-1 max-w-[240px] text-sm text-gray-400">Agrega la primera lección para comenzar a estructurar tu
+              curso</p>
+          </div>
+          <button (click)="openAddLesson()"
+            class="flex cursor-pointer items-center gap-2 rounded-xl border border-green-500 bg-white px-4 py-2.5 text-sm font-semibold text-green-600 transition-all hover:bg-green-500 hover:text-white">
+            <i class="pi pi-plus text-xs"></i> Agregar primera lección
+          </button>
+        </div>
+
+        <!-- Lista de lecciones -->
+        <div *ngIf="lessons.length > 0" class="flex flex-col gap-3">
+
+          <div *ngFor="let lesson of lessons; let i = index"
+            class="group flex items-center gap-4 rounded-xl border border-gray-200 bg-white px-5 py-4 transition-all hover:border-green-200 hover:shadow-sm">
+
+            <!-- Número -->
+            <div
+              class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-green-50 text-sm font-bold text-green-700">
+              {{ lesson.lessonOrder }}
+            </div>
+
+            <!-- Info -->
+            <div class="min-w-0 flex-1">
+              <p class="truncate text-sm font-semibold text-gray-800">{{ lesson.title }}</p>
+              <div class="mt-1 flex items-center gap-2">
+                <!-- Tipo -->
+                <span class="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold" [ngClass]="{
+                    'bg-blue-50 text-blue-700': lesson.type === 'VIDEO',
+                    'bg-emerald-50 text-emerald-700': lesson.type === 'PDF',
+                    'bg-gray-100 text-gray-600': lesson.type === 'TEXT'
+                  }">
+                  <i class="pi text-[10px]" [ngClass]="{
+                      'pi-play': lesson.type === 'VIDEO',
+                      'pi-file': lesson.type === 'PDF',
+                      'pi-link': lesson.type === 'TEXT'
+                    }"></i>
+                  {{ getLessonTypeLabel(lesson.type) }}
+                </span>
+                <!-- Gratis / Pago -->
+                <span *ngIf="lesson.isFree"
+                  class="inline-flex items-center gap-1 rounded-full bg-green-50 px-2.5 py-0.5 text-xs font-semibold text-green-700">
+                  <i class="pi pi-unlock text-[10px]"></i> Gratuita
+                </span>
+                <span *ngIf="!lesson.isFree"
+                  class="inline-flex items-center gap-1 rounded-full bg-orange-50 px-2.5 py-0.5 text-xs font-semibold text-orange-600">
+                  <i class="pi pi-lock text-[10px]"></i> De pago
+                </span>
+                <!-- URL -->
+                <span *ngIf="lesson.contenUrl" class="truncate text-xs text-gray-400 max-w-[180px]">
+                  {{ lesson.contenUrl }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Acciones -->
+            <div class="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+              <button (click)="openEditLesson(i)"
+                class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-blue-500 transition-colors hover:bg-blue-50">
+                <i class="pi pi-pencil text-sm"></i>
+              </button>
+              <button (click)="removeLesson(i)"
+                class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-red-400 transition-colors hover:bg-red-50">
+                <i class="pi pi-trash text-sm"></i>
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Banner lecciones pendientes -->
+        <div *ngIf="courseCreated && lessons.some(l => !l.saved)"
+          class="mt-4 flex items-center gap-3 rounded-xl border border-blue-200 bg-blue-50 px-5 py-4">
+          <i class="pi pi-info-circle text-lg text-blue-500"></i>
+          <p class="flex-1 text-sm text-blue-700">Tienes lecciones que aún no se han guardado en el servidor</p>
+          <button (click)="addLessonToExistingCourse()" [disabled]="loading"
+            class="flex cursor-pointer items-center gap-2 rounded-lg bg-blue-500 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-blue-600 disabled:opacity-50">
+            <i class="pi pi-cloud-upload text-xs"></i> Guardar
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Integración del componente hijo LessonInsert -->
+<app-lesson-insert *ngIf="showLessonDialog" [lesson]="currentLesson" [isEditing]="editingIndex !== null"
+  [(showDialog)]="showLessonDialog" (onSaveLesson)="handleLessonSave($event)">
+</app-lesson-insert>

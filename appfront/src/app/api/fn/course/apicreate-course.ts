@@ -8,14 +8,23 @@ import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
 
-export interface GetallCourse$Params {
-      body?: any
+export interface ApicreateCourse$Params {
+  body?: {
+    'coverImage'?: Blob[];
+    'description'?: string;
+    'idCategory'?: string;
+    'idTeacher'?: string;
+    'level'?: string;
+    'price'?: string;
+    'status'?: string;
+    'title'?: string;
+  }
 }
 
-export function getallCourse(http: HttpClient, rootUrl: string, params?: GetallCourse$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-  const rb = new RequestBuilder(rootUrl, getallCourse.PATH, 'get');
+export function apicreateCourse(http: HttpClient, rootUrl: string, params?: ApicreateCourse$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  const rb = new RequestBuilder(rootUrl, apicreateCourse.PATH, 'post');
   if (params) {
-    rb.body(params.body, 'application/json');
+    rb.body(params.body, 'multipart/form-data');
   }
 
   return http.request(
@@ -28,4 +37,4 @@ export function getallCourse(http: HttpClient, rootUrl: string, params?: GetallC
   );
 }
 
-getallCourse.PATH = '/courses/list';
+apicreateCourse.PATH = '/courses/create';

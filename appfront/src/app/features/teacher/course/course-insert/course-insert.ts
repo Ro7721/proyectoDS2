@@ -1,0 +1,347 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+
+// PrimeNG imports
+import { InputTextModule } from 'primeng/inputtext';
+import { TextareaModule } from 'primeng/textarea';
+import { SelectModule } from 'primeng/select';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { ButtonModule } from 'primeng/button';
+import { TagModule } from 'primeng/tag';
+import { ToastModule } from 'primeng/toast';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { MessageService } from 'primeng/api';
+
+import { Api } from '../../../../api/api';
+import {
+  apicreateCourse,
+  apigetallCategory,
+  apicreateLesson,
+} from '../../../../api/functions';
+import { LessonInsert, LessonForm } from '../lesson-insert/lesson-insert';
+
+// ─── Interfaces ────────────────────────────────────────────────────────────────
+
+interface Category {
+  idCategory: string;
+  name: string;
+  description?: string;
+}
+
+interface LessonDisplay extends LessonForm {
+  id?: string;
+  saved: boolean;
+}
+
+// ─── Component ─────────────────────────────────────────────────────────────────
+
+@Component({
+  selector: 'app-course-insert',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    InputTextModule,
+    TextareaModule,
+    SelectModule,
+    InputNumberModule,
+    ButtonModule,
+    TagModule,
+    ToastModule,
+    ProgressSpinnerModule,
+    LessonInsert,
+  ],
+  providers: [MessageService],
+  templateUrl: './course-insert.html',
+  styleUrl: './course-insert.css',
+})
+export class CourseInsert implements OnInit {
+
+  // ── Curso ──────────────────────────────────────────────────────────────────
+  courseForm: FormGroup;
+  courseStatus = 'DRAFT';
+  coverImageFile: Blob | null = null;
+  coverImagePreview: string | null = null;
+  idTeacher = 'teacher-uuid-placeholder'; // Reemplazar con el ID real del auth
+
+  categories: Category[] = [];
+
+  levelOptions = [
+    { label: 'Principiante', value: 'BEGINNER' },
+    { label: 'Intermedio', value: 'INTERMEDIATE' },
+    { label: 'Avanzado', value: 'ADVANCED' },
+  ];
+
+  // ── Lecciones ─────────────────────────────────────────────────────────────
+  lessons: LessonDisplay[] = [];
+  showLessonDialog = false;
+  currentLesson: LessonForm | null = null;
+  editingIndex: number | null = null;
+
+  // ── Estado UI ──────────────────────────────────────────────────────────────
+  loading = false;
+  courseCreated = false;
+  createdCourseId: string | null = null;
+
+  // ── Constructor ───────────────────────────────────────────────────────────
+  constructor(
+    private fb: FormBuilder,
+    private api: Api,
+    private messageService: MessageService,
+  ) {
+    this.courseForm = this.fb.group({
+      courseTitle: ['', Validators.required],
+      courseDescription: ['', Validators.required],
+      selectedCategoryId: [null, Validators.required],
+      courseLevel: ['', Validators.required],
+      coursePrice: [0, [Validators.required, Validators.min(0)]],
+    });
+  }
+
+  // ── Lifecycle ─────────────────────────────────────────────────────────────
+  ngOnInit(): void {
+    this.loadCategories();
+  }
+
+  // ── Toasts ────────────────────────────────────────────────────────────────
+
+  private toastSuccess(summary: string, detail?: string): void {
+    this.messageService.add({
+      severity: 'success',
+      summary,
+      detail: detail ?? '',
+      life: 4000,
+    });
+  }
+
+  private toastError(summary: string, detail?: string): void {
+    this.messageService.add({
+      severity: 'error',
+      summary,
+      detail: detail ?? '',
+      life: 5000,
+    });
+  }
+
+  private toastWarn(summary: string, detail?: string): void {
+    this.messageService.add({
+      severity: 'warn',
+      summary,
+      detail: detail ?? '',
+      life: 4500,
+    });
+  }
+
+  // ── Categorías ────────────────────────────────────────────────────────────
+
+  private loadCategories(): void {
+    this.api.invoke(apigetallCategory)
+      .then((response: any) => {
+
+        const responseData =
+          typeof response === 'string'
+            ? JSON.parse(response)
+            : response;
+
+        console.log('Categorias:', responseData);
+
+        this.categories = responseData;
+
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }
+
+  // ── Portada ───────────────────────────────────────────────────────────────
+
+  onCoverInputChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files?.[0]) {
+      this.setCoverImage(input.files[0]);
+    }
+  }
+
+  onCoverDrop(event: DragEvent): void {
+    event.preventDefault();
+    const file = event.dataTransfer?.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      this.setCoverImage(file);
+    } else {
+      this.toastWarn('Archivo no válido', 'Solo se aceptan imágenes (PNG, JPG, WEBP)');
+    }
+  }
+
+  private setCoverImage(file: File): void {
+    if (file.size > 5 * 1024 * 1024) {
+      this.toastWarn('Imagen muy grande', 'El archivo no debe superar los 5 MB');
+      return;
+    }
+    this.coverImageFile = file;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      this.coverImagePreview = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // ── Gestión de lecciones ──────────────────────────────────────────────────
+
+  openAddLesson(): void {
+    this.editingIndex = null;
+    this.currentLesson = null; // Envia null para limpiar el formulario en el hijo
+    this.showLessonDialog = true;
+  }
+
+  openEditLesson(index: number): void {
+    this.editingIndex = index;
+    this.currentLesson = { ...this.lessons[index] };
+    this.showLessonDialog = true;
+  }
+
+  handleLessonSave(lessonData: LessonForm): void {
+    if (this.editingIndex !== null) {
+      this.lessons[this.editingIndex] = {
+        ...lessonData,
+        saved: this.lessons[this.editingIndex].saved,
+      };
+      this.toastSuccess('Lección actualizada', `"${lessonData.title}" fue editada correctamente`);
+    } else {
+      // Set the default order correctly if it was 1 and there are already lessons
+      if (lessonData.lessonOrder === 1 && this.lessons.length > 0) {
+        lessonData.lessonOrder = this.lessons.length + 1;
+      }
+      this.lessons.push({ ...lessonData, saved: false });
+      this.toastSuccess('Lección agregada', `"${lessonData.title}" se agregó a la lista`);
+    }
+    this.showLessonDialog = false;
+  }
+
+  removeLesson(index: number): void {
+    const name = this.lessons[index].title;
+    this.lessons.splice(index, 1);
+    this.lessons.forEach((l, i) => (l.lessonOrder = i + 1));
+    this.toastWarn('Lección eliminada', `"${name}" fue removida de la lista`);
+  }
+
+  // ── Guardar curso ─────────────────────────────────────────────────────────
+
+  async saveCourse(status: 'DRAFT' | 'PUBLISHED'): Promise<void> {
+    if (!this.coverImageFile) {
+      this.toastWarn('Falta la portada', 'Selecciona una imagen de portada para continuar');
+      return;
+    }
+
+    if (this.courseForm.invalid) {
+      this.courseForm.markAllAsTouched();
+      this.toastWarn('Campos incompletos', 'Completa todos los campos obligatorios del curso');
+      return;
+    }
+
+    const formValue = this.courseForm.value;
+
+    this.loading = true;
+    this.courseStatus = status;
+
+    try {
+      const resp = await this.api.invoke$Response(apicreateCourse, {
+        body: {
+          title: formValue.courseTitle,
+          description: formValue.courseDescription,
+          idCategory: String(formValue.selectedCategoryId),
+          idTeacher: this.idTeacher,
+          level: formValue.courseLevel,
+          price: String(formValue.coursePrice),
+          status: this.courseStatus,
+          coverImage: [this.coverImageFile],
+        },
+      });
+
+      const body = JSON.parse(resp.body as any);
+      this.createdCourseId = body?.data?.idCourse ?? null;
+      this.courseCreated = true;
+
+      if (this.lessons.length > 0 && this.createdCourseId) {
+        await this.saveAllLessons(this.createdCourseId);
+      }
+
+      const label = status === 'DRAFT' ? 'guardado como borrador' : 'publicado';
+      this.toastSuccess(
+        `Curso ${label}`,
+        `"${formValue.courseTitle}" fue ${label} exitosamente`,
+      );
+
+    } catch (e) {
+      console.error(e);
+      this.toastError('Error al guardar', 'Ocurrió un problema al procesar el curso. Intenta de nuevo.');
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  // ── Guardar lecciones ─────────────────────────────────────────────────────
+
+  private async saveAllLessons(courseId: string): Promise<void> {
+    let saved = 0;
+    let failed = 0;
+
+    for (let i = 0; i < this.lessons.length; i++) {
+      const lesson = this.lessons[i];
+      if (lesson.saved) continue;
+
+      try {
+        await this.api.invoke$Response(apicreateLesson, {
+          body: {
+            title: lesson.title,
+            description: lesson.description,
+            type: lesson.type,
+            contenUrl: lesson.contenUrl,
+            lessonOrder: String(lesson.lessonOrder),
+            isFree: String(lesson.isFree),
+            courseId,
+            files: lesson.files as unknown as Blob[],
+          },
+        });
+        this.lessons[i].saved = true;
+        saved++;
+      } catch (e) {
+        console.error(`Error al guardar lección "${lesson.title}"`, e);
+        failed++;
+      }
+    }
+
+    if (failed > 0) {
+      this.toastWarn(
+        'Algunas lecciones fallaron',
+        `${saved} guardadas correctamente, ${failed} con error`,
+      );
+    }
+  }
+
+  async addLessonToExistingCourse(): Promise<void> {
+    if (!this.createdCourseId) return;
+    this.loading = true;
+    try {
+      await this.saveAllLessons(this.createdCourseId);
+      const pendingLeft = this.lessons.filter(l => !l.saved).length;
+      if (pendingLeft === 0) {
+        this.toastSuccess('Lecciones guardadas', 'Todas las lecciones fueron subidas correctamente');
+      }
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  // ── Helpers de UI ─────────────────────────────────────────────────────────
+
+  getLessonTypeLabel(type: string): string {
+    switch (type) {
+      case 'VIDEO': return 'Video';
+      case 'PDF': return 'Documento';
+      default: return 'Recurso';
+    }
+  }
+
+}

@@ -8,17 +8,14 @@ import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
 
-export interface CreateCategory$Params {
-      body?: {
-'description'?: string;
-'name'?: string;
-}
+export interface ApidetailsCourse$Params {
+      body?: any
 }
 
-export function createCategory(http: HttpClient, rootUrl: string, params?: CreateCategory$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-  const rb = new RequestBuilder(rootUrl, createCategory.PATH, 'post');
+export function apidetailsCourse(http: HttpClient, rootUrl: string, params?: ApidetailsCourse$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  const rb = new RequestBuilder(rootUrl, apidetailsCourse.PATH, 'get');
   if (params) {
-    rb.body(params.body, 'application/json');
+    rb.body(params.body, 'text/plain');
   }
 
   return http.request(
@@ -31,4 +28,4 @@ export function createCategory(http: HttpClient, rootUrl: string, params?: Creat
   );
 }
 
-createCategory.PATH = '/categories/insert';
+apidetailsCourse.PATH = '/courses/detail/0c4775a4-e945-42a8-9e3d-e17b6d1a1234';

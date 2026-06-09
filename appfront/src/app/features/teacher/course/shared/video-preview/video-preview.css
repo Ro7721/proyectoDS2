@@ -1,0 +1,14 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.video-preview-container {
+  /* Ocultar barra de scroll en navegadores basados en webkit para el iframe si la hubiera */
+  scrollbar-width: none;
+}
+
+.video-preview-container::-webkit-scrollbar {
+  display: none;
+}

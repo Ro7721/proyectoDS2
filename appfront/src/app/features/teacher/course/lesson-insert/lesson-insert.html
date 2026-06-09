@@ -1,0 +1,100 @@
+<!-- ===== DIALOG: LECCIÓN ===== -->
+<p-dialog [visible]="showDialog" (visibleChange)="showDialogChange.emit($event)" [modal]="true" [closable]="true"
+    [draggable]="false" [resizable]="false" [header]="isEditing ? 'Editar lección' : 'Nueva lección'"
+    [style]="{ width: '860px' }">
+
+    <form [formGroup]="frmInserLesson" class="flex flex-col md:flex-row gap-6 py-2">
+
+        <!-- Columna Izquierda (Formulario) -->
+        <div class="flex flex-col gap-5 w-full md:w-[420px] flex-shrink-0">
+
+            <!-- Título -->
+            <div class="flex flex-col gap-1.5">
+                <label class="text-sm font-medium text-gray-700"
+                    [ngClass]="{'text-red-500': frmInserLesson.get('title')?.invalid && frmInserLesson.get('title')?.touched}">
+                    Título <span class="text-red-400">*</span>
+                </label>
+                <input pInputText formControlName="title" placeholder="Ej: Introducción al curso" class="w-full"
+                    [ngClass]="{'border-red-400': frmInserLesson.get('title')?.invalid && frmInserLesson.get('title')?.touched}" />
+
+            </div>
+
+            <!-- Tipo y Orden -->
+            <div class="grid grid-cols-2 gap-4">
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-gray-700">Tipo <span class="text-red-400">*</span></label>
+                    <p-select formControlName="type" [options]="lessonTypeOptions" optionLabel="label"
+                        optionValue="value" class="w-full" />
+                </div>
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-gray-700">Orden</label>
+                    <p-inputNumber formControlName="lessonOrder" [min]="1" class="w-full"
+                        [inputStyle]="{'width':'100%'}" />
+                </div>
+            </div>
+
+            <!-- URL -->
+            <div class="flex flex-col gap-1.5">
+                <label class="text-sm font-medium text-gray-700">URL del contenido</label>
+                <input pInputText formControlName="contenUrl" placeholder="https://youtube.com/watch?v=..."
+                    class="w-full" />
+            </div>
+
+            <!-- Descripción -->
+            <div class="flex flex-col gap-1.5">
+                <label class="text-sm font-medium text-gray-700">Descripción</label>
+                <textarea pTextarea formControlName="description" rows="3"
+                    placeholder="Breve descripción de la lección..." class="w-full resize-none"></textarea>
+            </div>
+
+            <!-- Archivos -->
+            <div class="flex flex-col gap-1.5">
+                <label class="text-sm font-medium text-gray-700">
+                    <i class="pi pi-paperclip mr-1 text-gray-400"></i> Archivos adjuntos
+                </label>
+                <label
+                    class="inline-flex w-fit cursor-pointer items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100">
+                    <i class="pi pi-upload text-sm text-gray-400"></i> Seleccionar archivos
+                    <input type="file" multiple class="hidden" (change)="onLessonFileSelect($event)"
+                        accept="video/*,.pdf,.txt" />
+                </label>
+                <p *ngIf="selectedFiles.length > 0" class="text-xs text-gray-400">
+                    {{ selectedFiles.length }} archivo(s) seleccionado(s)
+                </p>
+            </div>
+
+            <!-- Toggle gratuita -->
+            <div class="flex items-center gap-3 rounded-xl border border-gray-100 bg-gray-50 p-4">
+                <p-toggleButton formControlName="isFree" onLabel="Gratuita" offLabel="De pago" onIcon="pi pi-unlock"
+                    offIcon="pi pi-lock" />
+                <p class="text-sm text-gray-500">
+                    {{ frmInserLesson.get('isFree')?.value ? 'Cualquier usuario puede ver esta lección' :
+                    'Solo disponible para inscritos'}}
+                </p>
+            </div>
+
+        </div>
+
+        <!-- Columna Derecha (Video Preview) -->
+        <div class="flex-1 flex flex-col min-w-[320px]">
+            <app-video-preview [videoSrc]="frmInserLesson.get('contenUrl')?.value"
+                [files]="selectedFiles"></app-video-preview>
+        </div>
+
+    </form>
+
+    <ng-template pTemplate="footer">
+        <div class="flex justify-end gap-3">
+            <button (click)="closeDialog()"
+                class="cursor-pointer rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-gray-600 transition-colors hover:bg-gray-50">
+                Cancelar
+            </button>
+            <button (click)="saveLesson()"
+                class="flex cursor-pointer items-center gap-2 rounded-xl bg-green-500 px-6 py-2.5 text-sm font-semibold text-white transition-all hover:bg-green-600 active:scale-[.98]">
+                <i class="pi pi-check text-xs"></i>
+                {{ isEditing ? 'Actualizar' : 'Agregar lección' }}
+            </button>
+        </div>
+    </ng-template>
+
+</p-dialog>

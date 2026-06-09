@@ -14,8 +14,8 @@ type Role = 'STUDENT' | 'TEACHER' | 'ADMIN';
 })
 export class DashboardSell implements OnInit {
 
-  role: Role = 'STUDENT';
-  userName = 'Roger juro';
+  role: Role = 'TEACHER';
+  userName = 'Roger Juro';
   mobileOpen = false;
 
   studentMenu: MenuItem[] = [
@@ -28,7 +28,7 @@ export class DashboardSell implements OnInit {
   teacherMenu: MenuItem[] = [
     { label: 'Dashboard', icon: 'pi pi-th-large', route: '/dashboard/overview' },
     { label: 'Mis cursos', icon: 'pi pi-book', route: '/dashboard/my-courses' },
-    { label: 'Crear curso', icon: 'pi pi-plus', route: '/dashboard/create' },
+    { label: 'Crear curso', icon: 'pi pi-plus', route: '/dashboard/course-insert' },
     { label: 'Estudiantes', icon: 'pi pi-users', route: '/dashboard/students' },
     { label: 'Analíticas', icon: 'pi pi-chart-bar', route: '/dashboard/analytics' },
   ];

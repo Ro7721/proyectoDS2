@@ -8,23 +8,20 @@ import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
 
-export interface CreateCourse$Params {
+export interface ApicreateUser$Params {
       body?: {
-'coverImage'?: Blob;
-'description'?: string;
-'idCategory'?: string;
-'idTeacher'?: string;
-'level'?: string;
-'price'?: string;
-'status'?: string;
-'title'?: string;
+'email'?: string;
+'firstName'?: string;
+'lastName'?: string;
+'password'?: string;
+'role'?: string;
 }
 }
 
-export function createCourse(http: HttpClient, rootUrl: string, params?: CreateCourse$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-  const rb = new RequestBuilder(rootUrl, createCourse.PATH, 'post');
+export function apicreateUser(http: HttpClient, rootUrl: string, params?: ApicreateUser$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  const rb = new RequestBuilder(rootUrl, apicreateUser.PATH, 'post');
   if (params) {
-    rb.body(params.body, 'multipart/form-data');
+    rb.body(params.body, 'application/json');
   }
 
   return http.request(
@@ -37,4 +34,4 @@ export function createCourse(http: HttpClient, rootUrl: string, params?: CreateC
   );
 }
 
-createCourse.PATH = '/courses/create';
+apicreateUser.PATH = '/users/create';

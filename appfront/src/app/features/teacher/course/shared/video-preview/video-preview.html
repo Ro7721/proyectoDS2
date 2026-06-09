@@ -1,0 +1,45 @@
+<div class="video-preview-container h-full w-full flex flex-col relative bg-[#111111] rounded-2xl overflow-hidden shadow-xl ring-1 ring-gray-200">
+  
+  <!-- Encabezado sutil -->
+  <div class="absolute top-0 left-0 w-full z-10 flex items-center justify-between px-4 py-3 bg-gradient-to-b from-black/80 to-transparent pointer-events-none">
+    <div class="flex items-center gap-2 drop-shadow-md">
+      <div class="w-2 h-2 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.8)]" 
+           [ngClass]="{'bg-red-500 shadow-red-500/50': videoType === 'youtube', 'bg-blue-400 shadow-blue-400/50': videoType === 'vimeo', 'bg-emerald-400 shadow-emerald-400/50': videoType === 'local', 'bg-gray-500': videoType === 'none'}">
+      </div>
+      <span class="text-[10px] font-bold text-white/95 tracking-widest uppercase">
+        {{ videoType === 'none' ? 'Preview' : videoType }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Contenido -->
+  <div class="flex-1 w-full h-full flex items-center justify-center bg-black min-h-[260px]">
+    
+    <!-- Placeholder cuando no hay video -->
+    <div *ngIf="videoType === 'none'" class="flex flex-col items-center justify-center gap-4 text-gray-500 p-8 text-center bg-[#111111] w-full h-full">
+      <div class="w-16 h-16 rounded-2xl bg-gray-800 flex items-center justify-center shadow-inner">
+        <i class="pi pi-play-circle text-3xl text-gray-600"></i>
+      </div>
+      <div>
+        <p class="text-sm font-semibold text-gray-400">Sin vista previa</p>
+        <p class="text-xs mt-1.5 max-w-[200px] mx-auto text-gray-500 leading-relaxed">Sube un video o pega un enlace de YouTube/Vimeo</p>
+      </div>
+    </div>
+
+    <!-- YouTube / Vimeo iFrame -->
+    <iframe *ngIf="(videoType === 'youtube' || videoType === 'vimeo') && safeUrl"
+            [src]="safeUrl" 
+            class="w-full h-full border-0 absolute inset-0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+    </iframe>
+
+    <!-- Video nativo para local o links directos -->
+    <video *ngIf="videoType === 'local' && localVideoUrl"
+           [src]="localVideoUrl" 
+           controls 
+           class="w-full h-full object-contain absolute inset-0 bg-black outline-none">
+    </video>
+    
+  </div>
+</div>

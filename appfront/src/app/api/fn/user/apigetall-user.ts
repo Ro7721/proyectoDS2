@@ -8,12 +8,12 @@ import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
 
-export interface GetallUser$Params {
+export interface ApigetallUser$Params {
       body?: any
 }
 
-export function getallUser(http: HttpClient, rootUrl: string, params?: GetallUser$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-  const rb = new RequestBuilder(rootUrl, getallUser.PATH, 'get');
+export function apigetallUser(http: HttpClient, rootUrl: string, params?: ApigetallUser$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  const rb = new RequestBuilder(rootUrl, apigetallUser.PATH, 'get');
   if (params) {
     rb.body(params.body, 'text/plain');
   }
@@ -28,4 +28,4 @@ export function getallUser(http: HttpClient, rootUrl: string, params?: GetallUse
   );
 }
 
-getallUser.PATH = '/users/list';
+apigetallUser.PATH = '/users/list';
