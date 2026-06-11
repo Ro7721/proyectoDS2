@@ -42,7 +42,7 @@ export class CourseGetall implements OnInit {
   notFound = false;
 
   // TODO: reemplazar con AuthService cuando implementes el login
-  private teacherId = 'cbc516d9-3b5e-47a6-8c53-ccd271ec277e';
+  private teacherId = '2bcae299-4b2f-4f71-8ef7-f11c0894cdb6';
 
   constructor(private http: HttpClient) { }
 
