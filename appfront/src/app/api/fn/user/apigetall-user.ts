@@ -15,7 +15,7 @@ export interface ApigetallUser$Params {
 export function apigetallUser(http: HttpClient, rootUrl: string, params?: ApigetallUser$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
   const rb = new RequestBuilder(rootUrl, apigetallUser.PATH, 'get');
   if (params) {
-    rb.body(params.body, 'text/plain');
+    rb.body(params.body, 'application/json');
   }
 
   return http.request(

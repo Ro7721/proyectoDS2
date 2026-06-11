@@ -1,0 +1,901 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "OpenAPI definition",
+        "version": "v0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8080",
+            "description": "Generated server url"
+        }
+    ],
+    "paths": {
+        "/users/update/{id}": {
+            "put": {
+                "tags": [
+                    "user-controller"
+                ],
+                "operationId": "updateUser",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseUserResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/create": {
+            "post": {
+                "tags": [
+                    "user-controller"
+                ],
+                "operationId": "createUser",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseUserResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/lessons/insert": {
+            "post": {
+                "tags": [
+                    "lesson-controller"
+                ],
+                "operationId": "create",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "request": {
+                                        "$ref": "#/components/schemas/LessonRequest"
+                                    },
+                                    "response": {
+                                        "$ref": "#/components/schemas/GenericResponse"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseLessonResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/courses/create": {
+            "post": {
+                "tags": [
+                    "couse-controller"
+                ],
+                "operationId": "createCourse",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CourseRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseCourseResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/categories/insert": {
+            "post": {
+                "tags": [
+                    "category-controller"
+                ],
+                "operationId": "insert",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CategoryRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseCategoryResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "tags": [
+                    "auth-controller"
+                ],
+                "operationId": "login",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/courses/publish/{idCourse}": {
+            "patch": {
+                "tags": [
+                    "couse-controller"
+                ],
+                "operationId": "publishCourse",
+                "parameters": [
+                    {
+                        "name": "idCourse",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseCourseResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/search/{id}": {
+            "get": {
+                "tags": [
+                    "user-controller"
+                ],
+                "operationId": "getUserById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/list": {
+            "get": {
+                "tags": [
+                    "user-controller"
+                ],
+                "operationId": "getAllUsers",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/UserResponse"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/lessons/list": {
+            "get": {
+                "tags": [
+                    "lesson-controller"
+                ],
+                "operationId": "getAllLessons",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/LessonResponse"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/courses/teacher/{teacherId}": {
+            "get": {
+                "tags": [
+                    "couse-controller"
+                ],
+                "operationId": "findByTeacher",
+                "parameters": [
+                    {
+                        "name": "teacherId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseListCourseResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/courses/teacher/{teacherId}/withlessons": {
+            "get": {
+                "tags": [
+                    "couse-controller"
+                ],
+                "operationId": "findByTeacherWithLessons",
+                "parameters": [
+                    {
+                        "name": "teacherId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseListCourseResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/courses/list": {
+            "get": {
+                "tags": [
+                    "couse-controller"
+                ],
+                "operationId": "getAllCourses",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/CourseResponse"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/courses/detail/{idCourse}": {
+            "get": {
+                "tags": [
+                    "couse-controller"
+                ],
+                "operationId": "getById",
+                "parameters": [
+                    {
+                        "name": "idCourse",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseCourseResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/categories/list": {
+            "get": {
+                "tags": [
+                    "category-controller"
+                ],
+                "operationId": "getAll",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/CategoryResponse"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/me": {
+            "get": {
+                "tags": [
+                    "auth-controller"
+                ],
+                "operationId": "getCurrentUser",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/delete/{id}": {
+            "delete": {
+                "tags": [
+                    "user-controller"
+                ],
+                "operationId": "deleteUser",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseBoolean"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/courses/delete/{idCourse}": {
+            "delete": {
+                "tags": [
+                    "couse-controller"
+                ],
+                "operationId": "deleteCourse",
+                "parameters": [
+                    {
+                        "name": "idCourse",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseCourseResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "UserRequest": {
+                "type": "object",
+                "properties": {
+                    "firstName": {
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "password": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "role": {
+                        "type": "string",
+                        "enum": [
+                            "ROLE_ADMIN",
+                            "ROLE_TEACHER",
+                            "ROLE_STUDENT"
+                        ],
+                        "minLength": 1
+                    }
+                },
+                "required": [
+                    "email",
+                    "password",
+                    "role"
+                ]
+            },
+            "ApiResponseUserResponse": {
+                "type": "object",
+                "properties": {
+                    "response": {
+                        "$ref": "#/components/schemas/GenericResponse"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/UserResponse"
+                    }
+                }
+            },
+            "GenericResponse": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string"
+                    },
+                    "listMessage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "UserResponse": {
+                "type": "object",
+                "properties": {
+                    "idUser": {
+                        "type": "string"
+                    },
+                    "firstName": {
+                        "type": "string"
+                    },
+                    "surName": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "role": {
+                        "type": "string",
+                        "enum": [
+                            "ROLE_ADMIN",
+                            "ROLE_TEACHER",
+                            "ROLE_STUDENT"
+                        ]
+                    },
+                    "active": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "LessonRequest": {
+                "type": "object",
+                "properties": {
+                    "courseId": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string"
+                    },
+                    "contenUrl": {
+                        "type": "string"
+                    },
+                    "durationMinutes": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "lessonOrder": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "files": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "binary"
+                        }
+                    },
+                    "free": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "ApiResponseLessonResponse": {
+                "type": "object",
+                "properties": {
+                    "response": {
+                        "$ref": "#/components/schemas/GenericResponse"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/LessonResponse"
+                    }
+                }
+            },
+            "LessonFileResponse": {
+                "type": "object",
+                "properties": {
+                    "idFile": {
+                        "type": "string"
+                    },
+                    "fileName": {
+                        "type": "string"
+                    },
+                    "fileUrl": {
+                        "type": "string"
+                    },
+                    "fileType": {
+                        "type": "string"
+                    },
+                    "fileOrder": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                }
+            },
+            "LessonResponse": {
+                "type": "object",
+                "properties": {
+                    "idLesson": {
+                        "type": "string"
+                    },
+                    "courseId": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string"
+                    },
+                    "contentUrl": {
+                        "type": "string"
+                    },
+                    "durationMinutes": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "lessonOrder": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "isFree": {
+                        "type": "boolean"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "files": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/LessonFileResponse"
+                        }
+                    }
+                }
+            },
+            "CourseRequest": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "coverImage": {
+                        "type": "string",
+                        "format": "binary"
+                    },
+                    "level": {
+                        "type": "string"
+                    },
+                    "price": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "idTeacher": {
+                        "type": "string"
+                    },
+                    "idCategory": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ApiResponseCourseResponse": {
+                "type": "object",
+                "properties": {
+                    "response": {
+                        "$ref": "#/components/schemas/GenericResponse"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/CourseResponse"
+                    }
+                }
+            },
+            "CourseResponse": {
+                "type": "object",
+                "properties": {
+                    "idCourse": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "coverImage": {
+                        "type": "string"
+                    },
+                    "level": {
+                        "type": "string"
+                    },
+                    "price": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "categoryName": {
+                        "type": "string"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "totalLessons": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "lessons": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/LessonResponse"
+                        }
+                    }
+                }
+            },
+            "CategoryRequest": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ApiResponseCategoryResponse": {
+                "type": "object",
+                "properties": {
+                    "response": {
+                        "$ref": "#/components/schemas/GenericResponse"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/CategoryResponse"
+                    }
+                }
+            },
+            "CategoryResponse": {
+                "type": "object",
+                "properties": {
+                    "idCategory": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    }
+                }
+            },
+            "LoginRequest": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "password": {
+                        "type": "string",
+                        "minLength": 1
+                    }
+                },
+                "required": [
+                    "email",
+                    "password"
+                ]
+            },
+            "ApiResponseListCourseResponse": {
+                "type": "object",
+                "properties": {
+                    "response": {
+                        "$ref": "#/components/schemas/GenericResponse"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CourseResponse"
+                        }
+                    }
+                }
+            },
+            "ApiResponseBoolean": {
+                "type": "object",
+                "properties": {
+                    "response": {
+                        "$ref": "#/components/schemas/GenericResponse"
+                    },
+                    "data": {
+                        "type": "boolean"
+                    }
+                }
+            }
+        }
+    }
+}

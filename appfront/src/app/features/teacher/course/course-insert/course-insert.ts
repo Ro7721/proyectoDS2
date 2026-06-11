@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
@@ -64,9 +64,9 @@ export class CourseInsert implements OnInit {
   courseStatus = 'DRAFT';
   coverImageFile: Blob | null = null;
   coverImagePreview: string | null = null;
-  idTeacher = 'teacher-uuid-placeholder'; // Reemplazar con el ID real del auth
+  idTeacher = 'cbc516d9-3b5e-47a6-8c53-ccd271ec277e'; // Reemplazar con el ID real del auth
 
-  categories: Category[] = [];
+  listCategories: Category[] = [];
 
   levelOptions = [
     { label: 'Principiante', value: 'BEGINNER' },
@@ -75,7 +75,7 @@ export class CourseInsert implements OnInit {
   ];
 
   // ── Lecciones ─────────────────────────────────────────────────────────────
-  lessons: LessonDisplay[] = [];
+  listLessons: LessonDisplay[] = [];
   showLessonDialog = false;
   currentLesson: LessonForm | null = null;
   editingIndex: number | null = null;
@@ -147,11 +147,12 @@ export class CourseInsert implements OnInit {
 
         console.log('Categorias:', responseData);
 
-        this.categories = responseData;
+        this.listCategories = responseData;
 
       })
       .catch(error => {
-        console.error(error);
+        console.error('Error al cargar categorías:', error);
+        this.toastError('Error', 'No se pudieron cargar las categorías');
       });
   }
 
@@ -197,32 +198,32 @@ export class CourseInsert implements OnInit {
 
   openEditLesson(index: number): void {
     this.editingIndex = index;
-    this.currentLesson = { ...this.lessons[index] };
+    this.currentLesson = { ...this.listLessons[index] };
     this.showLessonDialog = true;
   }
 
   handleLessonSave(lessonData: LessonForm): void {
     if (this.editingIndex !== null) {
-      this.lessons[this.editingIndex] = {
+      this.listLessons[this.editingIndex] = {
         ...lessonData,
-        saved: this.lessons[this.editingIndex].saved,
+        saved: this.listLessons[this.editingIndex].saved,
       };
       this.toastSuccess('Lección actualizada', `"${lessonData.title}" fue editada correctamente`);
     } else {
       // Set the default order correctly if it was 1 and there are already lessons
-      if (lessonData.lessonOrder === 1 && this.lessons.length > 0) {
-        lessonData.lessonOrder = this.lessons.length + 1;
+      if (lessonData.lessonOrder === 1 && this.listLessons.length > 0) {
+        lessonData.lessonOrder = this.listLessons.length + 1;
       }
-      this.lessons.push({ ...lessonData, saved: false });
+      this.listLessons.push({ ...lessonData, saved: false });
       this.toastSuccess('Lección agregada', `"${lessonData.title}" se agregó a la lista`);
     }
     this.showLessonDialog = false;
   }
 
   removeLesson(index: number): void {
-    const name = this.lessons[index].title;
-    this.lessons.splice(index, 1);
-    this.lessons.forEach((l, i) => (l.lessonOrder = i + 1));
+    const name = this.listLessons[index].title;
+    this.listLessons.splice(index, 1);
+    this.listLessons.forEach((l, i) => (l.lessonOrder = i + 1));
     this.toastWarn('Lección eliminada', `"${name}" fue removida de la lista`);
   }
 
@@ -263,7 +264,7 @@ export class CourseInsert implements OnInit {
       this.createdCourseId = body?.data?.idCourse ?? null;
       this.courseCreated = true;
 
-      if (this.lessons.length > 0 && this.createdCourseId) {
+      if (this.listLessons.length > 0 && this.createdCourseId) {
         await this.saveAllLessons(this.createdCourseId);
       }
 
@@ -274,7 +275,7 @@ export class CourseInsert implements OnInit {
       );
 
     } catch (e) {
-      console.error(e);
+      console.error('Error al guardar curso:', e);
       this.toastError('Error al guardar', 'Ocurrió un problema al procesar el curso. Intenta de nuevo.');
     } finally {
       this.loading = false;
@@ -287,8 +288,8 @@ export class CourseInsert implements OnInit {
     let saved = 0;
     let failed = 0;
 
-    for (let i = 0; i < this.lessons.length; i++) {
-      const lesson = this.lessons[i];
+    for (let i = 0; i < this.listLessons.length; i++) {
+      const lesson = this.listLessons[i];
       if (lesson.saved) continue;
 
       try {
@@ -304,10 +305,10 @@ export class CourseInsert implements OnInit {
             files: lesson.files as unknown as Blob[],
           },
         });
-        this.lessons[i].saved = true;
+        this.listLessons[i].saved = true;
         saved++;
       } catch (e) {
-        console.error(`Error al guardar lección "${lesson.title}"`, e);
+        console.error(`Error al guardar lección "${lesson.title}":`, e);
         failed++;
       }
     }
@@ -325,7 +326,7 @@ export class CourseInsert implements OnInit {
     this.loading = true;
     try {
       await this.saveAllLessons(this.createdCourseId);
-      const pendingLeft = this.lessons.filter(l => !l.saved).length;
+      const pendingLeft = this.listLessons.filter(l => !l.saved).length;
       if (pendingLeft === 0) {
         this.toastSuccess('Lecciones guardadas', 'Todas las lecciones fueron subidas correctamente');
       }

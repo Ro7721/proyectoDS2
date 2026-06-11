@@ -8,16 +8,16 @@ import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
 
-export interface ApidetailsCourse$Params {
-  idCourse: string;
+export interface Apicoursesbyteacher$Params {
+  teacherId: string;
       body?: any
 }
 
-export function apidetailsCourse(http: HttpClient, rootUrl: string, params: ApidetailsCourse$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-  const rb = new RequestBuilder(rootUrl, apidetailsCourse.PATH, 'get');
+export function apicoursesbyteacher(http: HttpClient, rootUrl: string, params: Apicoursesbyteacher$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  const rb = new RequestBuilder(rootUrl, apicoursesbyteacher.PATH, 'get');
   if (params) {
-    rb.path('idCourse', params.idCourse, {});
-    rb.body(params.body, 'text/plain');
+    rb.path('teacherId', params.teacherId, {});
+    rb.body(params.body, 'application/json');
   }
 
   return http.request(
@@ -30,4 +30,4 @@ export function apidetailsCourse(http: HttpClient, rootUrl: string, params: Apid
   );
 }
 
-apidetailsCourse.PATH = '/courses/detail/{idCourse}';
+apicoursesbyteacher.PATH = '/courses/teacher/{teacherId}/withlessons';

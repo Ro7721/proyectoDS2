@@ -7,6 +7,8 @@ export type { ApigetallCourse$Params as ApigetallCourse$Params } from './fn/cour
 export { apigetallCourse as apigetallCourse } from './fn/course/apigetall-course';
 export type { ApidetailsCourse$Params as ApidetailsCourse$Params } from './fn/course/apidetails-course';
 export { apidetailsCourse as apidetailsCourse } from './fn/course/apidetails-course';
+export type { Apicoursesbyteacher$Params as Apicoursesbyteacher$Params } from './fn/course/apicoursesbyteacher';
+export { apicoursesbyteacher as apicoursesbyteacher } from './fn/course/apicoursesbyteacher';
 export type { ApigetallCategory$Params as ApigetallCategory$Params } from './fn/category/apigetall-category';
 export { apigetallCategory as apigetallCategory } from './fn/category/apigetall-category';
 export type { ApicreateCategory$Params as ApicreateCategory$Params } from './fn/category/apicreate-category';
