@@ -1,26 +1,63 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { ChangeDetectorRef, Component, PLATFORM_ID, inject, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
+import { Api } from '../../api/api';
+import { PublicCourseCard$Params, publicCourseCard } from '../../api/functions';
+import { CourseCardResponse } from '../../models/course.model';
+import { CourseCard } from '../../features/coursecard/course-card/course-card';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule, RouterLink, MatIconModule],
+  imports: [CommonModule, RouterLink, MatIconModule, CourseCard],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
-export class Home {
+export class Home implements OnInit {
+  private api = inject(Api);
+  private cdr = inject(ChangeDetectorRef);
+  private messageService = inject(MessageService);
+  private platformId = inject(PLATFORM_ID);
 
   isMenuOpen = false;
+  publicCourses: CourseCardResponse[] = [];
+  loadingCourses = true;
+  coursesLoadError = false;
 
-  popularCourses = [
-    { id: 1, img: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=400', title: 'Business Strategy' },
-    { id: 2, img: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400', title: 'Web Development' },
-    { id: 3, img: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400', title: 'Remote Work' },
-    { id: 4, img: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=400', title: 'Productivity' },
-  ];
+  ngOnInit(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      this.loadingCourses = false;
+      return;
+    }
+
+    this.loadPublicCourses();
+  }
 
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
+  }
+
+  private loadPublicCourses(): void {
+    this.loadingCourses = true;
+    this.coursesLoadError = false;
+
+    this.api.invoke<PublicCourseCard$Params, any>(publicCourseCard)
+      .then((response) => {
+        this.publicCourses = response?.data ?? [];
+        this.loadingCourses = false;
+        this.cdr.detectChanges();
+      })
+      .catch((error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error al cargar cursos publicos',
+        });
+        this.publicCourses = [];
+        this.loadingCourses = false;
+        this.coursesLoadError = true;
+        this.cdr.detectChanges();
+      });
   }
 }

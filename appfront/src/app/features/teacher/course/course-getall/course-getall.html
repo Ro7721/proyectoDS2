@@ -1,274 +1,105 @@
 <p-toast position="top-right" />
 
-<!-- ───────────────────────── PAGE HEADER ───────────────────────── -->
-<div class="flex items-center justify-between mb-6">
-    <div>
-        <h2 class="text-2xl font-bold text-gray-800 mb-1">Mis Cursos</h2>
-        <p class="text-sm text-gray-500">Administra y visualiza el contenido de tus cursos</p>
-    </div>
-    <button pButton icon="pi pi-plus" label="Crear curso" class="p-button-sm"
-        style="background:#22c55e; border-color:#22c55e;"></button>
-</div>
-
-<!-- ───────────────────────── SKELETON LOADER ───────────────────── -->
-<div *ngIf="loading" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
-    <div *ngFor="let i of [1,2,3,4,5,6]" class="rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-100">
-        <p-skeleton height="160px" styleClass="w-full" borderRadius="0" />
-        <div class="p-4 space-y-3">
-            <p-skeleton height="1.2rem" width="70%" />
-            <p-skeleton height="0.9rem" width="90%" />
-            <p-skeleton height="0.9rem" width="80%" />
-            <div class="flex gap-2 pt-1">
-                <p-skeleton height="1.6rem" width="70px" borderRadius="999px" />
-                <p-skeleton height="1.6rem" width="80px" borderRadius="999px" />
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- ───────────────────────── EMPTY STATE ───────────────────────── -->
-<div *ngIf="!loading && listCourses.length === 0" class="flex flex-col items-center justify-center py-24 text-center">
-    <div class="w-20 h-20 rounded-full bg-green-50 flex items-center justify-center mb-4">
-        <i class="pi pi-book text-3xl text-green-400"></i>
-    </div>
-    <h3 class="text-lg font-semibold text-gray-700 mb-1">Aún no tienes cursos</h3>
-    <p class="text-sm text-gray-400 mb-5">Crea tu primer curso y empieza a enseñar hoy.</p>
-    <button pButton label="Crear mi primer curso" icon="pi pi-plus" style="background:#22c55e; border-color:#22c55e;"
-        class="p-button-sm"></button>
-</div>
-
-<!-- ───────────────────────── COURSE GRID ───────────────────────── -->
-<div *ngIf="!loading && listCourses.length > 0" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
-
-    <div *ngFor="let course of listCourses" (click)="openCourseDetail(course)" class="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5
-           transition-all duration-200 cursor-pointer overflow-hidden flex flex-col">
-        <!-- Cover image -->
-        <div class="relative overflow-hidden h-40 bg-gray-100">
-            <img *ngIf="course.coverImage" [src]="course.coverImage" [alt]="course.title"
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-            <div *ngIf="!course.coverImage"
-                class="w-full h-full flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100">
-                <i class="pi pi-book text-4xl text-green-300"></i>
-            </div>
-
-            <!-- Status badge top-right -->
-            <span class="absolute top-3 right-3">
-                <p-tag [value]="course.status" [severity]="getStatusSeverity(course.status)"
-                    styleClass="text-xs font-semibold px-2 py-0.5 rounded-full" />
-            </span>
-        </div>
-
-        <!-- Body -->
-        <div class="p-4 flex flex-col flex-1">
-            <!-- Category -->
-            <span class="text-xs font-medium text-green-600 uppercase tracking-wide mb-1">
-                {{ course.categoryName }}
-            </span>
-
-            <!-- Title -->
-            <h3
-                class="text-base font-semibold text-gray-800 leading-snug mb-1 line-clamp-2 group-hover:text-green-700 transition-colors">
-                {{ course.title }}
-            </h3>
-
-            <!-- Description -->
-            <p class="text-sm text-gray-500 line-clamp-2 mb-3 flex-1">
-                {{ course.description }}
-            </p>
-
-            <!-- Tags row -->
-            <div class="flex flex-wrap gap-2 mb-4">
-                <p-tag [value]="course.level" [severity]="getLevelSeverity(course.level)" styleClass="text-xs" />
-                <span class="inline-flex items-center gap-1 text-xs text-gray-500 bg-gray-100 rounded-full px-2 py-0.5">
-                    <i class="pi pi-play-circle text-xs"></i>
-                    {{ course.totalLessons }} lecciones
-                </span>
-            </div>
-
-            <!-- Footer: price + arrow -->
-            <div class="flex items-center justify-between pt-3 border-t border-gray-100">
-                <span class="text-base font-bold" [ngClass]="course.price === 0 ? 'text-green-600' : 'text-gray-800'">
-                    {{ formatPrice(course.price) }}
-                </span>
-                <button class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center
-                       group-hover:bg-green-500 transition-colors duration-200">
-                    <i class="pi pi-arrow-right text-xs text-green-500 group-hover:text-white transition-colors"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<!-- ═══════════════════════ COURSE DETAIL MODAL ═══════════════════════ -->
-<p-dialog [(visible)]="showModal" [modal]="true" [dismissableMask]="true" [draggable]="false" [resizable]="false"
-    [style]="{ width: '860px', maxWidth: '95vw' }" styleClass="course-detail-dialog" (onHide)="closeModal()">
-    <!-- Custom header -->
-    <ng-template pTemplate="header">
-        <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-xl bg-green-100 flex items-center justify-center">
-                <i class="pi pi-book text-green-600 text-base"></i>
-            </div>
-            <div>
-                <p class="text-xs text-gray-400 font-medium uppercase tracking-wider leading-none mb-0.5">Detalle del
-                    curso</p>
-                <h2 class="text-base font-bold text-gray-800 leading-none">
-                    {{ selectedCourse?.title ?? 'Cargando...' }}
-                </h2>
-            </div>
-        </div>
-    </ng-template>
-
-    <!-- ── SKELETON while loading detail ── -->
-    <div *ngIf="detailLoading" class="space-y-4 p-1">
-        <p-skeleton height="200px" borderRadius="12px" />
-        <div class="grid grid-cols-4 gap-3">
-            <p-skeleton *ngFor="let i of [1,2,3,4]" height="70px" borderRadius="10px" />
-        </div>
-        <p-skeleton height="120px" borderRadius="10px" />
-        <p-skeleton height="50px" borderRadius="10px" />
-        <p-skeleton height="50px" borderRadius="10px" />
-        <p-skeleton height="50px" borderRadius="10px" />
-    </div>
-
-    <!-- ── DETAIL CONTENT ── -->
-    <div *ngIf="!detailLoading && selectedCourse" class="space-y-5">
-
-        <!-- Hero cover + badges -->
-        <div class="relative rounded-xl overflow-hidden h-48 bg-gradient-to-br from-green-50 to-emerald-100">
-            <img *ngIf="selectedCourse.coverImage" [src]="selectedCourse.coverImage" [alt]="selectedCourse.title"
-                class="w-full h-full object-cover" />
-            <div *ngIf="!selectedCourse.coverImage" class="w-full h-full flex items-center justify-center">
-                <i class="pi pi-book text-6xl text-green-200"></i>
-            </div>
-            <!-- Overlay badges -->
-            <div class="absolute bottom-3 left-3 flex gap-2">
-                <p-tag [value]="selectedCourse.status" [severity]="getStatusSeverity(selectedCourse.status)" />
-                <p-tag [value]="selectedCourse.level" [severity]="getLevelSeverity(selectedCourse.level)" />
-            </div>
-        </div>
-
-        <!-- Stats row -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div class="flex flex-col items-center justify-center bg-gray-50 rounded-xl py-3 px-2 text-center">
-                <i class="pi pi-play-circle text-green-500 text-xl mb-1"></i>
-                <span class="text-xl font-bold text-gray-800">{{ selectedCourse.totalLessons }}</span>
-                <span class="text-xs text-gray-400">Lecciones</span>
-            </div>
-            <div class="flex flex-col items-center justify-center bg-gray-50 rounded-xl py-3 px-2 text-center">
-                <i class="pi pi-clock text-blue-400 text-xl mb-1"></i>
-                <span class="text-xl font-bold text-gray-800">{{ totalDuration }}</span>
-                <span class="text-xs text-gray-400">Min. totales</span>
-            </div>
-            <div class="flex flex-col items-center justify-center bg-gray-50 rounded-xl py-3 px-2 text-center">
-                <i class="pi pi-lock-open text-emerald-500 text-xl mb-1"></i>
-                <span class="text-xl font-bold text-gray-800">{{ totalFreeLessons }}</span>
-                <span class="text-xs text-gray-400">Gratuitas</span>
-            </div>
-            <div class="flex flex-col items-center justify-center bg-gray-50 rounded-xl py-3 px-2 text-center">
-                <i class="pi pi-tag text-orange-400 text-xl mb-1"></i>
-                <span class="text-xl font-bold"
-                    [ngClass]="selectedCourse.price === 0 ? 'text-green-600' : 'text-gray-800'">
-                    {{ formatPrice(selectedCourse.price) }}
-                </span>
-                <span class="text-xs text-gray-400">Precio</span>
-            </div>
-        </div>
-
-        <!-- Description -->
-        <div class="bg-gray-50 rounded-xl p-4">
-            <h4 class="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                <i class="pi pi-align-left text-green-500"></i> Descripción
-            </h4>
-            <p class="text-sm text-gray-600 leading-relaxed">{{ selectedCourse.description }}</p>
-        </div>
-
-        <!-- Category chip -->
-        <div class="flex items-center gap-2">
-            <span class="text-xs text-gray-400 font-medium">Categoría:</span>
-            <p-chip [label]="selectedCourse.categoryName" styleClass="text-xs bg-green-50 text-green-700" />
-        </div>
-
-        <!-- Divider -->
-        <p-divider styleClass="my-1" />
-
-        <!-- Lessons accordion -->
+<section class="space-y-6">
+    <header
+        class="flex flex-col gap-4 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm md:flex-row md:items-center md:justify-between">
         <div>
-            <h4 class="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
-                <i class="pi pi-list text-green-500"></i>
-                Contenido del curso
-                <span class="ml-auto text-xs font-normal text-gray-400">{{ selectedCourse.lessons.length }}
-                    lecciones</span>
-            </h4>
+            <p class="text-xs font-semibold uppercase tracking-wide text-emerald-600">Panel docente</p>
+            <h2 class="mt-1 text-2xl font-bold text-gray-900">Mis cursos</h2>
+            <p class="mt-1 text-sm text-gray-500">Gestiona tus cursos, revisa su estado y entra al contenido.</p>
+        </div>
+        <div class="flex gap-4">
+            <p-button type="button" icon="pi pi-refresh" label="Actualizar" class="p-button-outlined p-button-sm"
+                (click)="loadCourses()" />
+            <p-button label="Crear curso " icon="pi pi-plus" iconPos="top" routerLink="/dashboard/course-insert" />
 
-            <p-accordion [multiple]="true" styleClass="lesson-accordion">
-                <p-accordion value="0">
-                    <p-accordion-panel *ngFor="let lesson of selectedCourse.lessons; let i = index" [value]="i">
+        </div>
+    </header>
 
-                        <p-accordion-header>
-                            <div class="flex items-center gap-3 w-full py-0.5">
-                                <span
-                                    class="w-6 h-6 rounded-full bg-green-100 text-green-700 text-xs font-bold flex items-center justify-center">
-                                    {{ lesson.lessonOrder }}
-                                </span>
-
-                                <i class="pi {{ getLessonTypeIcon(lesson.type) }} text-gray-400 text-sm"></i>
-
-                                <span class="text-sm font-medium text-gray-700 flex-1">
-                                    {{ lesson.title }}
-                                </span>
-
-                                <div class="flex items-center gap-2 mr-2">
-                                    <span *ngIf="lesson.isFree"
-                                        class="text-xs bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full font-medium">
-                                        Gratis
-                                    </span>
-
-                                    <span class="text-xs text-gray-400">
-                                        {{ lesson.durationMinutes }} min
-                                    </span>
-                                </div>
-                            </div>
-                        </p-accordion-header>
-
-                        <p-accordion-content>
-
-                            <p *ngIf="lesson.description" class="text-sm text-gray-500 leading-relaxed">
-                                {{ lesson.description }}
-                            </p>
-
-                            <div *ngIf="lesson.contentUrl">
-                                <a [href]="lesson.contentUrl" target="_blank">
-                                    {{ lesson.contentUrl }}
-                                </a>
-                            </div>
-
-                        </p-accordion-content>
-
-                    </p-accordion-panel>
-                </p-accordion>
-            </p-accordion>
-
-            <!-- Empty lessons -->
-            <div *ngIf="!selectedCourse.lessons || selectedCourse.lessons.length === 0"
-                class="text-center py-8 bg-gray-50 rounded-xl">
-                <i class="pi pi-inbox text-3xl text-gray-300 mb-2 block"></i>
-                <p class="text-sm text-gray-400">Este curso no tiene lecciones aún.</p>
+    <div *ngIf="loading" class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+        <div *ngFor="let item of [1,2,3,4,5,6]"
+            class="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+            <p-skeleton height="180px" styleClass="w-full" borderRadius="0" />
+            <div class="space-y-3 p-4">
+                <p-skeleton height="1rem" width="40%" />
+                <p-skeleton height="1.4rem" width="78%" />
+                <p-skeleton height="0.9rem" width="95%" />
+                <p-skeleton height="0.9rem" width="70%" />
+                <div class="flex justify-between pt-2">
+                    <p-skeleton height="1.8rem" width="90px" borderRadius="999px" />
+                    <p-skeleton height="2rem" width="2rem" borderRadius="999px" />
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Footer actions -->
-    <ng-template pTemplate="footer">
-        <div class="flex justify-between items-center w-full">
-            <button pButton label="Cerrar" icon="pi pi-times" class="p-button-text p-button-sm text-gray-500"
-                (click)="closeModal()"></button>
-            <div class="flex gap-2">
-                <button pButton icon="pi pi-pencil" label="Editar curso" class="p-button-outlined p-button-sm"
-                    style="color:#22c55e; border-color:#22c55e;"></button>
-                <button pButton icon="pi pi-plus" label="Nueva lección" class="p-button-sm"
-                    style="background:#22c55e; border-color:#22c55e;"></button>
-            </div>
+    <div *ngIf="!loading && listCourses.length === 0"
+        class="flex flex-col items-center justify-center rounded-2xl border border-dashed border-gray-200 bg-white px-6 py-20 text-center">
+        <div class="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-50">
+            <i class="pi pi-book text-3xl text-emerald-400"></i>
         </div>
-    </ng-template>
-</p-dialog>
+        <h3 class="text-lg font-bold text-gray-800">Aún no tienes cursos</h3>
+        <p class="mt-1 max-w-md text-sm text-gray-500">Crea tu primer curso y empieza a organizar tus lecciones.</p>
+        <a pButton routerLink="/dashboard/course-insert" label="Crear mi primer curso" icon="pi pi-plus"
+            class="p-button-sm mt-5" style="background:#16a34a; border-color:#16a34a;"></a>
+    </div>
+
+    <div *ngIf="!loading && listCourses.length > 0" class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+        <article *ngFor="let course of listCourses" (click)="openCourseDetail(course)"
+            class="group flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition duration-200 hover:-translate-y-1 hover:border-emerald-100 hover:shadow-lg">
+            <div class="relative h-44 overflow-hidden bg-emerald-50">
+                <img *ngIf="course.coverImage" [src]="course.coverImage" [alt]="course.title"
+                    class="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                <div *ngIf="!course.coverImage"
+                    class="flex h-full w-full items-center justify-center bg-gradient-to-br from-emerald-50 to-sky-50">
+                    <i class="pi pi-image text-4xl text-emerald-200"></i>
+                </div>
+
+                <div class="absolute left-3 top-3">
+                    <p-tag [value]="course.status" [severity]="getStatusSeverity(course.status)"
+                        styleClass="text-xs font-semibold" />
+                </div>
+            </div>
+
+            <div class="flex flex-1 flex-col p-4">
+                <div class="mb-2 flex items-center justify-between gap-3">
+                    <span class="truncate text-xs font-semibold uppercase tracking-wide text-emerald-600">
+                        {{ course.categoryName || 'Sin categoría' }}
+                    </span>
+                    <p-tag [value]="course.level" [severity]="getLevelSeverity(course.level)" styleClass="text-xs" />
+                </div>
+
+                <h3 class="line-clamp-2 text-lg font-bold leading-snug text-gray-900 group-hover:text-emerald-700">
+                    {{ course.title }}
+                </h3>
+                <p class="mt-2 line-clamp-2 flex-1 text-sm leading-relaxed text-gray-500">
+                    {{ course.description }}
+                </p>
+
+                <div class="mt-4 grid grid-cols-2 gap-2 text-sm">
+                    <div class="rounded-xl bg-gray-50 px-3 py-2">
+                        <span class="block text-xs text-gray-400">Lecciones</span>
+                        <strong class="text-gray-800">{{ course.totalLessons || 0 }}</strong>
+                    </div>
+                    <div class="rounded-xl bg-gray-50 px-3 py-2">
+                        <span class="block text-xs text-gray-400">Precio</span>
+                        <strong [ngClass]="course.price === 0 ? 'text-emerald-600' : 'text-gray-800'">
+                            {{ formatPrice(course.price) }}
+                        </strong>
+                    </div>
+                </div>
+
+                <div class="mt-4 flex items-center justify-between border-t border-gray-100 pt-3">
+                    <span class="text-xs text-gray-400">Haz clic para ver detalles</span>
+                    <button type="button"
+                        class="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 transition group-hover:bg-emerald-600 group-hover:text-white">
+                        <i class="pi pi-arrow-right text-sm"></i>
+                    </button>
+                </div>
+            </div>
+        </article>
+    </div>
+</section>
+
+<app-course-details [visible]="showDetails" [courseId]="selectedCourseId"
+    (visibleChange)="onDetailsVisibilityChange($event)"></app-course-details>

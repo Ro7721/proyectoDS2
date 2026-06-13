@@ -26,7 +26,12 @@ export interface CourseResponse {
     level: string;
     price: number;
     status: string;
+    teacherFullName?: string;
     categoryName: string;
     totalLessons: number;
     lessons: LessonResponse[];
 }
+
+export type CourseCardResponse = Omit<CourseResponse, 'lessons'> & {
+    teacherFullName: string;
+};

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
@@ -59,6 +59,8 @@ interface LessonDisplay extends LessonForm {
 })
 export class CourseInsert implements OnInit {
 
+  private cdr = inject(ChangeDetectorRef);
+
   // ── Curso ──────────────────────────────────────────────────────────────────
   courseForm: FormGroup;
   courseStatus = 'DRAFT';
@@ -100,12 +102,10 @@ export class CourseInsert implements OnInit {
     });
   }
 
-  // ── Lifecycle ─────────────────────────────────────────────────────────────
   ngOnInit(): void {
     this.loadCategories();
   }
 
-  // ── Toasts ────────────────────────────────────────────────────────────────
 
   private toastSuccess(summary: string, detail?: string): void {
     this.messageService.add({
@@ -148,11 +148,12 @@ export class CourseInsert implements OnInit {
         console.log('Categorias:', responseData);
 
         this.listCategories = responseData;
-
+        this.cdr.detectChanges();
       })
       .catch(error => {
         console.error('Error al cargar categorías:', error);
         this.toastError('Error', 'No se pudieron cargar las categorías');
+        this.cdr.detectChanges();
       });
   }
 
@@ -275,10 +276,10 @@ export class CourseInsert implements OnInit {
       );
 
     } catch (e) {
-      console.error('Error al guardar curso:', e);
       this.toastError('Error al guardar', 'Ocurrió un problema al procesar el curso. Intenta de nuevo.');
     } finally {
       this.loading = false;
+      this.cdr.detectChanges();
     }
   }
 
@@ -332,6 +333,7 @@ export class CourseInsert implements OnInit {
       }
     } finally {
       this.loading = false;
+      this.cdr.detectChanges();
     }
   }
 

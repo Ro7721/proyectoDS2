@@ -80,23 +80,42 @@
 
                 <div class="order-1 lg:order-2 relative">
                     <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?w=900" alt="Student learning"
-                        class="w-full h-[270px] sm:h-[310px] lg:h-auto object-cover rounded-2xl lg:rounded-3xl">
+                        class="w-full h-[220px] sm:h-[360px] lg:h-[560px] object-cover rounded-2xl lg:rounded-3xl">
                 </div>
             </div>
         </section>
 
-        <!-- POPULAR COURSES -->
+        <!-- PUBLIC COURSES -->
         <section class="px-6 lg:px-16 pb-12 lg:pb-16">
-            <h2 class="text-[26px] lg:text-[32px] font-bold text-gray-900 mb-6 lg:mb-8">Cursos Populares</h2>
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5">
-                <a *ngFor="let course of popularCourses" [routerLink]="['/courses', course.id]"
-                    class="group block overflow-hidden rounded-2xl bg-gray-100 aspect-[4/3] relative">
-                    <img [src]="course.img" [alt]="course.title"
-                        class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                    <div
-                        class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition">
-                    </div>
+            <div class="mb-6 lg:mb-8 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                    <h2 class="text-[26px] lg:text-[32px] font-bold text-gray-900">Cursos Populares</h2>
+                    <p class="mt-1 text-sm text-gray-500">Explora los cursos publicados por nuestros docentes.</p>
+                </div>
+                <a routerLink="/auth/register" class="text-sm font-semibold text-[#3A9E5F] hover:text-[#2e7d4a]">
+                    Ver todos
                 </a>
+            </div>
+
+            <div *ngIf="loadingCourses" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5">
+                <div *ngFor="let item of [1,2,3,4]" class="h-[340px] animate-pulse rounded-xl bg-gray-100"></div>
+            </div>
+
+            <div *ngIf="!loadingCourses && publicCourses.length > 0"
+                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5">
+                <app-course-card *ngFor="let course of publicCourses" [course]="course"></app-course-card>
+            </div>
+
+            <div *ngIf="!loadingCourses && publicCourses.length === 0"
+                class="rounded-xl border border-dashed border-gray-200 bg-gray-50 px-6 py-10 text-center">
+                <mat-icon class="mb-2 text-[#3A9E5F]">school</mat-icon>
+                <h3 class="text-base font-semibold text-gray-800">
+                    {{ coursesLoadError ? 'No pudimos cargar los cursos' : 'Aún no hay cursos publicados' }}
+                </h3>
+                <p class="mt-1 text-sm text-gray-500">
+                    {{ coursesLoadError ? 'Intenta nuevamente cuando el servidor esté disponible.' : 'Vuelve pronto para
+                    descubrir nuevas clases.' }}
+                </p>
             </div>
         </section>
 

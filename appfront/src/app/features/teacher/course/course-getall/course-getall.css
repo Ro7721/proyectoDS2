@@ -1,61 +1,7 @@
-/* mis-cursos.component.scss */
-
-/* ── Dialog overrides ────────────────────────────────────── */
-::ng-deep .course-detail-dialog {
-    .p-dialog-header {
-        padding: 1.1rem 1.4rem 0.8rem;
-        border-bottom: 1px solid #f1f5f9;
-    }
-
-    .p-dialog-content {
-        padding: 1.25rem 1.4rem;
-        overflow-y: auto;
-        max-height: 72vh;
-    }
-
-    .p-dialog-footer {
-        padding: 0.8rem 1.4rem;
-        border-top: 1px solid #f1f5f9;
-    }
+:host {
+    display: block;
 }
 
-/* ── Accordion overrides ─────────────────────────────────── */
-::ng-deep .lesson-accordion {
-    .p-accordion-header-link {
-        padding: 0.65rem 1rem !important;
-        background: #f9fafb !important;
-        border-radius: 10px !important;
-        border: 1px solid #f1f5f9 !important;
-        margin-bottom: 4px;
-        transition: background 0.15s;
-
-        &:hover {
-            background: #f0fdf4 !important;
-            border-color: #bbf7d0 !important;
-        }
-    }
-
-    .p-accordion-header-text {
-        width: 100%;
-    }
-
-    .p-accordion-content {
-        padding: 0.5rem 1rem 0.75rem !important;
-        border: 1px solid #f1f5f9 !important;
-        border-top: none !important;
-        border-radius: 0 0 10px 10px !important;
-        margin-bottom: 4px;
-        background: #fff;
-    }
-
-    /* Active header */
-    .p-highlight .p-accordion-header-link {
-        background: #f0fdf4 !important;
-        border-color: #86efac !important;
-    }
-}
-
-/* ── Card hover ──────────────────────────────────────────── */
 .line-clamp-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;

@@ -64,7 +64,7 @@ export class LessonInsert implements OnInit, OnChanges {
       title: ['', Validators.required],
       type: ['VIDEO', Validators.required],
       contenUrl: [''],
-      description: [''],
+      description: ['', Validators.required],
       lessonOrder: [1, Validators.required],
       isFree: [false]
     });

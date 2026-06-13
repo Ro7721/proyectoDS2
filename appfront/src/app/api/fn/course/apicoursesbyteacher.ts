@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
+import { CourseResponse } from '../../../models/course.model';
 
 
 export interface Apicoursesbyteacher$Params {
@@ -13,7 +14,15 @@ export interface Apicoursesbyteacher$Params {
       body?: any
 }
 
-export function apicoursesbyteacher(http: HttpClient, rootUrl: string, params: Apicoursesbyteacher$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+export interface ApicoursesbyteacherApiResponse {
+  response?: {
+    type?: string;
+    listMessage?: string[];
+  };
+  data?: CourseResponse[];
+}
+
+export function apicoursesbyteacher(http: HttpClient, rootUrl: string, params: Apicoursesbyteacher$Params, context?: HttpContext): Observable<StrictHttpResponse<ApicoursesbyteacherApiResponse>> {
   const rb = new RequestBuilder(rootUrl, apicoursesbyteacher.PATH, 'get');
   if (params) {
     rb.path('teacherId', params.teacherId, {});
@@ -21,11 +30,11 @@ export function apicoursesbyteacher(http: HttpClient, rootUrl: string, params: A
   }
 
   return http.request(
-    rb.build({ responseType: 'text', accept: '*/*', context })
+    rb.build({ responseType: 'json', accept: 'application/json', context })
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;
+      return (r as HttpResponse<any>).clone({ body: r.body as ApicoursesbyteacherApiResponse }) as StrictHttpResponse<ApicoursesbyteacherApiResponse>;
     })
   );
 }

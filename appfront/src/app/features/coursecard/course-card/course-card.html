@@ -1,0 +1,44 @@
+<article
+    class="course-card group h-full overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-lg">
+    <a [routerLink]="['/auth/register']" class="flex h-full flex-col">
+        <div class="relative aspect-[16/10] overflow-hidden bg-green-50">
+            <img [src]="course.coverImage || fallbackImage" [alt]="course.title"
+                class="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+
+            <div class="absolute left-3 top-3 flex max-w-[calc(100%-1.5rem)] gap-2">
+                <span
+                    class="truncate rounded-full bg-white/95 px-3 py-1 text-xs font-semibold uppercase text-[#2f7d4f] shadow-sm">
+                    {{ course.categoryName || 'Curso' }}
+                </span>
+            </div>
+        </div>
+
+        <div class="flex flex-1 flex-col p-4">
+            <div class="mb-2 flex items-center justify-between gap-3 text-xs text-gray-500">
+                <span class="inline-flex min-w-0 items-center gap-1">
+                    <mat-icon class="course-card__icon">person</mat-icon>
+                    <span class="truncate">{{ course.teacherFullName || 'Docente' }}</span>
+                </span>
+                <span class="shrink-0 font-medium text-[#3A9E5F]">{{ course.level || 'Nivel' }}</span>
+            </div>
+
+            <h3 class="line-clamp-2 text-base font-bold leading-snug text-gray-900 transition group-hover:text-[#2f7d4f]">
+                {{ course.title }}
+            </h3>
+
+            <p class="mt-2 line-clamp-2 flex-1 text-sm leading-relaxed text-gray-500">
+                {{ course.description }}
+            </p>
+
+            <div class="mt-4 flex items-center justify-between border-t border-gray-100 pt-3">
+                <span class="inline-flex items-center gap-1 text-sm text-gray-500">
+                    <mat-icon class="course-card__icon">play_circle</mat-icon>
+                    {{ course.totalLessons || 0 }} lecciones
+                </span>
+                <span class="text-base font-bold" [ngClass]="course.price ? 'text-gray-900' : 'text-[#3A9E5F]'">
+                    {{ formatPrice(course.price) }}
+                </span>
+            </div>
+        </div>
+    </a>
+</article>
