@@ -1,4 +1,5 @@
-<p-toast position="top-right" [breakpoints]="{'576px': {width: '100%', right: '0', left: '0'}}" />
+<p-toast position="top-right" [breakpoints]="{'576px': {width: '100%', right: '0', left: '0'}}"
+  [pt]="{detail: {class: 'text-black! '}}" />
 
 <!-- Spinner overlay -->
 <div *ngIf="loading" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">

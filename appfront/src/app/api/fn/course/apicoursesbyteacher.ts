@@ -11,7 +11,7 @@ import { CourseResponse } from '../../../models/course.model';
 
 export interface Apicoursesbyteacher$Params {
   teacherId: string;
-      body?: any
+  body?: any
 }
 
 export interface ApicoursesbyteacherApiResponse {

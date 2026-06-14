@@ -8,6 +8,8 @@ import { Learning } from './page/dashboard-sell/learning/learning';
 import { CourseInsert } from './features/teacher/course/course-insert/course-insert';
 import { CourseGetall } from './features/teacher/course/course-getall/course-getall';
 import { OverviewTeacher } from './features/teacher/overview-teacher/overview-teacher';
+import { AuthGuard } from './core/guards/auth.guard';
+import { DashboardRedirect } from './page/dashboard-sell/dashboard-redirect/dashboard-redirect';
 
 export const routes: Routes = [
     { path: '', component: Home },
@@ -19,8 +21,8 @@ export const routes: Routes = [
         ]
     },
     {
-        path: 'dashboard', component: DashboardSell, children: [
-            { path: '', redirectTo: 'learning', pathMatch: 'full' },
+        path: 'dashboard', component: DashboardSell, canActivate: [AuthGuard], children: [
+            { path: '', component: DashboardRedirect },
             { path: 'learning', component: Learning },
             { path: 'course-insert', component: CourseInsert },
             { path: 'course-getall', component: CourseGetall },

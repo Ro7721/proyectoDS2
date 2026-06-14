@@ -1,3 +1,5 @@
+<p-toast position="top-right" [pt]="{detail: {class: 'text-black!'}}"
+    [breakpoints]="{'576px': {width: '100%', right: '0', left: '0'}}" />
 <div class="w-full max-w-xl px-6 sm:px-10 py-10">
 
     <!-- Navbar -->
@@ -28,29 +30,55 @@
     </div>
 
     <!-- Form -->
-    <form class="space-y-5" (ngSubmit)="login()">
+    <form [formGroup]="form" class="space-y-5" (ngSubmit)="login()">
 
         <div>
             <label class="block mb-1.5 text-sm font-semibold text-gray-700">
                 Email
             </label>
 
-            <input type="email" [(ngModel)]="email" name="email" placeholder="Password"
-                class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition bg-white" />
+            <input type="email" formControlName="email" placeholder="ejem. pepe@gmail.com"
+                class="w-full border border-gray-300 rounded-lg px-4 py-3" />
+            @if (email.touched && email.invalid) {
+            <small class="text-red-500">
+
+                @if(email.errors?.['required']){
+                El correo es obligatorio
+                }
+
+                @if(email.errors?.['email']){
+                Formato de correo inválido
+                }
+
+            </small>
+            }
         </div>
 
         <div>
             <label class="block mb-1.5 text-sm font-semibold text-gray-700">
-                Password
+                Contraseña
             </label>
 
-            <input type="password" [(ngModel)]="password" name="password" placeholder="Student: Teacher"
-                class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition bg-white" />
+            <input type="password" formControlName="password" placeholder="Student: Teacher"
+                class="w-full border border-gray-300 rounded-lg px-4 py-3" />
+            @if (password.touched && password.invalid) {
+            <small class="text-red-500">
+
+                @if(password.errors?.['required']){
+                La contraseña es obligatoria
+                }
+
+                @if(password.errors?.['minlength'] || password.errors?.['maxlength']){
+                La contraseña debe tener entre 4 y 15 caracteres
+                }
+
+            </small>
+            }
         </div>
 
-        <button type="submit"
+        <button type="submit" [disabled]="loading || form.invalid"
             class="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-semibold transition mt-2">
-            Sign In
+            {{ loading ? 'Ingresando...' : 'Inciar Sesión' }}
         </button>
     </form>
 

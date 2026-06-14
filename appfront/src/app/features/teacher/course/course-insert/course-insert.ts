@@ -71,7 +71,7 @@ export class CourseInsert implements OnInit {
   listCategories: Category[] = [];
 
   levelOptions = [
-    { label: 'Principiante', value: 'BEGINNER' },
+    { label: 'Principiante', value: 'BASIC' },
     { label: 'Intermedio', value: 'INTERMEDIATE' },
     { label: 'Avanzado', value: 'ADVANCED' },
   ];

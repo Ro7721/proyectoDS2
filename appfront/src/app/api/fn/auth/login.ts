@@ -6,15 +6,18 @@ import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
-import { CourseResponse } from '../../../models/course.model';
+import { LoginResponse } from '../../../models/auth.model';
 
 
-export interface ApigetallCourse$Params {
-  body?: any
+export interface Login$Params {
+  body?: {
+    'email'?: string;
+    'password'?: string;
+  }
 }
 
-export function apigetallCourse(http: HttpClient, rootUrl: string, params?: ApigetallCourse$Params, context?: HttpContext): Observable<StrictHttpResponse<CourseResponse[]>> {
-  const rb = new RequestBuilder(rootUrl, apigetallCourse.PATH, 'get');
+export function login(http: HttpClient, rootUrl: string, params?: Login$Params, context?: HttpContext): Observable<StrictHttpResponse<LoginResponse>> {
+  const rb = new RequestBuilder(rootUrl, login.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -24,9 +27,9 @@ export function apigetallCourse(http: HttpClient, rootUrl: string, params?: Apig
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return (r as HttpResponse<any>).clone({ body: r.body as CourseResponse[] }) as StrictHttpResponse<CourseResponse[]>;
+      return (r as HttpResponse<any>).clone({ body: r.body as LoginResponse }) as StrictHttpResponse<LoginResponse>;
     })
   );
 }
 
-apigetallCourse.PATH = '/courses/list';
+login.PATH = '/auth/login';

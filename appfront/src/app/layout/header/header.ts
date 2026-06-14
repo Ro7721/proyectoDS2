@@ -1,9 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputTextModule } from 'primeng/inputtext';
-
 @Component({
   selector: 'app-header',
   imports: [CommonModule, ButtonModule, InputTextModule, IconFieldModule],
@@ -12,12 +11,33 @@ import { InputTextModule } from 'primeng/inputtext';
 })
 export class Header {
   sidebarVisible = signal<boolean>(false);
+
   @Input() title = 'Dashboard';
   @Input() userName = 'Usuario';
-  @Input() role: 'STUDENT' | 'TEACHER' | 'ADMIN' = 'STUDENT';
+  @Input() role: 'ROLE_STUDENT' | 'ROLE_TEACHER' | 'ROLE_ADMIN' = 'ROLE_STUDENT';
 
   toggleSidebar() {
     this.sidebarVisible.update((value) => !value);
-    console.log(this.sidebarVisible());
   }
-}
+
+  get initials(): string {
+
+    if (!this.userName.trim()) {
+      return '?';
+    }
+    const words = this.userName
+      .trim()
+      .split('/\s+/');
+
+    if (words.length === 1) {
+      return words[0][0].toUpperCase();
+    }
+
+    return (
+      words[0][0] +
+      words[1][0]
+    ).toUpperCase();
+  }
+
+
+} 

@@ -23,3 +23,11 @@ export type { ApicreateLesson$Params as ApicreateLesson$Params } from './fn/less
 export { apicreateLesson as apicreateLesson } from './fn/lesson/apicreate-lesson';
 export type { ApilessonGetall$Params as ApilessonGetall$Params } from './fn/lesson/apilesson-getall';
 export { apilessonGetall as apilessonGetall } from './fn/lesson/apilesson-getall';
+export type { ApideleteLesson$Params as ApideleteLesson$Params } from './fn/lesson/apidelete-lesson';
+export { apideleteLesson as apideleteLesson } from './fn/lesson/apidelete-lesson';
+export type { Login$Params as Login$Params } from './fn/auth/login';
+export { login as login } from './fn/auth/login';
+export type { Me$Params as Me$Params } from './fn/auth/me';
+export { me as me } from './fn/auth/me';
+export type { RefreshToken$Params as RefreshToken$Params } from './fn/auth/refresh-token';
+export { refreshToken as refreshToken } from './fn/auth/refresh-token';
