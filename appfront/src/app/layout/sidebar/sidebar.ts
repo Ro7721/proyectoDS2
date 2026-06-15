@@ -35,7 +35,6 @@ export class Sidebar {
     if (!item.items?.length) {
       return false;
     }
-
     return item.items.some(child =>
       this.router.url === child['route']
     );
