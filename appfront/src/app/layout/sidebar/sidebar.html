@@ -9,11 +9,58 @@
         </div>
 
         <nav class="space-y-1">
-            <a *ngFor="let item of menu" [routerLink]="item['route']" routerLinkActive="bg-[#3A9E5F]/10 text-[#3A9E5F]"
-                class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-100 transition font-medium">
-                <i *ngIf="item.icon" [class]="item.icon"></i>
-                <span>{{ item.label }}</span>
-            </a>
+
+            <div *ngFor="let item of menu">
+
+                <!-- ITEM NORMAL -->
+                <a *ngIf="!item.items?.length" [routerLink]="item['route']"
+                    routerLinkActive="bg-[#3A9E5F]/10 text-[#3A9E5F]"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-100 transition font-medium">
+
+                    <i [class]="item.icon"></i>
+                    <span>{{ item.label }}</span>
+
+                </a>
+
+                <!-- ITEM CON SUBMENU -->
+                <div *ngIf="item.items?.length">
+
+                    <div class="flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer hover:bg-gray-100"
+                        [ngClass]="{
+                    'bg-[#3A9E5F]/10 text-[#3A9E5F]': isParentActive(item)
+                }" (click)="toggleSubmenu(item.label!)">
+
+                        <div class="flex items-center gap-3">
+                            <i [class]="item.icon"></i>
+                            <span>{{ item.label }}</span>
+                        </div>
+
+                        <i class="pi transition-transform" [ngClass]="
+                        isOpen(item.label!)
+                        ? 'pi-chevron-down'
+                        : 'pi-chevron-right'
+                    ">
+                        </i>
+
+                    </div>
+
+                    <div *ngIf="isOpen(item.label!) || isParentActive(item)" class="ml-6 mt-1 space-y-1">
+
+                        <a *ngFor="let child of item.items" [routerLink]="child['route']"
+                            routerLinkActive="bg-[#3A9E5F]/10 text-[#3A9E5F]"
+                            class="flex items-center gap-3 px-4 py-2 rounded-lg text-sm hover:bg-gray-100 transition">
+
+                            <i [class]="child.icon"></i>
+                            <span>{{ child.label }}</span>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
         </nav>
     </div>
 

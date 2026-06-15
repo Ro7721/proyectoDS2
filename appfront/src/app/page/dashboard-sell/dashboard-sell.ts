@@ -8,6 +8,7 @@ import { Footer } from '../../layout/footer/footer';
 import { MenuItem, MessageService } from 'primeng/api';
 import { AuthService } from '../../core/auth/auth.service';
 import { ToastModule } from "primeng/toast";
+import { MessageToast } from '../../message/message-toast';
 type Role = 'ROLE_STUDENT' | 'ROLE_TEACHER' | 'ROLE_ADMIN';
 @Component({
   selector: 'app-dashboard-sell',
@@ -17,27 +18,59 @@ type Role = 'ROLE_STUDENT' | 'ROLE_TEACHER' | 'ROLE_ADMIN';
 })
 export class DashboardSell implements OnInit {
   private platformId = inject(PLATFORM_ID);
-  private authService = inject(AuthService);
-  messageService = inject(MessageService);
 
   role: Role = 'ROLE_STUDENT';
   userName = '';
   mobileOpen = false;
 
+  constructor(private toast: MessageToast, private authService: AuthService) {
+
+    const welcome = sessionStorage.getItem('welcomeShown');
+    if (!welcome && this.authService.user) {
+      this.toast.toastSuccess('¡Bienvenido de vuelta!', `${this.authService.user?.firstName} ${this.authService.user?.surName}`);
+      sessionStorage.setItem('welcomeShown', 'true');
+    }
+  }
 
   studentMenu: MenuItem[] = [
-    { label: 'Mi aprendizaje', icon: 'pi pi-book', route: '/dashboard/learning' },
-    { label: 'Mi progreso', icon: 'pi pi-chart-line', route: '#' },
-    { label: 'Certificados', icon: 'pi pi-trophy', route: '#' },
-    { label: 'Wishlist', icon: 'pi pi-heart', route: '#' },
+    {
+      label: 'Mi aprendizaje', icon: 'pi pi-book', items: [
+        { label: 'Mis cursos', icon: 'pi pi-book', route: '/dashboard/learning' },
+        { label: 'Mi progreso', icon: 'pi pi-chart-line', route: '#' },
+        { label: 'Certificados', icon: 'pi pi-trophy', route: '#' },
+        { label: 'Wishlist', icon: 'pi pi-heart', route: '#' },
+      ]
+    },
+    { label: 'Mi perfil', icon: 'pi pi-user', route: '#' },
+    { label: 'Configuracion', icon: 'pi pi-cog', route: '#' },
+    { label: 'Ayuda', icon: 'pi pi-question-circle', route: '#' }
   ];
 
   teacherMenu: MenuItem[] = [
     { label: 'Dashboard', icon: 'pi pi-th-large', route: '/dashboard/overview-teacher' },
-    { label: 'Mis cursos', icon: 'pi pi-book', route: '/dashboard/course-getall' },
-    { label: 'Crear curso', icon: 'pi pi-plus', route: '/dashboard/course-insert' },
-    { label: 'Estudiantes', icon: 'pi pi-users', route: '/dashboard/student-getall' },
-    { label: 'Analíticas', icon: 'pi pi-chart-bar', route: '#' },
+    {
+      label: 'Cursos', icon: 'pi pi-book', items: [
+        { label: 'Crear curso', icon: 'pi pi-plus', route: '/dashboard/course-insert' },
+        { label: 'Mis cursos', icon: 'pi pi-book', route: '/dashboard/course-getall' },
+        { label: 'Lecciones', icon: 'pi pi-list', route: '#' },
+      ]
+    },
+    {
+      label: 'Estudiantes', icon: 'pi pi-users', items: [
+        { label: 'Estudiantes', icon: 'pi pi-user', route: '#' },
+        { label: 'Inscripciones', icon: 'pi pi-ticket', route: '#' },
+      ]
+    },
+    {
+      label: 'Analíticas', icon: 'pi pi-chart-line', items: [
+        { label: 'Analíticas', icon: 'pi pi-chart-line', route: '#' },
+        { label: 'Reportes', icon: 'pi pi-file-excel', route: '#' },
+      ]
+    },
+    { label: 'Comentarios', icon: 'pi pi-comment', route: '#' },
+    { label: 'Certificados', icon: 'pi pi-trophy', route: '#' },
+    { label: 'Configuracion', icon: 'pi pi-cog', route: '#' },
+    { label: 'Ayuda', icon: 'pi pi-question-circle', route: '#' }
   ];
 
   get menu() { return this.role === 'ROLE_TEACHER' ? this.teacherMenu : this.studentMenu; }
@@ -53,17 +86,5 @@ export class DashboardSell implements OnInit {
     this.userName = `${user.firstName} ${user.surName}`;
     this.role = user.role as Role;
 
-    const welcome = sessionStorage.getItem('welcomeShown');
-    if (!welcome) {
-      this.messageService.add(
-        {
-          severity: 'success',
-          summary: '¡Bienvenido de vuelta!',
-          detail: `${user.firstName} ${user.surName}`,
-          life: 4000,
-        }
-      )
-      sessionStorage.setItem('welcomeShown', 'true');
-    }
   }
 }

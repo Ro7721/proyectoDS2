@@ -69,7 +69,9 @@ export class AuthService {
   }
 
   logout(): void {
+    localStorage.setItem('logoutMessage', 'sesion cerrada correctamente');
     this.clearSession();
+
     this.router.navigate(['/auth/login']);
   }
 

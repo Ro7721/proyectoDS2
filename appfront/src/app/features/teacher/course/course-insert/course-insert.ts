@@ -12,7 +12,7 @@ import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MessageService } from 'primeng/api';
-
+import { AuthService } from '../../../../core/auth/auth.service';
 import { Api } from '../../../../api/api';
 import {
   apicreateCourse,
@@ -60,13 +60,15 @@ interface LessonDisplay extends LessonForm {
 export class CourseInsert implements OnInit {
 
   private cdr = inject(ChangeDetectorRef);
+  private authService = inject(AuthService);
 
   // ── Curso ──────────────────────────────────────────────────────────────────
   courseForm: FormGroup;
   courseStatus = 'DRAFT';
   coverImageFile: Blob | null = null;
   coverImagePreview: string | null = null;
-  idTeacher = 'cbc516d9-3b5e-47a6-8c53-ccd271ec277e'; // Reemplazar con el ID real del auth
+  // obtener el id del teacher
+  idTeacher = this.authService.user?.idUser || '';
 
   listCategories: Category[] = [];
 

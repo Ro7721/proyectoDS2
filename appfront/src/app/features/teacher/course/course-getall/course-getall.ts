@@ -9,6 +9,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { TagModule } from 'primeng/tag';
 import { Toast } from 'primeng/toast';
 import { CourseDetails } from '../course-details/course-details';
+import { AuthService } from '../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-course-getall',
@@ -19,15 +20,14 @@ import { CourseDetails } from '../course-details/course-details';
 export class CourseGetall implements OnInit {
   private api = inject(Api);
   private cdr = inject(ChangeDetectorRef);
+  private authService = inject(AuthService);
 
   listCourses: CourseResponse[] = [];
   selectedCourseId: string | null = null;
   loading = true;
   showDetails = false;
   notFound = false;
-
-  // TODO: reemplazar con AuthService cuando el login exponga el docente autenticado.
-  private teacherId = 'cbc516d9-3b5e-47a6-8c53-ccd271ec277e';
+  teacherId = this.authService.user?.idUser || '';
 
   ngOnInit(): void {
     this.loadCourses();

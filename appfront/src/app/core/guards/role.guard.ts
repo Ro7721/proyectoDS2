@@ -21,15 +21,19 @@ export class RoleGuard implements CanActivate {
       return true;
     }
 
-    const hasRole =
-      this.authService.hasAnyRole(roles);
-
-    if (hasRole) {
+    const currentRole = this.authService.currentRole;
+    if (currentRole && roles.includes(currentRole)) {
       return true;
     }
-
-    return this.router.createUrlTree([
-      '/dashboard'
-    ]);
+    switch (currentRole) {
+      case "ROLE_STUDENT":
+        return this.router.createUrlTree(["/dashboard/learning"]);
+      case "ROLE_TEACHER":
+        return this.router.createUrlTree(["/dashboard/overview-teacher"]);
+      case "ROLE_ADMIN":
+        return this.router.createUrlTree(["/dashboard/admin"]);
+      default:
+        return this.router.createUrlTree(['/auth/login']);
+    }
   }
 }
