@@ -19,9 +19,9 @@ export interface RefreshTokenResponse {
 }
 
 export interface CurrentUser {
-    id: string;
+    idUser: string;
     firstName: string;
-    lastName: string;
+    surName: string;
     email: string;
     role: string;
 }

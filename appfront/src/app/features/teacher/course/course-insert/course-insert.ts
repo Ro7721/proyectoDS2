@@ -20,7 +20,7 @@ import {
   apicreateLesson,
 } from '../../../../api/functions';
 import { LessonInsert, LessonForm } from '../lesson-insert/lesson-insert';
-
+import { MessageToast } from '../../../../message/message-toast';
 // ─── Interfaces ────────────────────────────────────────────────────────────────
 
 interface Category {
@@ -67,7 +67,7 @@ export class CourseInsert implements OnInit {
   courseStatus = 'DRAFT';
   coverImageFile: Blob | null = null;
   coverImagePreview: string | null = null;
-  // obtener el id del teacher
+  // obtener el id del teacher logeado
   idTeacher = this.authService.user?.idUser || '';
 
   listCategories: Category[] = [];
@@ -94,6 +94,7 @@ export class CourseInsert implements OnInit {
     private fb: FormBuilder,
     private api: Api,
     private messageService: MessageService,
+    private messageToast: MessageToast
   ) {
     this.courseForm = this.fb.group({
       courseTitle: ['', Validators.required],
@@ -106,34 +107,6 @@ export class CourseInsert implements OnInit {
 
   ngOnInit(): void {
     this.loadCategories();
-  }
-
-
-  private toastSuccess(summary: string, detail?: string): void {
-    this.messageService.add({
-      severity: 'success',
-      summary,
-      detail: detail ?? '',
-      life: 4000,
-    });
-  }
-
-  private toastError(summary: string, detail?: string): void {
-    this.messageService.add({
-      severity: 'error',
-      summary,
-      detail: detail ?? '',
-      life: 5000,
-    });
-  }
-
-  private toastWarn(summary: string, detail?: string): void {
-    this.messageService.add({
-      severity: 'warn',
-      summary,
-      detail: detail ?? '',
-      life: 4500,
-    });
   }
 
   // ── Categorías ────────────────────────────────────────────────────────────
@@ -154,7 +127,7 @@ export class CourseInsert implements OnInit {
       })
       .catch(error => {
         console.error('Error al cargar categorías:', error);
-        this.toastError('Error', 'No se pudieron cargar las categorías');
+        this.messageToast.toastError('Error', 'No se pudieron cargar las categorías');
         this.cdr.detectChanges();
       });
   }
@@ -174,13 +147,13 @@ export class CourseInsert implements OnInit {
     if (file && file.type.startsWith('image/')) {
       this.setCoverImage(file);
     } else {
-      this.toastWarn('Archivo no válido', 'Solo se aceptan imágenes (PNG, JPG, WEBP)');
+      this.messageToast.toastError('Archivo no válido', 'Solo se aceptan imágenes (PNG, JPG, WEBP)');
     }
   }
 
   private setCoverImage(file: File): void {
     if (file.size > 5 * 1024 * 1024) {
-      this.toastWarn('Imagen muy grande', 'El archivo no debe superar los 5 MB');
+      this.messageToast.toastWarn('Imagen muy grande', 'El archivo no debe superar los 5 MB');
       return;
     }
     this.coverImageFile = file;
@@ -211,14 +184,14 @@ export class CourseInsert implements OnInit {
         ...lessonData,
         saved: this.listLessons[this.editingIndex].saved,
       };
-      this.toastSuccess('Lección actualizada', `"${lessonData.title}" fue editada correctamente`);
+      this.messageToast.toastSuccess('Lección actualizada', `"${lessonData.title}" fue editada correctamente`);
     } else {
       // Set the default order correctly if it was 1 and there are already lessons
       if (lessonData.lessonOrder === 1 && this.listLessons.length > 0) {
         lessonData.lessonOrder = this.listLessons.length + 1;
       }
       this.listLessons.push({ ...lessonData, saved: false });
-      this.toastSuccess('Lección agregada', `"${lessonData.title}" se agregó a la lista`);
+      this.messageToast.toastSuccess('Lección agregada', `"${lessonData.title}" se agregó a la lista`);
     }
     this.showLessonDialog = false;
   }
@@ -227,20 +200,20 @@ export class CourseInsert implements OnInit {
     const name = this.listLessons[index].title;
     this.listLessons.splice(index, 1);
     this.listLessons.forEach((l, i) => (l.lessonOrder = i + 1));
-    this.toastWarn('Lección eliminada', `"${name}" fue removida de la lista`);
+    this.messageToast.toastWarn('Lección eliminada', `"${name}" fue removida de la lista`);
   }
 
   // ── Guardar curso ─────────────────────────────────────────────────────────
 
   async saveCourse(status: 'DRAFT' | 'PUBLISHED'): Promise<void> {
     if (!this.coverImageFile) {
-      this.toastWarn('Falta la portada', 'Selecciona una imagen de portada para continuar');
+      this.messageToast.toastWarn('Falta la portada', 'Selecciona una imagen de portada para continuar');
       return;
     }
 
     if (this.courseForm.invalid) {
       this.courseForm.markAllAsTouched();
-      this.toastWarn('Campos incompletos', 'Completa todos los campos obligatorios del curso');
+      this.messageToast.toastWarn('Campos incompletos', 'Completa todos los campos obligatorios del curso');
       return;
     }
 
@@ -272,13 +245,13 @@ export class CourseInsert implements OnInit {
       }
 
       const label = status === 'DRAFT' ? 'guardado como borrador' : 'publicado';
-      this.toastSuccess(
+      this.messageToast.toastSuccess(
         `Curso ${label}`,
         `"${formValue.courseTitle}" fue ${label} exitosamente`,
       );
 
     } catch (e) {
-      this.toastError('Error al guardar', 'Ocurrió un problema al procesar el curso. Intenta de nuevo.');
+      this.messageToast.toastError('Error al guardar', 'Ocurrió un problema al procesar el curso. Intenta de nuevo.');
     } finally {
       this.loading = false;
       this.cdr.detectChanges();
@@ -317,7 +290,7 @@ export class CourseInsert implements OnInit {
     }
 
     if (failed > 0) {
-      this.toastWarn(
+      this.messageToast.toastWarn(
         'Algunas lecciones fallaron',
         `${saved} guardadas correctamente, ${failed} con error`,
       );
@@ -331,7 +304,7 @@ export class CourseInsert implements OnInit {
       await this.saveAllLessons(this.createdCourseId);
       const pendingLeft = this.listLessons.filter(l => !l.saved).length;
       if (pendingLeft === 0) {
-        this.toastSuccess('Lecciones guardadas', 'Todas las lecciones fueron subidas correctamente');
+        this.messageToast.toastSuccess('Lecciones guardadas', 'Todas las lecciones fueron subidas correctamente');
       }
     } finally {
       this.loading = false;

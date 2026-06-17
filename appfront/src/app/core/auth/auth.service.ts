@@ -18,17 +18,17 @@ export class AuthService {
   constructor(private api: Api) { }
 
   async login(email: string, password: string): Promise<LoginResponse> {
-    console.log('Antes del login');
     const response = await this.api.invoke<Login$Params, LoginResponse>(login, {
       body: {
         email,
         password
       }
     });
-    console.log('Respuesta login:', response);
     this.saveSession(response);
     return response;
   }
+
+  // Traer el usuario actual para mostrar información en el header
   async getCurrentUser(): Promise<CurrentUser> {
     const response = await this.api.invoke<
       Me$Params,
@@ -36,7 +36,7 @@ export class AuthService {
     >(me, {});
     return response;
   }
-
+  //Verifica si el usuario esta autenticado
   async ensureAuthenticated(): Promise<boolean> {
     if (this.isAuthenticated()) return true;
     if (!this.refreshToken) return false;
@@ -49,7 +49,7 @@ export class AuthService {
       return false;
     }
   }
-
+  //Refresh token 
   async refreshAccessToken(): Promise<RefreshTokenResponse | null> {
     const storedRefreshToken = this.refreshToken;
     if (!storedRefreshToken) return null;
@@ -69,17 +69,17 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.setItem('logoutMessage', 'sesion cerrada correctamente');
+    localStorage.setItem('logoutMessage', 'Sesión cerrada correctamente');
     this.clearSession();
 
     this.router.navigate(['/auth/login']);
   }
-
+  // Verifica si el usuario esta autenticado
   isAuthenticated(): boolean {
     const token = this.accessToken;
     return Boolean(token && !this.isTokenExpired(token));
   }
-
+  // Verifica si el usuario tiene alguno de los roles permitidos
   hasAnyRole(allowedRoles: string[]): boolean {
     if (allowedRoles.length === 0) return true;
 
@@ -119,7 +119,7 @@ export class AuthService {
   getTokenType(): string {
     return this.isBrowser() ? (localStorage.getItem('tokenType') ?? 'Bearer') : 'Bearer';
   }
-
+  // Guarda la sesión del usuario en el localStorage
   private saveSession(response: LoginResponse): void {
     if (!response?.accessToken) {
       throw new Error('Token inválido');
@@ -134,7 +134,7 @@ export class AuthService {
     localStorage.setItem('role', this.normalizeRole(response.user.role));
     this.saveTokenExpiration(response.accessToken);
   }
-
+  // Limpia la sesión del usuario
   private clearSession(): void {
     if (!this.isBrowser()) return;
 

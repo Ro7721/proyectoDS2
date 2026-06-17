@@ -12,6 +12,7 @@ import { DialogModule } from 'primeng/dialog';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 
 import { VideoPreviewComponent } from '../shared/video-preview/video-preview';
+import { MessageToast } from '../../../../message/message-toast';
 
 export interface LessonForm {
   title: string;
@@ -59,7 +60,7 @@ export class LessonInsert implements OnInit, OnChanges {
     { label: 'Texto', value: 'TEXT' }
   ];
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private toastMessage: MessageToast) {
     this.frmInserLesson = this.fb.group({
       title: ['', Validators.required],
       type: ['VIDEO', Validators.required],
@@ -91,6 +92,7 @@ export class LessonInsert implements OnInit, OnChanges {
         isFree: this.lesson.isFree
       });
       this.selectedFiles = [...this.lesson.files];
+      this.toastMessage.toastSuccess('Leccion cargada correctamente');
     } else {
       this.frmInserLesson.reset({
         type: 'VIDEO',

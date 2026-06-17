@@ -31,6 +31,7 @@ export class Sidebar {
   isOpen(label: string): boolean {
     return this.openedMenus[label] ?? false;
   }
+
   isParentActive(item: MenuItem): boolean {
     if (!item.items?.length) {
       return false;

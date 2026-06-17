@@ -100,15 +100,15 @@ export class Login implements OnInit {
         const errorType = err.error.error;
         const errorMessage = err.error.message;
         if (errorType === 'EMAIL_NOT_FOUND') {
-          this.toast.toastError('correo incorrecto', errorMessage);
+          this.toast.toastError('Correo no encontrado', errorMessage);
         } else if (errorType === 'PASSWORD_INVALID') {
-          this.toast.toastError('contraseña incorrecta', errorMessage);
+          this.toast.toastError('Contraseña incorrecta', errorMessage);
         } else {
-          this.toast.toastError('error de Autenticación', errorMessage);
+          this.toast.toastError('Error de autenticación', errorMessage);
         }
       } else {
         if (err.status === 401) {
-          this.toast.toastError('Credinciales invalidas', 'El usuario o la contrseña no coinciden');
+          this.toast.toastError('Credenciales inválidas', 'El usuario o la contraseña no coinciden');
         } else {
           this.toast.toastError('Error', 'No fue posible iniciar sesión');
         }

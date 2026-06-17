@@ -10,8 +10,9 @@
         </div>
         <div class="flex gap-4">
             <p-button type="button" icon="pi pi-refresh" label="Actualizar" class="p-button-outlined p-button-sm"
-                (click)="loadCourses()" />
-            <p-button label="Crear curso " icon="pi pi-plus" iconPos="top" routerLink="/dashboard/course-insert" />
+                [style]="{background:'#16a34a', borderColor:'#16a34a'}" (click)="loadCourses()" />
+            <p-button label="Crear curso " icon="pi pi-plus" iconPos="top" routerLink="/dashboard/course-insert"
+                styleClass="bg-emerald-500 hover:bg-emerald-600" />
 
         </div>
     </header>

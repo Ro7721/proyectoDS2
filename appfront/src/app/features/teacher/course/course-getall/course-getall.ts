@@ -10,6 +10,7 @@ import { TagModule } from 'primeng/tag';
 import { Toast } from 'primeng/toast';
 import { CourseDetails } from '../course-details/course-details';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { MessageToast } from '../../../../message/message-toast';
 
 @Component({
   selector: 'app-course-getall',
@@ -28,6 +29,8 @@ export class CourseGetall implements OnInit {
   showDetails = false;
   notFound = false;
   teacherId = this.authService.user?.idUser || '';
+
+  constructor(private toastMessage: MessageToast) { }
 
   ngOnInit(): void {
     this.loadCourses();
@@ -48,7 +51,7 @@ export class CourseGetall implements OnInit {
         this.cdr.detectChanges();
       })
       .catch((error) => {
-        console.error('Error al cargar cursos:', error);
+        this.toastMessage.toastError('Error al cargar cursos', error?.message || 'Ocurrio un error');
         this.listCourses = [];
         this.loading = false;
         this.notFound = true;

@@ -59,7 +59,7 @@
                 Contraseña
             </label>
 
-            <input type="password" formControlName="password" placeholder="Student: Teacher"
+            <input type="password" formControlName="password" placeholder="Ingresa tu contraseña"
                 class="w-full border border-gray-300 rounded-lg px-4 py-3" />
             @if (password.touched && password.invalid) {
             <small class="text-red-500">
@@ -78,7 +78,7 @@
 
         <button type="submit" [disabled]="loading || form.invalid"
             class="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-semibold transition mt-2">
-            {{ loading ? 'Ingresando...' : 'Inciar Sesión' }}
+            {{ loading ? 'Ingresando...' : 'Iniciar Sesión' }}
         </button>
     </form>
 

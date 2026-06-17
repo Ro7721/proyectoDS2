@@ -24,12 +24,6 @@ export class DashboardSell implements OnInit {
   mobileOpen = false;
 
   constructor(private toast: MessageToast, private authService: AuthService) {
-
-    const welcome = sessionStorage.getItem('welcomeShown');
-    if (!welcome && this.authService.user) {
-      this.toast.toastSuccess('¡Bienvenido de vuelta!', `${this.authService.user?.firstName} ${this.authService.user?.surName}`);
-      sessionStorage.setItem('welcomeShown', 'true');
-    }
   }
 
   studentMenu: MenuItem[] = [
@@ -85,6 +79,18 @@ export class DashboardSell implements OnInit {
     }
     this.userName = `${user.firstName} ${user.surName}`;
     this.role = user.role as Role;
+
+    // Mostrar toast de bienvenida después de que el componente esté renderizado
+    const welcome = sessionStorage.getItem('welcomeShown');
+    if (!welcome) {
+      setTimeout(() => {
+        this.toast.toastSuccess(
+          '¡Bienvenido!',
+          `Hola ${user.firstName} ${user.surName}, bienvenido de vuelta`
+        );
+      }, 300);
+      sessionStorage.setItem('welcomeShown', 'true');
+    }
 
   }
 }
