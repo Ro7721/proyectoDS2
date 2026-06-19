@@ -10,18 +10,18 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { ToggleButtonModule } from 'primeng/togglebutton';
-
+import { FileUploadModule } from 'primeng/fileupload';
 import { VideoPreviewComponent } from '../shared/video-preview/video-preview';
 import { MessageToast } from '../../../../message/message-toast';
 
-export interface LessonForm {
+export interface LessonFormPayload {
   title: string;
-  type: string;
-  contenUrl: string;
   description: string;
-  lessonOrder: number;
-  isFree: boolean;
-  files: File[];
+  type: string;
+  contenUrl?: string;
+  isFree: string;
+  mainVideoFile?: Blob[];
+  adjunctFiles?: Blob[];
 }
 
 @Component({
@@ -38,21 +38,23 @@ export interface LessonForm {
     ButtonModule,
     DialogModule,
     ToggleButtonModule,
-    VideoPreviewComponent
+    VideoPreviewComponent,
+    FileUploadModule
   ],
   templateUrl: './lesson-insert.html',
   styleUrl: './lesson-insert.css',
 })
 export class LessonInsert implements OnInit, OnChanges {
-  @Input() lesson: LessonForm | null = null;
+  @Input() lesson: any | null = null;
   @Input() showDialog: boolean = false;
   @Input() isEditing: boolean = false;
 
   @Output() showDialogChange = new EventEmitter<boolean>();
-  @Output() onSaveLesson = new EventEmitter<LessonForm>();
+  @Output() onSaveLesson = new EventEmitter<LessonFormPayload>();
 
   frmInserLesson: FormGroup;
-  selectedFiles: File[] = [];
+  mainVideoFile: File[] = [];
+  adjunctFiles: File[] = [];
 
   lessonTypeOptions = [
     { label: 'Video', value: 'VIDEO' },
@@ -66,19 +68,24 @@ export class LessonInsert implements OnInit, OnChanges {
       type: ['VIDEO', Validators.required],
       contenUrl: [''],
       description: ['', Validators.required],
-      lessonOrder: [1, Validators.required],
       isFree: [false]
     });
   }
 
   ngOnInit(): void {
     this.updateFormWithLesson();
+    this.listenToTypeChanges();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['lesson'] && this.lesson) {
       this.updateFormWithLesson();
     }
+  }
+  private listenToTypeChanges(): void {
+    this.frmInserLesson.get('type')?.valueChanges.subscribe((type) => {
+      this.mainVideoFile = [];
+    });
   }
 
   private updateFormWithLesson(): void {
@@ -88,25 +95,32 @@ export class LessonInsert implements OnInit, OnChanges {
         type: this.lesson.type,
         contenUrl: this.lesson.contenUrl,
         description: this.lesson.description,
-        lessonOrder: this.lesson.lessonOrder,
         isFree: this.lesson.isFree
       });
-      this.selectedFiles = [...this.lesson.files];
+      this.mainVideoFile = this.lesson.mainVideoFile ? [...this.lesson.mainVideoFile] : [];
+      this.adjunctFiles = this.lesson.adjunctFiles ? [...this.lesson.adjunctFiles] : [];
       this.toastMessage.toastSuccess('Leccion cargada correctamente');
     } else {
       this.frmInserLesson.reset({
         type: 'VIDEO',
-        lessonOrder: 1,
         isFree: false
       });
-      this.selectedFiles = [];
+      this.mainVideoFile = [];
+      this.adjunctFiles = [];
     }
   }
 
-  onLessonFileSelect(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files) {
-      this.selectedFiles = Array.from(input.files);
+  // Captura el archivo de video principal de PrimeNG
+  onVideoSelect(event: any): void {
+    if (event.files && event.files.length > 0) {
+      this.mainVideoFile = [event.files[0]]; // Envolvemos en un arreglo para cumplir con ApicreateLesson$Params
+    }
+  }
+
+  // Captura archivos adjuntos
+  onAdjunctFilesSelect(event: any): void {
+    if (event.files) {
+      this.adjunctFiles = Array.from(event.files);
     }
   }
 
@@ -119,16 +133,21 @@ export class LessonInsert implements OnInit, OnChanges {
       this.frmInserLesson.markAllAsTouched();
       return;
     }
+    const currentType = this.frmInserLesson.get('type')?.value;
+    if (currentType == 'VIDEO' && this.mainVideoFile.length == 0 && !this.isEditing) {
+      this.toastMessage.toastError('Debe subir un video para este tipo de leccion');
+      return;
+    }
 
     const formValue = this.frmInserLesson.value;
-    const lessonData: LessonForm = {
+    const lessonData: LessonFormPayload = {
       title: formValue.title,
       type: formValue.type,
       contenUrl: formValue.contenUrl || '',
       description: formValue.description || '',
-      lessonOrder: formValue.lessonOrder,
-      isFree: formValue.isFree,
-      files: this.selectedFiles
+      isFree: formValue.isFree ? 'true' : 'false',
+      mainVideoFile: this.mainVideoFile.length > 0 ? (this.mainVideoFile as Blob[]) : undefined,
+      adjunctFiles: this.adjunctFiles.length > 0 ? (this.adjunctFiles as Blob[]) : undefined
     };
 
     this.onSaveLesson.emit(lessonData);

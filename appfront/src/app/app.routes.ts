@@ -11,6 +11,7 @@ import { OverviewTeacher } from './features/teacher/overview-teacher/overview-te
 import { AuthGuard } from './core/guards/auth.guard';
 import { DashboardRedirect } from './page/dashboard-sell/dashboard-redirect/dashboard-redirect';
 import { RoleGuard } from './core/guards/role.guard';
+import { LessonGetall } from './features/teacher/lesson/lesson-getall/lesson-getall';
 
 export const routes: Routes = [
     { path: '', component: Home },
@@ -28,7 +29,8 @@ export const routes: Routes = [
             { path: 'learning', component: Learning, canActivate: [RoleGuard], data: { roles: ['ROLE_STUDENT'] } },
             { path: 'course-insert', component: CourseInsert, canActivate: [RoleGuard], data: { roles: ['ROLE_TEACHER'] } },
             { path: 'course-getall', component: CourseGetall, canActivate: [RoleGuard], data: { roles: ['ROLE_TEACHER'] } },
-            { path: 'overview-teacher', component: OverviewTeacher, canActivate: [RoleGuard], data: { roles: ['ROLE_TEACHER'] } }
+            { path: 'overview-teacher', component: OverviewTeacher, canActivate: [RoleGuard], data: { roles: ['ROLE_TEACHER'] } },
+            { path: 'lesson-getall', component: LessonGetall, canActivate: [RoleGuard], data: { roles: ['ROLE_TEACHER'] } }
         ]
     }
 ];

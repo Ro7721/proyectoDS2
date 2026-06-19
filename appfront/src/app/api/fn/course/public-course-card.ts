@@ -35,4 +35,4 @@ export function publicCourseCard(http: HttpClient, rootUrl: string, params?: Pub
   );
 }
 
-publicCourseCard.PATH = '/courses/publicCourses';
+publicCourseCard.PATH = '/courses/public-courses';

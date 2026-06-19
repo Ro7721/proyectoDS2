@@ -46,7 +46,7 @@ export class DashboardSell implements OnInit {
       label: 'Cursos', icon: 'pi pi-book', items: [
         { label: 'Crear curso', icon: 'pi pi-plus', route: '/dashboard/course-insert' },
         { label: 'Mis cursos', icon: 'pi pi-book', route: '/dashboard/course-getall' },
-        { label: 'Lecciones', icon: 'pi pi-list', route: '#' },
+        { label: 'Lecciones', icon: 'pi pi-list', route: '/dashboard/lesson-getall' },
       ]
     },
     {

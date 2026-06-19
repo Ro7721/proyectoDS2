@@ -10,12 +10,12 @@ import { RequestBuilder } from '../../request-builder';
 
 export interface ApicreateLesson$Params {
   body?: {
+    'adjunctFiles'?: Blob[];
     'contenUrl'?: string;
     'courseId'?: string;
     'description'?: string;
-    'files'?: Blob[];
     'isFree'?: string;
-    'lessonOrder'?: string;
+    'mainVideoFile'?: Blob[];
     'title'?: string;
     'type'?: string;
   }

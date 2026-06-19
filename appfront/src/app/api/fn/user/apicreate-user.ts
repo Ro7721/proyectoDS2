@@ -9,13 +9,13 @@ import { RequestBuilder } from '../../request-builder';
 
 
 export interface ApicreateUser$Params {
-      body?: {
-'email'?: string;
-'firstName'?: string;
-'lastName'?: string;
-'password'?: string;
-'role'?: string;
-}
+  body?: {
+    'email'?: string;
+    'firstName'?: string;
+    'lastName'?: string;
+    'password'?: string;
+    'role'?: string;
+  }
 }
 
 export function apicreateUser(http: HttpClient, rootUrl: string, params?: ApicreateUser$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {

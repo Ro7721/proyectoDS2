@@ -1,1 +1,137 @@
-<p>lesson-getall works!</p>
+<div class="min-h-screen  dark:bg-gray-900/50 p-6 sm:p-8">
+  <div class="max-w-7xl mx-auto space-y-6">
+
+    <!-- Top Header & Actions -->
+    <div
+      class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700/50">
+
+      <!-- Search Input -->
+      <div class="w-full sm:w-96">
+        <p-iconField iconPosition="left">
+          <p-inputIcon styleClass="pi pi-search text-gray-400" />
+          <input type="text" pInputText placeholder="Buscar lecciones..."
+            class="w-full pl-10 bg-gray-50 dark:bg-gray-900 border-none rounded-xl focus:ring-2 focus:ring-emerald-500/50"
+            (input)="onSearchChange($event)" />
+        </p-iconField>
+      </div>
+
+      <!-- Add New Lesson Button -->
+      <p-button label="Nueva Lección" icon="pi pi-plus"
+        styleClass="bg-emerald-500 hover:bg-emerald-600 border-none rounded-xl font-medium px-6 py-2.5 shadow-md shadow-emerald-500/20 transition-all w-full sm:w-auto" />
+    </div>
+
+    <!-- Table Section -->
+    <div
+      class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700/50 overflow-hidden">
+      <p-table [value]="lessons" [loading]="loading" [rowHover]="true" [paginator]="true" [rows]="10"
+        styleClass="p-datatable-striped" responsiveLayout="scroll">
+
+        <ng-template pTemplate="header">
+          <tr
+            class="bg-gray-50/50 dark:bg-gray-900/50 text-gray-500 dark:text-gray-400 text-sm uppercase tracking-wider">
+            <th class="font-medium p-4 rounded-tl-2xl w-[400px]">
+              <div class="flex items-center gap-2">
+                <div
+                  class="w-6 h-6 rounded-full bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 flex items-center justify-center text-xs">
+                  <i class="pi pi-book"></i>
+                </div>
+                Lección
+              </div>
+            </th>
+            <th class="font-medium p-4 text-center">Duración</th>
+            <th class="font-medium p-4 text-center">Tipo</th>
+            <th class="font-medium p-4 text-center">Acceso</th>
+            <th class="font-medium p-4 text-center">Orden</th>
+            <th class="font-medium p-4 text-right rounded-tr-2xl">Acciones</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-lesson>
+          <tr
+            class="group border-b border-gray-50 dark:border-gray-700/50 last:border-none hover:bg-gray-50/80 dark:hover:bg-gray-700/20 transition-colors">
+            <!-- Columna Lección -->
+            <td class="p-4">
+              <div class="flex items-center gap-4">
+                <div
+                  class="relative w-24 h-16 rounded-xl overflow-hidden shadow-sm flex-shrink-0 group-hover:shadow-md transition-shadow">
+                  <img [src]="getThumbnail(lesson)" [alt]="lesson.title" class="object-cover w-full h-full" />
+                  <div class="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors"></div>
+                  <!-- Duración superpuesta estilo YouTube -->
+                  <div
+                    class="absolute bottom-1 right-1 bg-black/70 text-white text-[10px] px-1.5 py-0.5 rounded-md font-medium">
+                    {{ lesson.durationMinutes }}:00
+                  </div>
+                </div>
+                <div class="flex flex-col justify-center min-w-0">
+                  <span class="font-semibold text-gray-800 dark:text-gray-100 truncate text-base mb-0.5">
+                    {{ lesson.title }}
+                  </span>
+                  <span class="text-xs text-gray-500 dark:text-gray-400 line-clamp-1">
+                    {{ lesson.description || 'Sin descripción' }}
+                  </span>
+                </div>
+              </div>
+            </td>
+
+            <!-- Columna Duración -->
+            <td class="p-4 text-center text-gray-600 dark:text-gray-300 font-medium text-sm">
+              {{ lesson.durationMinutes }} min
+            </td>
+
+            <!-- Columna Tipo -->
+            <td class="p-4 text-center">
+              <div
+                class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400">
+                <i [class]="getTypeIcon(lesson.type)"></i>
+              </div>
+            </td>
+
+            <!-- Columna Acceso -->
+            <td class="p-4 text-center">
+              <p-tag [severity]="getSeverity(lesson.isFree)" [value]="lesson.isFree ? 'Gratis' : 'Premium'"
+                [rounded]="true" styleClass="px-3 py-1 text-xs font-semibold tracking-wide">
+              </p-tag>
+            </td>
+
+            <!-- Columna Orden -->
+            <td class="p-4 text-center text-gray-500 dark:text-gray-400 text-sm">
+              #{{ lesson.lessonOrder || '-' }}
+            </td>
+
+            <!-- Columna Acciones -->
+            <td class="p-4 text-right">
+              <div
+                class="flex items-center justify-end gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                <!-- Botón Editar -->
+                <button pButton pRipple icon="pi pi-pencil"
+                  class="p-button-rounded p-button-text p-button-sm text-gray-500 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-colors w-8 h-8 p-0 flex items-center justify-center">
+                </button>
+                <!-- Botón Eliminar -->
+                <button pButton pRipple icon="pi pi-trash"
+                  class="p-button-rounded p-button-text p-button-sm text-gray-500 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors w-8 h-8 p-0 flex items-center justify-center">
+                </button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <!-- Empty Message -->
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="6">
+              <div class="flex flex-col items-center justify-center py-16 px-4">
+                <div class="w-16 h-16 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center mb-4">
+                  <i class="pi pi-search text-2xl text-gray-400"></i>
+                </div>
+                <p class="text-gray-500 dark:text-gray-400 font-medium mb-1">No se encontraron lecciones</p>
+                <p class="text-sm text-gray-400 dark:text-gray-500">Intenta con otro término de búsqueda o crea una
+                  nueva.</p>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+  </div>
+</div>

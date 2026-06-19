@@ -19,7 +19,7 @@ import {
   apigetallCategory,
   apicreateLesson,
 } from '../../../../api/functions';
-import { LessonInsert, LessonForm } from '../lesson-insert/lesson-insert';
+import { LessonInsert, LessonFormPayload } from '../lesson-insert/lesson-insert';
 import { MessageToast } from '../../../../message/message-toast';
 // ─── Interfaces ────────────────────────────────────────────────────────────────
 
@@ -29,7 +29,7 @@ interface Category {
   description?: string;
 }
 
-interface LessonDisplay extends LessonForm {
+interface LessonDisplay extends LessonFormPayload {
   id?: string;
   saved: boolean;
 }
@@ -81,13 +81,14 @@ export class CourseInsert implements OnInit {
   // ── Lecciones ─────────────────────────────────────────────────────────────
   listLessons: LessonDisplay[] = [];
   showLessonDialog = false;
-  currentLesson: LessonForm | null = null;
+  currentLesson: LessonFormPayload | null = null;
   editingIndex: number | null = null;
 
   // ── Estado UI ──────────────────────────────────────────────────────────────
   loading = false;
   courseCreated = false;
   createdCourseId: string | null = null;
+  lessonOrderCounter = 0;
 
   // ── Constructor ───────────────────────────────────────────────────────────
   constructor(
@@ -178,7 +179,7 @@ export class CourseInsert implements OnInit {
     this.showLessonDialog = true;
   }
 
-  handleLessonSave(lessonData: LessonForm): void {
+  handleLessonSave(lessonData: LessonFormPayload): void {
     if (this.editingIndex !== null) {
       this.listLessons[this.editingIndex] = {
         ...lessonData,
@@ -186,10 +187,6 @@ export class CourseInsert implements OnInit {
       };
       this.messageToast.toastSuccess('Lección actualizada', `"${lessonData.title}" fue editada correctamente`);
     } else {
-      // Set the default order correctly if it was 1 and there are already lessons
-      if (lessonData.lessonOrder === 1 && this.listLessons.length > 0) {
-        lessonData.lessonOrder = this.listLessons.length + 1;
-      }
       this.listLessons.push({ ...lessonData, saved: false });
       this.messageToast.toastSuccess('Lección agregada', `"${lessonData.title}" se agregó a la lista`);
     }
@@ -199,7 +196,6 @@ export class CourseInsert implements OnInit {
   removeLesson(index: number): void {
     const name = this.listLessons[index].title;
     this.listLessons.splice(index, 1);
-    this.listLessons.forEach((l, i) => (l.lessonOrder = i + 1));
     this.messageToast.toastWarn('Lección eliminada', `"${name}" fue removida de la lista`);
   }
 
@@ -275,11 +271,12 @@ export class CourseInsert implements OnInit {
             description: lesson.description,
             type: lesson.type,
             contenUrl: lesson.contenUrl,
-            lessonOrder: String(lesson.lessonOrder),
             isFree: String(lesson.isFree),
             courseId,
-            files: lesson.files as unknown as Blob[],
+            mainVideoFile: lesson.mainVideoFile,
+            adjunctFiles: lesson.adjunctFiles
           },
+
         });
         this.listLessons[i].saved = true;
         saved++;

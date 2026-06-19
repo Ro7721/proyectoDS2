@@ -16,28 +16,34 @@
                 </label>
                 <input pInputText formControlName="title" placeholder="Ej: Introducción al curso" class="w-full"
                     [ngClass]="{'border-red-400': frmInserLesson.get('title')?.invalid && frmInserLesson.get('title')?.touched}" />
-
             </div>
 
-            <!-- Tipo y Orden -->
-            <div class="grid grid-cols-2 gap-4">
-                <div class="flex flex-col gap-1.5">
-                    <label class="text-sm font-medium text-gray-700">Tipo <span class="text-red-400">*</span></label>
-                    <p-select formControlName="type" [options]="lessonTypeOptions" optionLabel="label"
-                        optionValue="value" class="w-full" />
-                </div>
-                <div class="flex flex-col gap-1.5">
-                    <label class="text-sm font-medium text-gray-700">Orden</label>
-                    <p-inputNumber formControlName="lessonOrder" [min]="1" class="w-full"
-                        [inputStyle]="{'width':'100%'}" />
-                </div>
-            </div>
-
-            <!-- URL -->
+            <!-- Tipo (Ocupa el ancho completo al remover el campo Orden) -->
             <div class="flex flex-col gap-1.5">
-                <label class="text-sm font-medium text-gray-700">URL del contenido</label>
-                <input pInputText formControlName="contenUrl" placeholder="https://youtube.com/watch?v=..."
+                <label class="text-sm font-medium text-gray-700">Tipo <span class="text-red-400">*</span></label>
+                <p-select formControlName="type" [options]="lessonTypeOptions" optionLabel="label" optionValue="value"
                     class="w-full" />
+            </div>
+
+            <!-- URL Alternativa -->
+            <div class="flex flex-col gap-1.5">
+                <label class="text-sm font-medium text-gray-700">URL del contenido alternativo</label>
+                <input pInputText formControlName="contenUrl" placeholder="https://youtube.com..." class="w-full" />
+            </div>
+
+            <!-- Subida del Video Principal (Solo visible si Tipo == VIDEO) -->
+            <div *ngIf="frmInserLesson.get('type')?.value === 'VIDEO'" class="flex flex-col gap-1.5">
+                <label class="text-sm font-medium text-gray-700 flex items-center gap-1">
+                    <i class="pi pi-video text-blue-500"></i> Video de la Lección <span class="text-red-400">*</span>
+                </label>
+                <p-fileUpload mode="basic" chooseLabel="Seleccionar Video (.mp4)" chooseIcon="pi pi-upload"
+                    accept="video/mp4,video/x-m4v,video/*" maxFileSize="524288000" [customUpload]="true"
+                    (onSelect)="onVideoSelect($event)"
+                    styleClass="p-button-outlined p-button-info w-full rounded-md border-gray-200" />
+
+                <p *ngIf=" mainVideoFile.length> 0" class="text-xs text-green-600 font-medium mt-1">
+                    <i class="pi pi-check-circle mr-1"></i> Video cargado: 1 archivo listo para subir.
+                </p>
             </div>
 
             <!-- Descripción -->
@@ -47,19 +53,18 @@
                     placeholder="Breve descripción de la lección..." class="w-full resize-none"></textarea>
             </div>
 
-            <!-- Archivos -->
+            <!-- Archivos Adjuntos / Recursos Complementarios -->
             <div class="flex flex-col gap-1.5">
                 <label class="text-sm font-medium text-gray-700">
-                    <i class="pi pi-paperclip mr-1 text-gray-400"></i> Archivos adjuntos
+                    <i class="pi pi-paperclip mr-1 text-gray-400"></i> Material Complementario (PDF, Textos)
                 </label>
-                <label
-                    class="inline-flex w-fit cursor-pointer items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100">
-                    <i class="pi pi-upload text-sm text-gray-400"></i> Seleccionar archivos
-                    <input type="file" multiple class="hidden" (change)="onLessonFileSelect($event)"
-                        accept="video/*,.pdf,.txt" />
-                </label>
-                <p *ngIf="selectedFiles.length > 0" class="text-xs text-gray-400">
-                    {{ selectedFiles.length }} archivo(s) seleccionado(s)
+                <p-fileUpload mode="basic" [multiple]="true" chooseLabel="Adjuntar lecturas/recursos"
+                    chooseIcon="pi pi-paperclip" accept=".pdf,.txt,.docx" maxFileSize="52428800" [customUpload]="true"
+                    (onSelect)="onAdjunctFilesSelect($event)"
+                    styleClass="p-button-outlined p-button-secondary w-full rounded-md border-gray-200" />
+
+                <p *ngIf="adjunctFiles.length > 0" class="text-xs text-gray-500 mt-1">
+                    {{ adjunctFiles.length }} recurso(s) complementario(s) seleccionado(s)
                 </p>
             </div>
 
@@ -77,12 +82,13 @@
 
         <!-- Columna Derecha (Video Preview) -->
         <div class="flex-1 flex flex-col min-w-[320px]">
-            <app-video-preview [videoSrc]="frmInserLesson.get('contenUrl')?.value"
-                [files]="selectedFiles"></app-video-preview>
+            <app-video-preview [videoSrc]="frmInserLesson.get('contenUrl')?.value" [files]="mainVideoFile">
+            </app-video-preview>
         </div>
 
     </form>
 
+    <!-- FOOTER CONSOLIDAD: Utiliza tu diseño exacto de botones -->
     <ng-template pTemplate="footer">
         <div class="flex justify-end gap-3">
             <button (click)="closeDialog()"
