@@ -12,18 +12,18 @@ export interface ApideleteLesson$Params {
   idLesson: string;
 }
 
-export function apideleteLesson(http: HttpClient, rootUrl: string, params: ApideleteLesson$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+export function apideleteLesson(http: HttpClient, rootUrl: string, params: ApideleteLesson$Params, context?: HttpContext): Observable<StrictHttpResponse<any>> {
   const rb = new RequestBuilder(rootUrl, apideleteLesson.PATH, 'delete');
   if (params) {
     rb.path('idLesson', params.idLesson, {});
   }
 
   return http.request(
-    rb.build({ responseType: 'text', accept: '*/*', context })
+    rb.build({ responseType: 'json', accept: 'application/json', context })
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;
+      return (r as HttpResponse<any>).clone({ body: r.body }) as StrictHttpResponse<any>;
     })
   );
 }

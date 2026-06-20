@@ -10,22 +10,22 @@ import { RequestBuilder } from '../../request-builder';
 
 export interface Apigetlessonsbyteacher$Params {
   teacherId: string;
-      body?: any
+  body?: any
 }
 
-export function apigetlessonsbyteacher(http: HttpClient, rootUrl: string, params: Apigetlessonsbyteacher$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+export function apigetlessonsbyteacher(http: HttpClient, rootUrl: string, params: Apigetlessonsbyteacher$Params, context?: HttpContext): Observable<StrictHttpResponse<any>> {
   const rb = new RequestBuilder(rootUrl, apigetlessonsbyteacher.PATH, 'get');
   if (params) {
     rb.path('teacherId', params.teacherId, {});
-    rb.body(params.body, 'text/plain');
+    rb.body(params.body, 'application/json');
   }
 
   return http.request(
-    rb.build({ responseType: 'text', accept: '*/*', context })
+    rb.build({ responseType: 'json', accept: 'application/json', context })
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;
+      return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<any>;
     })
   );
 }

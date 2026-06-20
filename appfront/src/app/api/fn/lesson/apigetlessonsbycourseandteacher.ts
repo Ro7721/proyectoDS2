@@ -13,7 +13,7 @@ export interface Apigetlessonsbycourseandteacher$Params {
   teacherId: string;
 }
 
-export function apigetlessonsbycourseandteacher(http: HttpClient, rootUrl: string, params: Apigetlessonsbycourseandteacher$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+export function apigetlessonsbycourseandteacher(http: HttpClient, rootUrl: string, params: Apigetlessonsbycourseandteacher$Params, context?: HttpContext): Observable<StrictHttpResponse<any>> {
   const rb = new RequestBuilder(rootUrl, apigetlessonsbycourseandteacher.PATH, 'get');
   if (params) {
     rb.path('courseId', params.courseId, {});
@@ -21,11 +21,11 @@ export function apigetlessonsbycourseandteacher(http: HttpClient, rootUrl: strin
   }
 
   return http.request(
-    rb.build({ responseType: 'text', accept: '*/*', context })
+    rb.build({ responseType: 'json', accept: 'application/json', context })
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;
+      return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<any>;
     })
   );
 }

@@ -1,7 +1,7 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormBuilder, FormsModule, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -20,6 +20,7 @@ export class Login implements OnInit {
   messageService = inject(MessageService);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private plataformId = inject(PLATFORM_ID);
   loading = false;
 
   constructor(private toast: MessageToast) {
@@ -47,15 +48,18 @@ export class Login implements OnInit {
   get password() { return this.form.controls.password; }
 
   ngOnInit(): void {
-    const message = localStorage.getItem('logoutMessage')
-    if (message) {
-      this.toast.toastSuccess('Éxito', message);
-      localStorage.removeItem('logoutMessage');
-    }
-    const message2 = localStorage.getItem('access-error')
-    if (message2) {
-      this.toast.toastError('Error', message2);
-      localStorage.removeItem('access-error');
+    if (isPlatformBrowser(this.plataformId)) {
+      const message = localStorage.getItem('logoutMessage');
+      if (message) {
+        this.toast.toastSuccess('Éxito', message);
+        localStorage.removeItem('logoutMessage');
+      }
+
+      const message2 = localStorage.getItem('access-error');
+      if (message2) {
+        this.toast.toastError('Error', message2);
+        localStorage.removeItem('access-error');
+      }
     }
   }
 

@@ -1,0 +1,29 @@
+/* Gradientes planos minimalistas para las portadas */
+.from-video-gradient {
+  background-image: linear-gradient(to bottom right, #0f172a, #1e293b, #047857);
+}
+
+.from-pdf-gradient {
+  background-image: linear-gradient(to bottom right, #1e293b, #334155, #475569);
+}
+
+.from-quiz-gradient {
+  background-image: linear-gradient(to bottom right, #0f172a, #3b4252, #065f46);
+}
+
+.group-hover\:scale-103:hover {
+  transform: scale(1.03);
+}
+
+/* Rediseño sutil para selectores e inputs PrimeNG */
+:host ::v-deep .p-select {
+  border-radius: 0.75rem !important;
+  background-color: rgb(248 250 252 / 0.5) !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: none !important;
+}
+
+:host ::v-deep .p-paginator {
+  background: transparent !important;
+  font-size: 0.75rem !important;
+}
