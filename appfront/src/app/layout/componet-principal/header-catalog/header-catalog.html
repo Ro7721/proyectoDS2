@@ -1,0 +1,23 @@
+<header
+    class="bg-white sticky top-0 z-50 border-b border-green-100 px-6 py-3 flex flex-wrap items-center justify-between gap-3 shadow-sm">
+    <div class="flex items-center gap-2 text-2xl font-extrabold border-green-100">
+        <i class="pi pi-book text-[#4CAF50] font-semibold"></i>
+        <p class="text-[#4CAF50]">EduLearning</p>
+    </div>
+    <!-- el buscador tiene que estart en el medio-->
+    <div
+        class="flex-1 max-w-lg min-w-[200px] bg-verde-fondo rounded-full px-4 py-2 flex items-center border-2 border-transparent focus-within: bg-green-100 focus-within:border-green-200 transition border-2 border-green-100">
+        <i class="pi pi-search text-green-600"></i>
+        <input type="text" [(ngModel)]="value"
+            class="flex-1 bg-transparent outline-none px-3 py-1 text-sm rounded-full focus:cursor-pointer"
+            (blur)="onSearch()" placeholder="Buscar cursos...">
+    </div>
+    <!-- el menu que tiene 2 opciones-->
+    <nav class="flex items-center gap-8">
+        <a href="#"
+            class="text-gray-700 hover:bg-green-100 hover:text-green-600 font-medium rounded-full px-2 py-1">Cursos</a>
+        <a href="#"
+            class="text-gray-700 hover:bg-green-100 hover:text-green-600 font-medium rounded-full px-2 py-1">Maestros</a>
+
+    </nav>
+</header>

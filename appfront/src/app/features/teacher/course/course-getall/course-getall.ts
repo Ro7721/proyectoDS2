@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Api } from '../../../../api/api';
-import { Apicoursesbyteacher$Params, apicoursesbyteacher } from '../../../../api/functions';
+import { Apicoursesbyteacher$Params, apicoursesbyteacher, apigetallCategory } from '../../../../api/functions';
 import { CourseResponse } from '../../../../models/course.model';
 import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
@@ -11,10 +11,12 @@ import { Toast } from 'primeng/toast';
 import { CourseDetails } from '../course-details/course-details';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { MessageToast } from '../../../../message/message-toast';
+import { CategoryResponse } from '../../../../models/category.model';
+import { SelectModule } from 'primeng/select';
 
 @Component({
   selector: 'app-course-getall',
-  imports: [CommonModule, RouterLink, ButtonModule, TagModule, SkeletonModule, Toast, CourseDetails],
+  imports: [CommonModule, RouterLink, ButtonModule, TagModule, SkeletonModule, Toast, CourseDetails, SelectModule],
   templateUrl: './course-getall.html',
   styleUrl: './course-getall.css',
 })
@@ -29,11 +31,13 @@ export class CourseGetall implements OnInit {
   showDetails = false;
   notFound = false;
   teacherId = this.authService.user?.idUser || '';
+  categories: CategoryResponse[] = [];
 
   constructor(private toastMessage: MessageToast) { }
 
   ngOnInit(): void {
     this.loadCourses();
+    this.loadCategories();
   }
 
   loadCourses(): void {
@@ -92,5 +96,43 @@ export class CourseGetall implements OnInit {
   formatPrice(price: number): string {
     if (!price) return 'Gratis';
     return new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN' }).format(price);
+  }
+
+  loadCategories() {
+    this.api.invoke(apigetallCategory).then((response: any) => {
+      const apiResponse = typeof response == 'string' ? JSON.parse(response) : response;
+      if (Array.isArray(apiResponse)) {
+        this.categories = apiResponse;
+      } else if (apiResponse && Array.isArray(apiResponse.data)) {
+        this.categories = apiResponse.data;
+      }
+      this.cdr.detectChanges();
+    }).catch((error) => {
+      this.toastMessage.toastError('Error al cargar categorias', error?.message || 'Ocurrio un error');
+      this.categories = [];
+      this.cdr.detectChanges();
+    });
+  }
+  courseFilterByCategory(category: CategoryResponse) {
+    this.loading = true;
+    this.notFound = false;
+
+    this.api
+      .invoke<Apicoursesbyteacher$Params, any>(apicoursesbyteacher, {
+        teacherId: this.teacherId,
+      })
+      .then((response) => {
+        this.listCourses = response?.data ?? [];
+        this.notFound = this.listCourses.length === 0;
+        this.loading = false;
+        this.cdr.detectChanges();
+      })
+      .catch((error) => {
+        this.toastMessage.toastError('Error al cargar cursos', error?.message || 'Ocurrio un error');
+        this.listCourses = [];
+        this.loading = false;
+        this.notFound = true;
+        this.cdr.detectChanges();
+      });
   }
 }

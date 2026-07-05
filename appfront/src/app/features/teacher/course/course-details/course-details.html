@@ -36,15 +36,15 @@
 
                 <div
                     class="absolute inset-x-0 bottom-0 flex flex-wrap gap-2 bg-gradient-to-t from-black/55 to-transparent p-4">
-                    <p-tag [value]="selectedCourse.status" [severity]="getStatusSeverity(selectedCourse.status)" />
-                    <p-tag [value]="selectedCourse.level" [severity]="getLevelSeverity(selectedCourse.level)" />
+                    <p-tag [value]="selectedCourse.status ? 'Publicado' : 'Privado' "
+                        [severity]="getStatusSeverity(selectedCourse.status)" />
+                    <p-tag [value]="selectedCourse.level " [severity]="getLevelSeverity(selectedCourse.level)" />
                 </div>
             </div>
 
             <div class="p-5">
                 <div class="mb-3 flex flex-wrap items-center gap-2">
-                    <p-chip [label]="selectedCourse.categoryName"
-                        styleClass="text-xs bg-emerald-50 text-emerald-700" />
+                    <p-chip [label]="selectedCourse.categoryName" styleClass="text-xs bg-emerald-50 text-emerald-700" />
                     <span *ngIf="selectedCourse.teacherFullName" class="text-sm text-gray-500">
                         Docente: {{ selectedCourse.teacherFullName }}
                     </span>
@@ -136,6 +136,8 @@
                     class="p-button-outlined p-button-sm"></button>
                 <button pButton type="button" icon="pi pi-plus" label="Nueva lección" class="p-button-sm"
                     style="background:#16a34a; border-color:#16a34a;"></button>
+                <button pButton type="button" icon="pi pi-trash" label="Eliminar"
+                    class="p-button-danger p-button-sm"></button>
             </div>
         </div>
     </ng-template>

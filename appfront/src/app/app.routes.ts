@@ -12,9 +12,11 @@ import { AuthGuard } from './core/guards/auth.guard';
 import { DashboardRedirect } from './page/dashboard-sell/dashboard-redirect/dashboard-redirect';
 import { RoleGuard } from './core/guards/role.guard';
 import { LessonGetall } from './features/teacher/lesson/lesson-getall/lesson-getall';
+import { Catalog } from './features/catalog/catalog';
 
 export const routes: Routes = [
     { path: '', component: Home },
+    { path: 'catalog', component: Catalog },
     {
         path: 'auth', component: AuthLayout, children: [
             { path: '', redirectTo: 'login', pathMatch: 'full' },

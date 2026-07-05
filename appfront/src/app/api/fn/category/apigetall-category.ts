@@ -9,10 +9,10 @@ import { RequestBuilder } from '../../request-builder';
 
 
 export interface ApigetallCategory$Params {
-      body?: any
+  body?: any
 }
 
-export function apigetallCategory(http: HttpClient, rootUrl: string, params?: ApigetallCategory$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+export function apigetallCategory(http: HttpClient, rootUrl: string, params?: ApigetallCategory$Params, context?: HttpContext): Observable<StrictHttpResponse<any>> {
   const rb = new RequestBuilder(rootUrl, apigetallCategory.PATH, 'get');
   if (params) {
     rb.body(params.body, 'application/json');
@@ -23,7 +23,7 @@ export function apigetallCategory(http: HttpClient, rootUrl: string, params?: Ap
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;
+      return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<any>;
     })
   );
 }
