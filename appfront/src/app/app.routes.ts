@@ -12,11 +12,13 @@ import { AuthGuard } from './core/guards/auth.guard';
 import { DashboardRedirect } from './page/dashboard-sell/dashboard-redirect/dashboard-redirect';
 import { RoleGuard } from './core/guards/role.guard';
 import { LessonGetall } from './features/teacher/lesson/lesson-getall/lesson-getall';
-import { Catalog } from './features/catalog/catalog';
+import { Catalog } from './page/catalogs/catalog/catalog';
+import { CourseDetail } from './page/catalogs/course-detail/course-detail';
 
 export const routes: Routes = [
     { path: '', component: Home },
     { path: 'catalog', component: Catalog },
+    { path: 'catalog/course/:id', component: CourseDetail },
     {
         path: 'auth', component: AuthLayout, children: [
             { path: '', redirectTo: 'login', pathMatch: 'full' },

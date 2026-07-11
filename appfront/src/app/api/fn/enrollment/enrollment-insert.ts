@@ -11,7 +11,6 @@ import { RequestBuilder } from '../../request-builder';
 export interface EnrollmentInsert$Params {
       body?: {
 'courseId'?: string;
-'studentId'?: string;
 }
 }
 
@@ -31,4 +30,4 @@ export function enrollmentInsert(http: HttpClient, rootUrl: string, params?: Enr
   );
 }
 
-enrollmentInsert.PATH = '/enrollments/insert';
+enrollmentInsert.PATH = '/enrollments/enroll';

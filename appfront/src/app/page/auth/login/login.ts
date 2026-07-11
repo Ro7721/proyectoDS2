@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormBuilder, FormsModule, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -20,6 +20,7 @@ export class Login implements OnInit {
   messageService = inject(MessageService);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private plataformId = inject(PLATFORM_ID);
   loading = false;
 
@@ -74,6 +75,14 @@ export class Login implements OnInit {
         this.email.value,
         this.password.value
       );
+
+      // Si hay returnUrl, redirigir ahí en vez del dashboard
+      const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+      if (returnUrl) {
+        await this.router.navigateByUrl(returnUrl);
+        return;
+      }
+
       const user = response.user;
       switch (user.role) {
 
@@ -122,3 +131,4 @@ export class Login implements OnInit {
     }
   }
 }
+

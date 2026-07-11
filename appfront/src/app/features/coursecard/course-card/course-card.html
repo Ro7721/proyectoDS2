@@ -1,6 +1,6 @@
 <article
     class="course-card group h-full overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-lg">
-    <a [routerLink]="['/catalog']" class="flex h-full flex-col">
+    <a [routerLink]="['/catalog/course', course.idCourse]" class="flex h-full flex-col">
         <div class="relative aspect-[16/10] overflow-hidden bg-green-50">
             <img [src]="course.coverImage || fallbackImage" [alt]="course.title"
                 class="h-full w-full object-cover transition duration-500 group-hover:scale-105" />

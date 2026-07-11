@@ -1,0 +1,195 @@
+<div class="min-h-screen bg-slate-50 text-slate-800 antialiased">
+
+    <div *ngIf="loading" class="animate-pulse">
+        <div class="bg-slate-900 h-80 w-full"></div>
+        <div class="max-w-7xl mx-auto px-6 py-12 grid lg:grid-cols-[2fr_350px] gap-12">
+            <div class="space-y-6">
+                <div class="h-8 bg-slate-200 rounded w-1/3"></div>
+                <div class="h-4 bg-slate-200 rounded w-full"></div>
+                <div class="h-4 bg-slate-200 rounded w-5/6"></div>
+                <div class="h-40 bg-slate-200 rounded-xl mt-10"></div>
+            </div>
+            <div class="h-96 bg-slate-200 rounded-xl"></div>
+        </div>
+    </div>
+
+    <div *ngIf="!loading && course">
+
+        <header
+            class="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 text-white relative border-b border-slate-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 py-14 sm:py-20">
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+
+                    <div class="space-y-6">
+                        <span
+                            class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-green-400 bg-green-500/10 px-3 py-1.5 rounded-full border border-green-500/20">
+                            <i class="fa-solid fa-graduation-cap"></i> {{ course.categoryName }}
+                        </span>
+
+                        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white leading-tight">
+                            {{ course.title }}
+                        </h1>
+
+                        <p class="text-base sm:text-lg text-slate-300 font-normal leading-relaxed max-w-xl">
+                            {{ course.description }}
+                        </p>
+
+                        <div
+                            class="flex flex-wrap gap-5 text-sm font-medium text-slate-300 pt-2 border-t border-slate-800">
+                            <span class="flex items-center gap-2">
+                                <i class="fa-solid fa-chalkboard-user text-green-400 text-base"></i>
+                                Docente: <strong class="text-white">{{ course.teacherFullName }}</strong>
+                            </span>
+                            <span class="flex items-center gap-2">
+                                <i class="fa-solid fa-signal text-green-400"></i>
+                                Nivel: <strong class="text-white">{{ lessonOption(course.level) }}</strong>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="relative group hidden lg:block justify-self-center w-full max-w-xl">
+                        <div
+                            class="absolute -inset-1 bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000">
+                        </div>
+                        <div
+                            class="relative bg-slate-900 rounded-2xl overflow-hidden shadow-2xl border border-slate-700/50 aspect-video">
+                            <img [src]="course.coverImage" [alt]="course.title" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 py-12">
+            <div class="grid lg:grid-cols-[1fr_360px] gap-12 items-start">
+
+                <div class="space-y-12">
+
+                    <section class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+                        <h2 class="text-xl sm:text-2xl font-bold text-slate-900 flex items-center gap-3">
+                            <i class="fa-solid fa-align-left text-green-600 text-lg"></i> Acerca de este curso
+                        </h2>
+                        <p class="text-slate-600 leading-relaxed text-base whitespace-pre-line">
+                            {{ course.description }}
+                        </p>
+                    </section>
+
+                    <section class="space-y-5">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 flex items-center gap-3">
+                                <i class="fa-solid fa-list-check text-green-600 text-lg"></i> Estructura del plan de
+                                estudios
+                            </h2>
+                            <span
+                                class="text-sm font-semibold text-slate-500 bg-slate-100 px-3 py-1 rounded-md self-start sm:self-auto">
+                                {{ course.totalLessons || course.lessons.length }} Lecciones totales
+                            </span>
+                        </div>
+
+                        <div
+                            class="bg-white rounded-2xl border border-slate-200/80 shadow-sm divide-y divide-slate-100 overflow-hidden">
+                            <div *ngFor="let lesson of course.lessons"
+                                class="p-4 sm:p-5 hover:bg-slate-50/80 transition-colors flex items-center justify-between gap-4 group">
+                                <div class="flex items-center gap-4">
+                                    <div
+                                        class="w-8 h-8 rounded-full bg-slate-100 text-slate-600 font-bold text-sm flex items-center justify-center border border-slate-200/60 group-hover:bg-green-50 group-hover:text-green-700 group-hover:border-green-200 transition-colors shrink-0">
+                                        {{ lesson.lessonOrder }}
+                                    </div>
+                                    <div class="flex items-center gap-2.5">
+                                        <i
+                                            class="fa-regular fa-circle-play text-slate-400 group-hover:text-green-600 transition-colors text-base"></i>
+                                        <span
+                                            class="font-semibold text-slate-700 group-hover:text-slate-900 transition-colors text-sm sm:text-base">
+                                            {{ lesson.title }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <span
+                                    class="text-xs sm:text-sm font-medium text-slate-400 flex items-center gap-1.5 shrink-0 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-200">
+                                    <i class="fa-regular fa-clock text-slate-400"></i> {{ lesson.durationMinutes }} min
+                                </span>
+                            </div>
+                        </div>
+                    </section>
+
+                </div>
+
+                <aside
+                    class="sticky top-28 bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden z-10">
+                    <div class="aspect-video relative w-full border-b border-slate-200 lg:hidden block">
+                        <img [src]="course.coverImage" class="w-full h-full object-cover">
+                    </div>
+
+                    <div class="p-6 sm:p-8 space-y-6">
+                        <div class="space-y-1">
+                            <span class="text-xs text-slate-400 font-bold uppercase tracking-wider block">Acceso de pago
+                                único</span>
+                            <div
+                                class="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                                <i class="fa-solid fa-tags text-green-600 text-2xl"></i>
+                                {{ formatPrice(course.price) }}
+                            </div>
+                        </div>
+                        <div class="mt-6">
+                            <button *ngIf="!enrolled"
+                                class="w-full text-white py-3 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2"
+                                [ngClass]="{
+                                    'bg-green-600 hover:bg-green-700 cursor-pointer': !enrolling,
+                                    'bg-green-400 cursor-not-allowed': enrolling
+                                }"
+                                [disabled]="enrolling"
+                                (click)="enrollCourse()">
+
+                                <i *ngIf="enrolling" class="fa-solid fa-spinner fa-spin"></i>
+                                <span *ngIf="enrolling">Inscribiéndose...</span>
+
+                                <span *ngIf="!enrolling && authService.isAuthenticated()">Inscribirme</span>
+                                <span *ngIf="!enrolling && !authService.isAuthenticated()">Iniciar sesión para inscribirme</span>
+                            </button>
+
+                            <div *ngIf="enrolled"
+                                class="w-full bg-emerald-50 border border-emerald-300 text-emerald-700 py-3 rounded-lg font-semibold text-center space-y-1">
+                                <div class="flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-circle-check"></i>
+                                    ¡Inscripción exitosa!
+                                </div>
+                                <p class="text-xs font-normal text-emerald-600">Redirigiendo a Mis Cursos...</p>
+                            </div>
+
+                            <p *ngIf="enrollError"
+                                class="mt-2 text-sm text-red-600 font-medium text-center">
+                                <i class="fa-solid fa-triangle-exclamation"></i> {{ enrollError }}
+                            </p>
+                        </div>
+
+                        <div class="pt-6 border-t border-slate-200 space-y-3.5">
+                            <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Este curso incluye:
+                            </h4>
+
+                            <ul class="space-y-3 text-sm text-slate-600 font-medium">
+                                <li class="flex items-start gap-3">
+                                    <i class="fa-solid fa-circle-check text-green-600 mt-0.5 text-base"></i>
+                                    <span>Acceso de por vida a los contenidos</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <i class="fa-solid fa-circle-check text-green-600 mt-0.5 text-base"></i>
+                                    <span>{{ course.totalLessons || course.lessons.length }} lecciones en alta
+                                        definición</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <i class="fa-solid fa-circle-check text-green-600 mt-0.5 text-base"></i>
+                                    <span>Nivel de instrucción: <strong>{{ course.level }}</strong></span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <i class="fa-solid fa-circle-check text-green-600 mt-0.5 text-base"></i>
+                                    <span>Certificado de finalización</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </main>
+    </div>
+</div>

@@ -72,7 +72,7 @@ export class AuthService {
     localStorage.setItem('logoutMessage', 'Sesión cerrada correctamente');
     this.clearSession();
 
-    this.router.navigate(['/auth/login']);
+    this.router.navigate(['']);
   }
   // Verifica si el usuario esta autenticado
   isAuthenticated(): boolean {
@@ -114,6 +114,15 @@ export class AuthService {
 
     const userRole = this.user?.role;
     return userRole ? this.normalizeRole(userRole) : null;
+  }
+  get isLoggedIn(): boolean {
+    return this.isAuthenticated();
+  }
+  isStudent(): boolean {
+    return this.currentRole === "ROLE_STUDENT";
+  }
+  isTeacher(): boolean {
+    return this.currentRole === "ROLE_TEACHER";
   }
 
   getTokenType(): string {
