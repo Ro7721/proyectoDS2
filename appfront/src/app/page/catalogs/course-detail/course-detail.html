@@ -23,7 +23,7 @@
                     <div class="space-y-6">
                         <span
                             class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-green-400 bg-green-500/10 px-3 py-1.5 rounded-full border border-green-500/20">
-                            <i class="fa-solid fa-graduation-cap"></i> {{ course.categoryName }}
+                            <i class="pi pi-graduation-cap"></i> {{ course.categoryName }}
                         </span>
 
                         <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white leading-tight">
@@ -37,11 +37,11 @@
                         <div
                             class="flex flex-wrap gap-5 text-sm font-medium text-slate-300 pt-2 border-t border-slate-800">
                             <span class="flex items-center gap-2">
-                                <i class="fa-solid fa-chalkboard-user text-green-400 text-base"></i>
+                                <i class="pi pi-user text-green-400 text-base"></i>
                                 Docente: <strong class="text-white">{{ course.teacherFullName }}</strong>
                             </span>
                             <span class="flex items-center gap-2">
-                                <i class="fa-solid fa-signal text-green-400"></i>
+                                <i class="pi pi-chart-bar text-green-400"></i>
                                 Nivel: <strong class="text-white">{{ lessonOption(course.level) }}</strong>
                             </span>
                         </div>
@@ -68,7 +68,7 @@
 
                     <section class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
                         <h2 class="text-xl sm:text-2xl font-bold text-slate-900 flex items-center gap-3">
-                            <i class="fa-solid fa-align-left text-green-600 text-lg"></i> Acerca de este curso
+                            <i class="pi pi-align-left text-green-600 text-lg"></i> Acerca de este curso
                         </h2>
                         <p class="text-slate-600 leading-relaxed text-base whitespace-pre-line">
                             {{ course.description }}
@@ -78,7 +78,7 @@
                     <section class="space-y-5">
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                             <h2 class="text-xl sm:text-2xl font-bold text-slate-900 flex items-center gap-3">
-                                <i class="fa-solid fa-list-check text-green-600 text-lg"></i> Estructura del plan de
+                                <i class="pi pi-list text-green-600 text-lg"></i> Estructura del plan de
                                 estudios
                             </h2>
                             <span
@@ -98,7 +98,7 @@
                                     </div>
                                     <div class="flex items-center gap-2.5">
                                         <i
-                                            class="fa-regular fa-circle-play text-slate-400 group-hover:text-green-600 transition-colors text-base"></i>
+                                            class="pi pi-play-circle text-slate-400 group-hover:text-green-600 transition-colors text-base"></i>
                                         <span
                                             class="font-semibold text-slate-700 group-hover:text-slate-900 transition-colors text-sm sm:text-base">
                                             {{ lesson.title }}
@@ -107,7 +107,7 @@
                                 </div>
                                 <span
                                     class="text-xs sm:text-sm font-medium text-slate-400 flex items-center gap-1.5 shrink-0 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-200">
-                                    <i class="fa-regular fa-clock text-slate-400"></i> {{ lesson.durationMinutes }} min
+                                    <i class="pi pi-clock text-slate-400"></i> {{ lesson.durationMinutes }} min
                                 </span>
                             </div>
                         </div>
@@ -127,39 +127,43 @@
                                 único</span>
                             <div
                                 class="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                                <i class="fa-solid fa-tags text-green-600 text-2xl"></i>
+                                <i class="pi pi-tags text-green-600 text-2xl"></i>
                                 {{ formatPrice(course.price) }}
                             </div>
                         </div>
                         <div class="mt-6">
-                            <button *ngIf="!enrolled"
+                            <div *ngIf="alreadyEnrolled"
+                                class="w-full bg-emerald-50 border border-emerald-300 text-emerald-700 py-3 rounded-lg font-semibold text-center flex items-center justify-center gap-2">
+                                <i class="pi pi-check-circle"></i>
+                                Ya inscrito
+                            </div>
+
+                            <button *ngIf="!enrolled && !alreadyEnrolled"
                                 class="w-full text-white py-3 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2"
                                 [ngClass]="{
                                     'bg-green-600 hover:bg-green-700 cursor-pointer': !enrolling,
                                     'bg-green-400 cursor-not-allowed': enrolling
-                                }"
-                                [disabled]="enrolling"
-                                (click)="enrollCourse()">
+                                }" [disabled]="enrolling" (click)="enrollCourse()">
 
-                                <i *ngIf="enrolling" class="fa-solid fa-spinner fa-spin"></i>
+                                <i *ngIf="enrolling" class="pi pi-spinner pi-spin"></i>
                                 <span *ngIf="enrolling">Inscribiéndose...</span>
 
                                 <span *ngIf="!enrolling && authService.isAuthenticated()">Inscribirme</span>
-                                <span *ngIf="!enrolling && !authService.isAuthenticated()">Iniciar sesión para inscribirme</span>
+                                <span *ngIf="!enrolling && !authService.isAuthenticated()">Iniciar sesión para
+                                    inscribirme</span>
                             </button>
 
                             <div *ngIf="enrolled"
                                 class="w-full bg-emerald-50 border border-emerald-300 text-emerald-700 py-3 rounded-lg font-semibold text-center space-y-1">
                                 <div class="flex items-center justify-center gap-2">
-                                    <i class="fa-solid fa-circle-check"></i>
+                                    <i class="pi pi-check-circle"></i>
                                     ¡Inscripción exitosa!
                                 </div>
                                 <p class="text-xs font-normal text-emerald-600">Redirigiendo a Mis Cursos...</p>
                             </div>
 
-                            <p *ngIf="enrollError"
-                                class="mt-2 text-sm text-red-600 font-medium text-center">
-                                <i class="fa-solid fa-triangle-exclamation"></i> {{ enrollError }}
+                            <p *ngIf="enrollError" class="mt-2 text-sm text-red-600 font-medium text-center">
+                                <i class="pi pi-exclamation-triangle"></i> {{ enrollError }}
                             </p>
                         </div>
 
@@ -169,20 +173,20 @@
 
                             <ul class="space-y-3 text-sm text-slate-600 font-medium">
                                 <li class="flex items-start gap-3">
-                                    <i class="fa-solid fa-circle-check text-green-600 mt-0.5 text-base"></i>
+                                    <i class="pi pi-check-circle text-green-600 mt-0.5 text-base"></i>
                                     <span>Acceso de por vida a los contenidos</span>
                                 </li>
                                 <li class="flex items-start gap-3">
-                                    <i class="fa-solid fa-circle-check text-green-600 mt-0.5 text-base"></i>
+                                    <i class="pi pi-check-circle text-green-600 mt-0.5 text-base"></i>
                                     <span>{{ course.totalLessons || course.lessons.length }} lecciones en alta
                                         definición</span>
                                 </li>
                                 <li class="flex items-start gap-3">
-                                    <i class="fa-solid fa-circle-check text-green-600 mt-0.5 text-base"></i>
+                                    <i class="pi pi-check-circle text-green-600 mt-0.5 text-base"></i>
                                     <span>Nivel de instrucción: <strong>{{ course.level }}</strong></span>
                                 </li>
                                 <li class="flex items-start gap-3">
-                                    <i class="fa-solid fa-circle-check text-green-600 mt-0.5 text-base"></i>
+                                    <i class="pi pi-check-circle text-green-600 mt-0.5 text-base"></i>
                                     <span>Certificado de finalización</span>
                                 </li>
                             </ul>

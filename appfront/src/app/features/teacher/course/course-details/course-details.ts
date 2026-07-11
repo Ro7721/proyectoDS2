@@ -10,7 +10,8 @@ import {
   inject,
 } from '@angular/core';
 import { Api } from '../../../../api/api';
-import { ApidetailsCourse$Params, apidetailsCourse } from '../../../../api/functions';
+import { ApidetailsCourse$Params, apidetailsCourse, apicreateLesson, ApicreateLesson$Params } from '../../../../api/functions';
+import { LessonInsert, LessonFormPayload } from '../lesson-insert/lesson-insert';
 import { CourseResponse } from '../../../../models/course.model';
 import { MessageService } from 'primeng/api';
 import { AccordionModule } from 'primeng/accordion';
@@ -32,6 +33,7 @@ import { TagModule } from 'primeng/tag';
     ChipModule,
     DividerModule,
     AccordionModule,
+    LessonInsert
   ],
   templateUrl: './course-details.html',
   styleUrl: './course-details.css',
@@ -47,6 +49,8 @@ export class CourseDetails implements OnChanges {
 
   selectedCourse: CourseResponse | null = null;
   loading = false;
+  showLessonDialog = false;
+  isOpeningLesson = false;
 
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -62,6 +66,7 @@ export class CourseDetails implements OnChanges {
   }
 
   close(): void {
+    if (this.isOpeningLesson) return;
     this.visible = false;
     this.visibleChange.emit(false);
     this.selectedCourse = null;
@@ -135,5 +140,75 @@ export class CourseDetails implements OnChanges {
         0,
       ) ?? 0
     );
+  }
+
+  openNewLessonDialog(): void {
+    // Indicamos que estamos abriendo la lección para evitar que `close()` limpie el estado
+    this.isOpeningLesson = true;
+    
+    // Cerramos el modal de detalles (esto disparará onHide que llama a close())
+    this.visible = false;
+    
+    // Esperamos a que termine la animación de PrimeNG antes de abrir el otro modal
+    setTimeout(() => {
+      if (!this.courseId) return;
+      this.showLessonDialog = true;
+    }, 300);
+  }
+
+  onLessonDialogClose(isVisible: boolean): void {
+    this.showLessonDialog = isVisible;
+    if (!isVisible) {
+      // Cuando se cierra el modal de lección, indicamos que ya no estamos en transición
+      this.isOpeningLesson = false;
+      // Reabrimos el modal de detalles
+      setTimeout(() => {
+        this.visible = true;
+      }, 300);
+    }
+  }
+
+  onSaveLesson(payload: LessonFormPayload): void {
+    if (!this.courseId) return;
+
+    this.loading = true;
+    const params: ApicreateLesson$Params = {
+      body: {
+        courseId: this.courseId,
+        title: payload.title,
+        description: payload.description,
+        type: payload.type,
+        contenUrl: payload.contenUrl,
+        isFree: payload.isFree,
+        mainVideoFile: payload.mainVideoFile,
+        adjunctFiles: payload.adjunctFiles,
+      }
+    };
+
+    this.api
+      .invoke<ApicreateLesson$Params, any>(apicreateLesson, params)
+      .then(() => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Lección creada correctamente.',
+        });
+        this.loadCourseDetail(this.courseId as string); // Actualiza la lista
+      })
+      .catch((error) => {
+        console.error('Error al crear lección:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudo crear la lección.',
+        });
+      })
+      .finally(() => {
+        this.loading = false;
+        // Al setear showLessonDialog = false, el HTML llamará a onLessonDialogClose
+        // que se encargará de reabrir el course-details.
+        this.onLessonDialogClose(false);
+        this.cdr.detectChanges();
+      });
   }
 }

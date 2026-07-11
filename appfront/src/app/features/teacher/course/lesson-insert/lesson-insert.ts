@@ -151,6 +151,10 @@ export class LessonInsert implements OnInit, OnChanges {
     };
 
     this.onSaveLesson.emit(lessonData);
+    this.frmInserLesson.reset({ type: 'VIDEO', isFree: false });
+    this.mainVideoFile = [];
+    this.adjunctFiles = [];
     this.closeDialog();
   }
+
 }

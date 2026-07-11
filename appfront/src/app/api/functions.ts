@@ -49,3 +49,5 @@ export type { Apideleteenrollment$Params as Apideleteenrollment$Params } from '.
 export { apideleteenrollment as apideleteenrollment } from './fn/enrollment/apideleteenrollment';
 export type { Apigetbyidenrollment$Params as Apigetbyidenrollment$Params } from './fn/enrollment/apigetbyidenrollment';
 export { apigetbyidenrollment as apigetbyidenrollment } from './fn/enrollment/apigetbyidenrollment';
+export type { CheckEnrollment$Params as CheckEnrollment$Params } from './fn/enrollment/check-enrollment';
+export { checkEnrollment as checkEnrollment } from './fn/enrollment/check-enrollment';

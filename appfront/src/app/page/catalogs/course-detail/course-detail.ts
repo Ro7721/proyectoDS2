@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Api } from '../../../api/api';
 import { CourseResponse } from '../../../models/course.model';
 import { apidetailsCourse, enrollmentInsert, EnrollmentInsert$Params } from '../../../api/functions';
+import { checkEnrollment } from '../../../api/fn/enrollment/check-enrollment';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../core/auth/auth.service';
 
@@ -92,11 +93,29 @@ export class CourseDetail implements OnInit {
     }
   }
 
+  alreadyEnrolled = false;
+
   loadCourse(id: string) {
     this.loading = true;
     this.api.invoke(apidetailsCourse, { idCourse: id }).then((response: any) => {
       const apiResponseData = typeof response == 'string' ? JSON.parse(response) : response;
       this.course = apiResponseData.data || apiResponseData;
+      
+      if (this.authService.isAuthenticated()) {
+        this.checkIfEnrolled(id);
+      } else {
+        this.loading = false;
+        this.changeDetectorRef.detectChanges();
+      }
+    }).catch(() => {
+      this.loading = false;
+      this.changeDetectorRef.detectChanges();
+    });
+  }
+
+  checkIfEnrolled(courseId: string) {
+    this.api.invoke(checkEnrollment, { courseId }).then((isEnrolled: any) => {
+      this.alreadyEnrolled = isEnrolled;
     }).finally(() => {
       this.loading = false;
       this.changeDetectorRef.detectChanges();

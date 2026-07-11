@@ -320,4 +320,13 @@ export class LessonGetall implements OnInit {
     };
     return map[type?.toUpperCase()] ?? 'from-pdf-gradient';
   }
+  // Al final de tu clase LessonGetall
+  trackById(index: number, lesson: LessonRow): string {
+    return lesson.idLesson || index.toString();
+  }
+
+  // Opcional: también para archivos
+  trackByFileId(index: number, file: FileRow): string {
+    return file.idFile || index.toString();
+  }
 }
