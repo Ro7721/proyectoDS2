@@ -1,0 +1,13 @@
+:host {
+    display: block;
+    background: #f8fafc;
+    min-height: 100vh;
+}
+
+img {
+    transition: 0.3s;
+}
+
+img:hover {
+    transform: scale(1.04);
+}

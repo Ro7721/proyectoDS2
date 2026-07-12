@@ -1,0 +1,14 @@
+<div class="course-progress">
+    <div class="course-progress__row">
+        <span class="course-progress__status" [class.course-progress__status--done]="completed">
+            <span class="material-icons">{{ completed ? 'check_circle' : 'autorenew' }}</span>
+            {{ statusLabel }}
+        </span>
+        <span class="course-progress__value">{{ clampedProgress }}%</span>
+    </div>
+
+    <div class="course-progress__track">
+        <div class="course-progress__fill" [class.course-progress__fill--done]="completed"
+            [style.width.%]="clampedProgress"></div>
+    </div>
+</div>

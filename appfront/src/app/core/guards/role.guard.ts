@@ -27,7 +27,7 @@ export class RoleGuard implements CanActivate {
     }
     switch (currentRole) {
       case "ROLE_STUDENT":
-        return this.router.createUrlTree(["/dashboard/learning"]);
+        return this.router.createUrlTree(["/dashboard/learning-estudent"]);
       case "ROLE_TEACHER":
         return this.router.createUrlTree(["/dashboard/overview-teacher"]);
       case "ROLE_ADMIN":

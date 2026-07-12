@@ -51,3 +51,9 @@ export type { Apigetbyidenrollment$Params as Apigetbyidenrollment$Params } from 
 export { apigetbyidenrollment as apigetbyidenrollment } from './fn/enrollment/apigetbyidenrollment';
 export type { CheckEnrollment$Params as CheckEnrollment$Params } from './fn/enrollment/check-enrollment';
 export { checkEnrollment as checkEnrollment } from './fn/enrollment/check-enrollment';
+export type { ApiMyCourses$Params as ApiMyCourses$Params } from './fn/enrollment/api-my-courses';
+export { apiMyCourses as apiMyCourses } from './fn/enrollment/api-my-courses';
+export type { ApiCourseContent$Params as ApiCourseContent$Params } from './fn/learning/api-course-content';
+export { apiCourseContent as apiCourseContent } from './fn/learning/api-course-content';
+export type { ApiSaveProgress$Params as ApiSaveProgress$Params } from './fn/learning/api-save-progress';
+export { apiSaveProgress as apiSaveProgress } from './fn/learning/api-save-progress';

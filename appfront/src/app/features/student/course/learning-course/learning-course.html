@@ -1,0 +1,28 @@
+@if (loading) {
+<div class="flex h-64 items-center justify-center">
+    <span class="material-icons animate-spin text-4xl text-[#E8592B]">progress_activity</span>
+</div>
+}
+
+@if (!loading && course) {
+<div class="min-h-screen bg-[#F7F6F3] p-4 md:p-6">
+    <div class="mx-auto flex max-w-7xl flex-col gap-6">
+
+        <app-learnin-header [course]="course" />
+
+        <app-course-progress [progress]="course.totalProgress" [completed]="course.completed" />
+
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-[320px_1fr]">
+            <app-lesson-sidebar [lessons]="course.lessons" [selectedLesson]="selectedLesson"
+                (lessonSelected)="onLessonSelected($event)" />
+
+            <div class="flex flex-col gap-4">
+                <app-lesson-player [lesson]="selectedLesson" (lessonProgress)="onLessonProgress($event)" />
+
+                <app-lesson-resource [files]="selectedLesson?.files" />
+            </div>
+        </div>
+
+    </div>
+</div>
+}

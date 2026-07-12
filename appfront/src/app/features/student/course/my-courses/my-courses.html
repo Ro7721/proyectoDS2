@@ -1,0 +1,88 @@
+<div class="max-w-7xl mx-auto p-8">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">
+            Mis Cursos
+        </h1>
+        <p class="text-gray-500 mt-2">
+            Continúa aprendiendo donde lo dejaste.
+        </p>
+    </div>
+
+    <!-- Loading -->
+
+    <div *ngIf="loading" class="flex justify-center py-20">
+
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600">
+        </div>
+
+    </div>
+    <!-- Sin cursos -->
+    <div *ngIf="!loading && courses.length===0" class="bg-white rounded-xl shadow p-12 text-center">
+        <h2 class="text-xl font-semibold">
+            Todavía no tienes cursos inscritos
+        </h2>
+        <p class="text-gray-500 mt-3">
+            Explora el catálogo y empieza a aprender.
+        </p>
+        <button (click)="exploreCourses()" class="mt-6 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg">
+            Explorar cursos
+        </button>
+    </div>
+
+    <!-- Lista -->
+
+    <div *ngIf="!loading && courses.length>0" class="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
+        <div *ngFor="let course of courses"
+            class="bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition">
+            <img [src]="course.coverImage" class="h-52 w-full object-cover">
+            <div class="p-5">
+                <div class="flex justify-between">
+                    <span class="text-sm text-green-700 font-semibold">
+                        {{course.categoryName}}
+                    </span>
+                    <span *ngIf="course.completed" class="text-green-600 text-sm">
+
+                        ✔ Completado
+                    </span>
+                    <span *ngIf="!course.completed" class="text-blue-600 text-sm">
+                        En progreso
+                    </span>
+                </div>
+                <h2 class="font-bold text-lg mt-2">
+                    {{course.title}}
+                </h2>
+                <p class="text-gray-500 text-sm mt-1">
+                    {{course.teacherFullName}}
+                </p>
+                <div class="mt-5">
+                    <div class="flex justify-between text-sm mb-2">
+                        <span>
+                            Progreso
+                        </span>
+                        <span>
+                            {{course.totalProgress}}%
+                        </span>
+                    </div>
+
+                    <div class="h-3 bg-gray-200 rounded-full">
+                        <div class="bg-green-600 h-3 rounded-full transition-all"
+                            [style.width.%]="course.totalProgress">
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center mt-5 text-sm text-gray-500">
+                    <span>
+                        {{course.totalLessons}} lecciones
+                    </span>
+                    <span>
+                        {{formatDate(course.lastAccess)}}
+                    </span>
+                </div>
+                <button (click)="continueCourse(course)"
+                    class="mt-6 w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold transition">
+                    Continuar curso
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

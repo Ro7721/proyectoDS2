@@ -1,0 +1,26 @@
+<nav class="lesson-sidebar" aria-label="Contenido del curso">
+    <h2 class="lesson-sidebar__title">Contenido del curso</h2>
+
+    <ol class="lesson-sidebar__rail">
+        @for (lesson of lessons; track trackByLesson($index, lesson); let i = $index) {
+        <li class="lesson-sidebar__item" [class.lesson-sidebar__item--active]="isSelected(lesson)">
+            <button type="button" class="lesson-sidebar__row" [attr.aria-current]="isSelected(lesson) ? 'true' : null"
+                (click)="select(lesson)">
+                <span class="lesson-sidebar__node">
+                    <span class="lesson-sidebar__dot">{{ i + 1 }}</span>
+                    @if (i < lessons.length - 1) { <span class="lesson-sidebar__line"></span>
+                }
+                </span>
+
+                <span class="lesson-sidebar__info">
+                    <span class="lesson-sidebar__row-top">
+                        <span class="material-icons lesson-sidebar__type-icon">{{ iconFor(lesson) }}</span>
+                        <span class="lesson-sidebar__lesson-title">{{ lesson.title }}</span>
+                    </span>
+                    <span class="lesson-sidebar__duration">{{ lesson.durationMinutes }} min</span>
+                </span>
+            </button>
+        </li>
+        }
+    </ol>
+</nav>

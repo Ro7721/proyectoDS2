@@ -1,0 +1,32 @@
+<header class="course-header" [style.--spine-color]="categorySpineColor">
+    <span class="course-header__spine" aria-hidden="true"></span>
+
+    <img class="course-header__cover" [src]="course.coverImage" [alt]="course.title" />
+
+    <div class="course-header__body">
+        <span class="course-header__category">{{ course.categoryName }}</span>
+
+        <h1 class="course-header__title">{{ course.title }}</h1>
+
+        <div class="course-header__meta">
+            <span class="course-header__teacher">
+                <span class="course-header__avatar">{{ teacherInitials }}</span>
+                {{ course.teacherFullName }}
+            </span>
+
+            <span class="course-header__divider" aria-hidden="true"></span>
+
+            <span class="course-header__stat">
+                <span class="material-icons">menu_book</span>
+                {{ course.totalLessons }} lecciones
+            </span>
+
+            <span class="course-header__divider" aria-hidden="true"></span>
+
+            <span class="course-header__stat">
+                <span class="material-icons">schedule</span>
+                Último acceso: {{ course.lastAccess | date: 'd MMM, HH:mm' }}
+            </span>
+        </div>
+    </div>
+</header>

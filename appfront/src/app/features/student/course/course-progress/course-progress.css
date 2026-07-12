@@ -1,0 +1,69 @@
+:host {
+    --ink: #14161a;
+    --paper: #ffffff;
+    --canvas: #f7f6f3;
+    --accent: #e8592b;
+    --success: #178a4c;
+    --line: #e8e6e2;
+    --muted: #6e7177;
+
+    display: block;
+    font-family: 'Inter', system-ui, sans-serif;
+}
+
+.course-progress {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 16px 20px;
+}
+
+.course-progress__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13.5px;
+}
+
+.course-progress__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    color: var(--accent);
+}
+
+.course-progress__status--done {
+    color: var(--success);
+}
+
+.course-progress__status .material-icons {
+    font-size: 18px;
+}
+
+.course-progress__value {
+    font-weight: 700;
+    color: var(--ink);
+}
+
+.course-progress__track {
+    width: 100%;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--canvas);
+    overflow: hidden;
+}
+
+.course-progress__fill {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--accent);
+    transition: width 0.3s ease;
+}
+
+.course-progress__fill--done {
+    background: var(--success);
+}

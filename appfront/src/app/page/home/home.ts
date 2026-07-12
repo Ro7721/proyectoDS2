@@ -58,11 +58,11 @@ export class Home implements OnInit {
     this.profileOpen = false;
     if (!this.authService.isAuthenticated()) {
       this.router.navigate(['/auth/login'], {
-        queryParams: { returnUrl: '/dashboard/learning' }
+        queryParams: { returnUrl: '/dashboard/my-courses' }
       });
       return;
     }
-    this.router.navigate(['/dashboard/learning']);
+    this.router.navigate(['/dashboard/my-courses']);
   }
 
   logout() {

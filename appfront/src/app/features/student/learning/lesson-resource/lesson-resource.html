@@ -1,0 +1,25 @@
+@if (files && files.length > 0) {
+  <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+    <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+      <span class="material-icons text-[#E8592B]">folder</span>
+      Recursos de la lección
+    </h3>
+    
+    <ul class="flex flex-col gap-3">
+      @for (file of files; track file.idFile) {
+        <li>
+          <a [href]="file.fileUrl" target="_blank" class="flex items-center gap-4 p-3 rounded-xl border border-gray-100 hover:border-[#E8592B] hover:bg-[#fde7db] transition group">
+            <div class="w-10 h-10 rounded-lg bg-gray-100 group-hover:bg-white flex items-center justify-center text-gray-500 group-hover:text-[#E8592B] transition">
+              <span class="material-icons">{{ getIconForType(file.fileType) }}</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-semibold text-gray-900 truncate group-hover:text-[#E8592B] transition">{{ file.fileName }}</p>
+              <p class="text-xs text-gray-500 uppercase">{{ file.fileType }}</p>
+            </div>
+            <span class="material-icons text-gray-400 group-hover:text-[#E8592B]">download</span>
+          </a>
+        </li>
+      }
+    </ul>
+  </div>
+}
