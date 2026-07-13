@@ -1,14 +1,40 @@
 <div class="course-progress">
-    <div class="course-progress__row">
-        <span class="course-progress__status" [class.course-progress__status--done]="completed">
-            <span class="material-icons">{{ completed ? 'check_circle' : 'autorenew' }}</span>
+    <div class="course-progress__header">
+        <div>
+            <p class="course-progress__label">
+                Progreso del curso
+            </p>
+            <h3>
+                {{ clampedProgress }}%
+            </h3>
+        </div>
+        <div class="course-progress__badge" [class.course-progress__badge--done]="completed">
+
+
+            <span class="material-icons">
+                {{ completed ? 'workspace_premium' : 'play_circle' }}
+            </span>
+
+
             {{ statusLabel }}
-        </span>
-        <span class="course-progress__value">{{ clampedProgress }}%</span>
+
+
+        </div>
+
     </div>
 
-    <div class="course-progress__track">
+    <div class="course-progress__bar">
         <div class="course-progress__fill" [class.course-progress__fill--done]="completed"
-            [style.width.%]="clampedProgress"></div>
+            [style.width.%]="clampedProgress">
+        </div>
+    </div>
+    <div class="course-progress__footer">
+        <span>
+            {{ clampedProgress }}% completado
+        </span>
+
+        <span>
+            {{ completed ? 'Curso finalizado 🎉' : (100 - clampedProgress) + '% restante' }}
+        </span>
     </div>
 </div>

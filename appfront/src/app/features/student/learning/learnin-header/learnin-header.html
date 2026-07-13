@@ -1,32 +1,41 @@
-<header class="course-header" [style.--spine-color]="categorySpineColor">
-    <span class="course-header__spine" aria-hidden="true"></span>
+<header class="course-header">
+    <div class="course-cover">
+        <img [src]="course.coverImage" [alt]="course.title">
+        <div class="overlay"></div>
+        <div class="header-content">
+            <span class="category">{{ course.categoryName }}</span>
+            <h1>{{ course.title }}</h1>
+            <div class="teacher">
+                <div class="avatar">{{ teacherInitials }}</div>
+                <div>
+                    <small>Instructor</small>
+                    <strong>{{ course.teacherFullName }}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <img class="course-header__cover" [src]="course.coverImage" [alt]="course.title" />
-
-    <div class="course-header__body">
-        <span class="course-header__category">{{ course.categoryName }}</span>
-
-        <h1 class="course-header__title">{{ course.title }}</h1>
-
-        <div class="course-header__meta">
-            <span class="course-header__teacher">
-                <span class="course-header__avatar">{{ teacherInitials }}</span>
-                {{ course.teacherFullName }}
-            </span>
-
-            <span class="course-header__divider" aria-hidden="true"></span>
-
-            <span class="course-header__stat">
-                <span class="material-icons">menu_book</span>
-                {{ course.totalLessons }} lecciones
-            </span>
-
-            <span class="course-header__divider" aria-hidden="true"></span>
-
-            <span class="course-header__stat">
-                <span class="material-icons">schedule</span>
-                Último acceso: {{ course.lastAccess | date: 'd MMM, HH:mm' }}
-            </span>
+    <div class="course-info">
+        <div class="card">
+            <span class="material-icons">menu_book</span>
+            <div>
+                <strong>{{ course.totalLessons }}</strong>
+                <small>Lecciones</small>
+            </div>
+        </div>
+        <div class="card">
+            <span class="material-icons">trending_up</span>
+            <div>
+                <strong>{{ course.totalProgress }}%</strong>
+                <small>Progreso</small>
+            </div>
+        </div>
+        <div class="card">
+            <span class="material-icons">history</span>
+            <div>
+                <strong>{{ course.lastAccess | date:'dd MMM yyyy'}}</strong>
+                <small>{{ course.lastAccess | date:'HH:mm' }}</small>
+            </div>
         </div>
     </div>
 </header>

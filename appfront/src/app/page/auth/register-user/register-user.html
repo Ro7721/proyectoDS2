@@ -1,20 +1,16 @@
 <div class="w-full max-w-lg px-6 sm:px-10 py-10">
-
     <!-- Navbar -->
     <div class="flex justify-center md:justify-end gap-6 sm:gap-8 text-sm mb-10 text-gray-700">
         <a routerLink="/" class="hover:text-green-500 transition">
             Home
         </a>
-
         <a routerLink="/auth/login" class="hover:text-green-500 transition">
             Iniciar Sesión
         </a>
-
         <a href="#" class="text-green-500 font-semibold">
             Registro
         </a>
     </div>
-
     <!-- Title -->
     <h1 class="text-4xl sm:text-5xl font-bold text-gray-800 mb-8 text-center md:text-left">
         Registro
@@ -22,35 +18,36 @@
 
     <!-- Tabs -->
     <div class="flex gap-10 border-b border-gray-300 mb-8">
-
         <button routerLink="/login" class="pb-3 text-gray-500 hover:text-green-500 transition">
             Iniciar Sesión
         </button>
-
         <button class="pb-3 border-b-2 border-green-500 font-semibold text-gray-800">
             Registro
         </button>
-
     </div>
 
     <!-- Form -->
-    <form class="space-y-5" (ngSubmit)="register()">
-
+    <form class="space-y-5" [formGroup]="form" (ngSubmit)="sendInsertUser()">
         <div>
             <label class="block mb-1.5 text-sm font-semibold text-gray-700">
                 Nombre
             </label>
-
-            <input type="text" [(ngModel)]="firstName" name="firstName" placeholder="ejm. Pepito"
+            <input type="text" formControlName="firstName" placeholder="ejm. Pepito"
                 class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition bg-white" />
+            @if (firstName.touched && firstName.hasError('required')) {
+            <small class="text-red-500">Debe ingresar un nombre</small>
+            }
         </div>
         <div>
             <label class="block mb-1.5 text-sm font-semibold text-gray-700">
                 Apellido
             </label>
 
-            <input type="text" [(ngModel)]="lastName" name="lastName" placeholder="ejm. salas"
+            <input type="text" formControlName="lastName" placeholder="ejm. Salas"
                 class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition bg-white" />
+            @if (lastName.touched && lastName.hasError('required')) {
+            <small class="text-red-500">Debe ingresar un apellido</small>
+            }
         </div>
 
         <div>
@@ -58,17 +55,81 @@
                 Correo Electrónico
             </label>
 
-            <input type="email" [(ngModel)]="email" name="email" placeholder="ejm. [EMAIL_ADDRESS]"
+            <input type="email" formControlName="email" placeholder="ejm. pepe@gmail..."
                 class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition bg-white" />
+            @if (email.touched && email.hasError('required')) {
+            <small class="text-red-500">Debe ingresar un correo electrónico</small>
+            }
+            @if (email.touched && email.hasError('email')) {
+            <small class="text-red-500">El correo electrónico no es válido</small>
+            }
+        </div>
+        <div class="flex gap-4">
+            <div class="w-full relative role-dropdown-container">
+                <label class="block mb-1.5 text-sm font-semibold text-gray-700">Rol</label>
+
+                <!-- Dropdown Header -->
+                <div (click)="toggleRoleDropdown()"
+                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm cursor-pointer flex justify-between items-center transition bg-white"
+                    [ngClass]="{'border-green-500 ring-1 ring-green-500': isRoleDropdownOpen, 'text-gray-700': role.value, 'text-gray-400': !role.value}">
+                    <span>{{ selectedRoleText }}</span>
+                    <svg class="w-4 h-4 text-gray-400 transition-transform duration-200"
+                        [ngClass]="{'rotate-180': isRoleDropdownOpen}" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </div>
+
+                <!-- Dropdown Menu -->
+                @if (isRoleDropdownOpen) {
+                <div
+                    class="absolute z-10 w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden transition-all">
+                    @for (item of roles; track $index) {
+                    <div (click)="selectRole(item.key)"
+                        class="px-4 py-3 text-sm text-gray-700 hover:bg-green-50 hover:text-green-600 cursor-pointer transition-colors duration-150 border-b border-gray-100 last:border-none"
+                        [ngClass]="{'bg-green-50 text-green-600 font-medium': role.value === item.key}">
+                        {{ item.value }}
+                    </div>
+                    }
+                </div>
+                }
+
+                @if (role.touched && role.hasError('required')) {
+                <small class="text-red-500 block mt-1">Debe seleccionar un rol</small>
+                }
+            </div>
         </div>
 
-        <div>
-            <label class="block mb-1.5 text-sm font-semibold text-gray-700">
-                Contraseña
-            </label>
+        <div class="flex gap-4">
+            <div class="w-full">
+                <label class="block mb-1.5 text-sm font-semibold text-gray-700">
+                    Contraseña
+                </label>
 
-            <input type="password" [(ngModel)]="password" name="password" placeholder="Ingresa tu contraseña"
-                class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition bg-white" />
+                <input type="password" formControlName="password" placeholder="Ingresa tu contraseña"
+                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition bg-white" />
+                @if (password.touched && password.hasError('required')) {
+                <small class="text-red-500">Debe ingresar una contraseña</small>
+                }
+                @if (password.touched && password.hasError('minlength')) {
+                <small class="text-red-500">La contraseña debe tener al menos 8 caracteres</small>
+                }
+                @if (password.touched && password.hasError('pattern')) {
+                <small class="text-red-500">La contraseña debe tener al menos una mayúscula, una minúscula, un número y
+                    un carácter especial</small>
+                }
+            </div>
+            <div class="w-full">
+                <label class="block mb-1.5 text-sm font-semibold text-gray-700">Confirmar Contraseña</label>
+                <input type="password" formControlName="confirmPassword" placeholder="Confirma tu contraseña"
+                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition bg-white" />
+                @if (confirmPassword.touched && confirmPassword.hasError('required')) {
+                <small class="text-red-500">Debe confirmar su contraseña</small>
+                }
+                @if (confirmPassword.touched && form.hasError('mismatch')) {
+                <small class="text-red-500">Las contraseñas no coinciden</small>
+                }
+            </div>
         </div>
 
         <button type="submit"
@@ -88,5 +149,4 @@
             Registro Social
         </button>
     </div>
-
 </div>

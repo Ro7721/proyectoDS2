@@ -4,21 +4,27 @@
     <ol class="lesson-sidebar__rail">
         @for (lesson of lessons; track trackByLesson($index, lesson); let i = $index) {
         <li class="lesson-sidebar__item" [class.lesson-sidebar__item--active]="isSelected(lesson)">
-            <button type="button" class="lesson-sidebar__row" [attr.aria-current]="isSelected(lesson) ? 'true' : null"
-                (click)="select(lesson)">
-                <span class="lesson-sidebar__node">
-                    <span class="lesson-sidebar__dot">{{ i + 1 }}</span>
-                    @if (i < lessons.length - 1) { <span class="lesson-sidebar__line"></span>
-                }
-                </span>
-
-                <span class="lesson-sidebar__info">
-                    <span class="lesson-sidebar__row-top">
-                        <span class="material-icons lesson-sidebar__type-icon">{{ iconFor(lesson) }}</span>
-                        <span class="lesson-sidebar__lesson-title">{{ lesson.title }}</span>
+            <button type="button" class="lesson-sidebar__row" (click)="select(lesson)">
+                <div class="lesson-sidebar__icon">
+                    <span class="material-icons" [style.color]="progressColor(lesson)">
+                        {{statusIcon(lesson)}}
                     </span>
-                    <span class="lesson-sidebar__duration">{{ lesson.durationMinutes }} min</span>
-                </span>
+                </div>
+                <div class="lesson-sidebar__content">
+                    <div class="lesson-sidebar__header">
+                        <span class="lesson-sidebar__title">
+                            {{lesson.lessonOrder}}. {{lesson.title}}
+                        </span>
+                        <span class="lesson-sidebar__time">
+                            {{lesson.durationMinutes}} min
+                        </span>
+                    </div>
+                    <div class="lesson-sidebar__status">{{statusLabel(lesson)}}</div>
+                    <div class="lesson-sidebar__progress">
+                        <div class="lesson-sidebar__progress-value" [style.width.%]="lesson.watchedPercentage"></div>
+                    </div>
+                </div>
+
             </button>
         </li>
         }

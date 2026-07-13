@@ -27,7 +27,7 @@ export class DashboardRedirect implements OnInit {
 
       case 'ROLE_STUDENT':
       default:
-        this.router.navigate(['/dashboard/learning-estudent']);
+        this.router.navigate(['/dashboard/my-courses']);
         break;
     }
   }

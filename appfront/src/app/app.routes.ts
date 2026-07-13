@@ -14,7 +14,6 @@ import { LessonGetall } from './features/teacher/lesson/lesson-getall/lesson-get
 import { Catalog } from './page/catalogs/catalog/catalog';
 import { CourseDetail } from './page/catalogs/course-detail/course-detail';
 import { MyCourses } from './features/student/course/my-courses/my-courses';
-import { LearningEstudent } from './features/student/learning-estudent/learning-estudent';
 import { LearningCourse } from './features/student/course/learning-course/learning-course';
 
 export const routes: Routes = [
@@ -37,7 +36,6 @@ export const routes: Routes = [
             { path: 'overview-teacher', component: OverviewTeacher, canActivate: [RoleGuard], data: { roles: ['ROLE_TEACHER'] } },
             { path: 'lesson-getall', component: LessonGetall, canActivate: [RoleGuard], data: { roles: ['ROLE_TEACHER'] } },
 
-            { path: 'learning-estudent', component: LearningEstudent, canActivate: [RoleGuard], data: { roles: ['ROLE_STUDENT'] } },
             { path: 'learning/course/:idCourse', component: LearningCourse, canActivate: [RoleGuard], data: { roles: ['ROLE_STUDENT'] } },
             { path: 'my-courses', component: MyCourses, canActivate: [RoleGuard], data: { roles: ['ROLE_STUDENT'] } }
         ]

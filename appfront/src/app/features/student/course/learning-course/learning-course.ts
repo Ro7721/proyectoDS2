@@ -58,13 +58,10 @@ export class LearningCourse implements OnInit {
     this.selectedLesson = data?.lessons?.[0];
   }
 
-  /** Se conecta al @Output lessonSelected de lesson-sidebar */
   onLessonSelected(lesson: LessonContentResponse): void {
     this.selectedLesson = lesson;
     this.cdr.markForCheck();
   }
-
-  /** Se conecta al @Output de progreso de lesson-player */
   onLessonProgress(event: LessonProgressEvent): void {
     this.api
       .invoke(apiSaveProgress, { body: event })

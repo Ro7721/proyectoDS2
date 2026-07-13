@@ -1,34 +1,63 @@
 @if (lesson) {
-  <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
-    @if (lesson.type === 'VIDEO') {
-      <div class="aspect-video bg-black relative">
-        <video 
-          #videoPlayer
-          controls 
-          class="w-full h-full object-contain"
-          [src]="lesson.contentUrl"
-          (timeupdate)="onTimeUpdate($event)"
-          (ended)="onEnded($event)">
-        </video>
+<div class="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+  @if (lesson.type === 'VIDEO') {
+  <div class="aspect-video bg-black relative">
+    <div class="absolute inset-x-0 top-0 bg-gradient-to-b from-black/70 to-transparent p-4">
+      <div class="flex items-center justify-between text-white">
+        <div>
+          <p class="text-xs uppercase tracking-widest opacity-80">
+            Lección {{ lesson.lessonOrder }}
+          </p>
+          <h2 class="text-xl font-bold">
+            {{ lesson.title }}
+          </h2>
+        </div>
+        <span class="rounded-full bg-black/40 px-3 py-1 text-sm">
+          {{ lesson.durationMinutes }} min
+        </span>
       </div>
-    } @else {
-      <div class="aspect-video bg-gray-100 flex items-center justify-center flex-col text-gray-500">
-        <span class="material-icons text-6xl mb-4">article</span>
-        <p>Este contenido es de tipo {{ lesson.type }} y no requiere reproductor de video.</p>
-        @if (lesson.contentUrl) {
-          <a [href]="lesson.contentUrl" target="_blank" class="mt-4 px-6 py-2 bg-[#E8592B] text-white rounded-lg hover:bg-[#c2410c] transition">Abrir contenido</a>
-        }
-      </div>
-    }
-
-    <div class="p-6">
-      <h2 class="text-2xl font-bold text-gray-900 mb-2">{{ lesson.title }}</h2>
-      <p class="text-gray-600 leading-relaxed">{{ lesson.description }}</p>
     </div>
+    <video #videoPlayer controls class="w-full aspect-video bg-black rounded-t-2xl object-contain"
+      [src]="lesson.contentUrl" (loadedmetadata)="onLoadedMetadata(videoPlayer)" (timeupdate)="onTimeUpdate($event)"
+      (pause)="onPause()" (ended)="onEnded()">
+    </video>
   </div>
+  } @else {
+  <div class="aspect-video bg-gray-100 flex items-center justify-center flex-col text-gray-500">
+    <span class="material-icons text-6xl mb-4">article</span>
+    <p>Este contenido es de tipo {{ lesson.type }} y no requiere reproductor de video.</p>
+    @if (lesson.contentUrl) {
+    <a [href]="lesson.contentUrl" target="_blank"
+      class="mt-4 px-6 py-2 bg-[#E8592B] text-white rounded-lg hover:bg-[#c2410c] transition">Abrir contenido</a>
+    }
+  </div>
+  }
+
+  <div class="border-t p-6 space-y-4">
+    <div class="flex items-center justify-between">
+      <div>
+        <h2 class="text-2xl font-bold">
+          {{ lesson.title }}
+        </h2>
+        <p class="text-gray-500">
+          {{ lesson.durationMinutes }} minutos
+        </p>
+      </div>
+      @if (lesson.completed) {
+      <span class="rounded-full bg-green-100 px-4 py-2 text-green-700 font-semibold">
+        ✓ Completada
+      </span>
+      }
+    </div>
+
+    <p class="leading-7 text-gray-600">
+      {{ lesson.description }}
+    </p>
+  </div>
+</div>
 } @else {
-  <div class="bg-white rounded-2xl border border-gray-200 p-12 text-center text-gray-500 shadow-sm">
-    <span class="material-icons text-4xl mb-2">video_library</span>
-    <p>Selecciona una lección para comenzar</p>
-  </div>
+<div class="bg-white rounded-2xl border border-gray-200 p-12 text-center text-gray-500 shadow-sm">
+  <span class="material-icons text-4xl mb-2">video_library</span>
+  <p>Selecciona una lección para comenzar</p>
+</div>
 }

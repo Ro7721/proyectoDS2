@@ -99,7 +99,7 @@ export class Login implements OnInit {
           break;
         case 'ROLE_STUDENT':
           await this.router.navigate([
-            '/dashboard/learning-estudent'
+            '/dashboard/my-courses'
           ]);
           break;
 

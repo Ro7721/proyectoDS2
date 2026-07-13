@@ -46,7 +46,8 @@
                     <div *ngIf="profileOpen"
                         class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50 animate-fadeIn">
                         <div class="px-4 py-3 border-b border-gray-100">
-                            <p class="text-sm font-semibold text-gray-800">{{ authService.user?.firstName }} {{ authService.user?.surName }}</p>
+                            <p class="text-sm font-semibold text-gray-800">{{ authService.user?.firstName }} {{
+                                authService.user?.surName }}</p>
                             <p class="text-xs text-gray-500 truncate">{{ authService.user?.email }}</p>
                         </div>
                         <button (click)="goToMyCourses()"
@@ -81,7 +82,8 @@
                 <a (click)="toggleMenu()" class="block py-2 text-gray-700">Precios</a>
 
                 <ng-container *ngIf="!authService.isAuthenticated()">
-                    <a routerLink="/auth/login" (click)="toggleMenu()" class="block py-2 text-gray-700">Iniciar Sesión</a>
+                    <a routerLink="/auth/login" (click)="toggleMenu()" class="block py-2 text-gray-700">Iniciar
+                        Sesión</a>
                     <a routerLink="/auth/register" (click)="toggleMenu()"
                         class="block w-full text-center bg-[#3A9E5F] text-white py-3 rounded-xl mt-4">Registrarse</a>
                 </ng-container>
@@ -89,8 +91,8 @@
                 <ng-container *ngIf="authService.isAuthenticated()">
                     <button (click)="goToMyCourses(); toggleMenu()"
                         class="block w-full text-left py-2 text-gray-700">Mis Cursos</button>
-                    <button (click)="logout(); toggleMenu()"
-                        class="block w-full text-left py-2 text-red-600">Cerrar Sesión</button>
+                    <button (click)="logout(); toggleMenu()" class="block w-full text-left py-2 text-red-600">Cerrar
+                        Sesión</button>
                 </ng-container>
             </nav>
         </div>

@@ -16,6 +16,10 @@ export interface LessonContentResponse {
     lessonOrder: number;
     isFree: boolean;
     files: LessonFileResponse[];
+    completed: boolean;
+    watchedPercentage: number;
+    lastPositionSeconds: number;
+    completedAt: string;
 }
 
 export interface CourseContentResponse {

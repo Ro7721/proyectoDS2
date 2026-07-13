@@ -36,4 +36,31 @@ export class LessonSidebar {
   trackByLesson(_index: number, lesson: LessonContentResponse): string {
     return lesson.idLesson;
   }
+  progressColor(lesson: LessonContentResponse): string {
+
+    if (lesson.completed) return '#16a34a';
+    if (lesson.watchedPercentage > 0) return '#2563eb';
+    return '#d1d5db';
+  }
+
+  statusIcon(lesson: LessonContentResponse): string {
+    if (lesson.completed) {
+      return 'check_circle';
+    }
+    if (lesson.watchedPercentage > 0) {
+      return 'play_circle';
+    }
+    return 'radio_button_unchecked';
+
+  }
+
+  statusLabel(lesson: LessonContentResponse): string {
+    if (lesson.completed) {
+      return 'Completada';
+    }
+    if (lesson.watchedPercentage > 0) {
+      return `${lesson.watchedPercentage}% visto`;
+    }
+    return 'Sin iniciar';
+  }
 }

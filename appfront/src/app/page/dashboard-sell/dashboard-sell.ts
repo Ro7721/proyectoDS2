@@ -27,14 +27,11 @@ export class DashboardSell implements OnInit {
   }
 
   studentMenu: MenuItem[] = [
-    { label: 'Panel Principal', icon: 'pi pi-th-large', route: '/dashboard/learning-estudent' },
-    { label: 'Aprendiendo', icon: 'pi pi-book', route: '/dashboard/learning/course/:idCourse' },
+    { label: 'Panel Principal', icon: 'pi pi-th-large', route: '/dashboard/my-courses' },
     {
       label: 'Mi aprendizaje', icon: 'pi pi-book', items: [
-        { label: 'Mis cursos', icon: 'pi pi-book', route: '/dashboard/my-courses' },
         { label: 'Mi progreso', icon: 'pi pi-chart-line', route: '#' },
         { label: 'Certificados', icon: 'pi pi-trophy', route: '#' },
-        { label: 'Wishlist', icon: 'pi pi-heart', route: '#' },
       ]
     },
     { label: 'Mi perfil', icon: 'pi pi-user', route: '#' },

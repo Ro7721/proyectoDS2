@@ -6,7 +6,6 @@
     --accent-soft: #fde7db;
     --line: #e8e6e2;
     --muted: #6e7177;
-
     display: block;
     font-family: 'Inter', system-ui, sans-serif;
 }
@@ -16,6 +15,8 @@
     border: 1px solid var(--line);
     border-radius: 20px;
     padding: 18px;
+    max-height: calc(100vh - 180px);
+    overflow: auto;
 }
 
 .lesson-sidebar__title {
@@ -23,7 +24,7 @@
     font-family: 'Sora', 'Inter', sans-serif;
     font-size: 13px;
     font-weight: 700;
-    letter-spacing: 0.03em;
+    letter-spacing: .03em;
     text-transform: uppercase;
     color: var(--muted);
 }
@@ -38,7 +39,7 @@
     all: unset;
     display: flex;
     align-items: flex-start;
-    gap: 12px;
+    gap: 14px;
     width: 100%;
     padding: 8px;
     border-radius: 12px;
@@ -133,4 +134,64 @@
 .lesson-sidebar__duration {
     font-size: 12px;
     color: var(--muted);
+}
+
+.lesson-sidebar__icon {
+    margin-top: 2px;
+}
+
+.lesson-sidebar__content {
+    flex: 1;
+}
+
+.lesson-sidebar__header {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.lesson-sidebar__title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.lesson-sidebar__time {
+    color: #6b7280;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.lesson-sidebar__status {
+    margin-top: 4px;
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.lesson-sidebar__progress {
+    margin-top: 8px;
+    height: 6px;
+    border-radius: 10px;
+    background: #e5e7eb;
+    overflow: hidden;
+}
+
+.lesson-sidebar__progress-value {
+    height: 100%;
+    background: #4dd65d;
+    transition: .3s;
+}
+
+.lesson-sidebar__item--active {
+    background: #fff7ed;
+    border-left: 4px solid #ea580c;
+}
+
+.lesson-sidebar__item {
+    border-radius: 12px;
+    transition: .2s;
+}
+
+.lesson-sidebar__item:hover {
+    background: #fafafa;
 }
