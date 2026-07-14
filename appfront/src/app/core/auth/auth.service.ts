@@ -14,7 +14,6 @@ export class AuthService {
   private router = inject(Router);
   private plataformId = inject(PLATFORM_ID);
   private isBrowser = () => isPlatformBrowser(this.plataformId);
-
   constructor(private api: Api) { }
 
   async login(email: string, password: string): Promise<LoginResponse> {
@@ -123,6 +122,19 @@ export class AuthService {
   }
   isTeacher(): boolean {
     return this.currentRole === "ROLE_TEACHER";
+  }
+
+  getRoleHomeUrl(role: AppRole | null = this.currentRole): string[] {
+    switch (role) {
+      case 'ROLE_TEACHER':
+        return ['/dashboard/overview-teacher'];
+      case 'ROLE_ADMIN':
+        return ['/dashboard/admin'];
+      case 'ROLE_STUDENT':
+        return ['/dashboard/my-courses'];
+      default:
+        return ['/auth/login'];
+    }
   }
 
   getTokenType(): string {

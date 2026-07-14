@@ -57,3 +57,7 @@ export type { ApiCourseContent$Params as ApiCourseContent$Params } from './fn/le
 export { apiCourseContent as apiCourseContent } from './fn/learning/api-course-content';
 export type { ApiSaveProgress$Params as ApiSaveProgress$Params } from './fn/learning/api-save-progress';
 export { apiSaveProgress as apiSaveProgress } from './fn/learning/api-save-progress';
+export type { ApiTeacherenrollments$Params as ApiTeacherenrollments$Params } from './fn/teacher-enrollment/api-teacherenrollments';
+export { apiTeacherenrollments as apiTeacherenrollments } from './fn/teacher-enrollment/api-teacherenrollments';
+export type { ApiTeacherenrollmentsbycourse$Params as ApiTeacherenrollmentsbycourse$Params } from './fn/teacher-enrollment/api-teacherenrollmentsbycourse';
+export { apiTeacherenrollmentsbycourse as apiTeacherenrollmentsbycourse } from './fn/teacher-enrollment/api-teacherenrollmentsbycourse';

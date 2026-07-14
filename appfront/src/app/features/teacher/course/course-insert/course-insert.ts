@@ -88,8 +88,6 @@ export class CourseInsert implements OnInit {
   loading = false;
   courseCreated = false;
   createdCourseId: string | null = null;
-  lessonOrderCounter = 0;
-
   // ── Constructor ───────────────────────────────────────────────────────────
   constructor(
     private fb: FormBuilder,

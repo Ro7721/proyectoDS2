@@ -48,12 +48,7 @@ export class DashboardSell implements OnInit {
         { label: 'Lecciones', icon: 'pi pi-list', route: '/dashboard/lesson-getall' },
       ]
     },
-    {
-      label: 'Estudiantes', icon: 'pi pi-users', items: [
-        { label: 'Estudiantes', icon: 'pi pi-user', route: '#' },
-        { label: 'Inscripciones', icon: 'pi pi-ticket', route: '#' },
-      ]
-    },
+    { label: 'Inscripciones', icon: 'pi pi-ticket', route: '/dashboard/students-enrollments' },
     {
       label: 'Analíticas', icon: 'pi pi-chart-line', items: [
         { label: 'Analíticas', icon: 'pi pi-chart-line', route: '#' },

@@ -12,23 +12,6 @@ export class DashboardRedirect implements OnInit {
   private router = inject(Router);
 
   ngOnInit(): void {
-
-    const role = this.authService.currentRole;
-
-    switch (role) {
-
-      case 'ROLE_TEACHER':
-        this.router.navigate(['/dashboard/overview-teacher']);
-        break;
-
-      case 'ROLE_ADMIN':
-        this.router.navigate(['/dashboard/admin']);
-        break;
-
-      case 'ROLE_STUDENT':
-      default:
-        this.router.navigate(['/dashboard/my-courses']);
-        break;
-    }
+    this.router.navigate(this.authService.getRoleHomeUrl());
   }
 }

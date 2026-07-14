@@ -1,0 +1,122 @@
+@if(enrollment){
+
+<div class="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+
+    <div class="bg-[#E8592B] p-6 text-white">
+
+        <h2 class="text-2xl font-bold">
+            {{enrollment.studentFullName}}
+        </h2>
+
+        <p class="opacity-90">
+            {{enrollment.studentEmail}}
+        </p>
+
+    </div>
+
+    <div class="grid gap-6 p-6 md:grid-cols-2">
+
+        <div class="space-y-5">
+
+            <div>
+                <p class="text-xs uppercase text-gray-500">
+                    Curso
+                </p>
+                <p class="font-semibold text-gray-900">
+                    {{enrollment.courseTitle}}
+                </p>
+            </div>
+
+            <div>
+                <p class="text-xs uppercase text-gray-500">
+                    Categoría
+                </p>
+                <!--<p class="font-semibold text-gray-900">
+                    {{enrollment.categoryName}}
+                </p>-->
+            </div>
+
+            <div>
+                <p class="text-xs uppercase text-gray-500">
+                    Fecha de inscripción
+                </p>
+                <p class="font-semibold">
+                    {{enrollment.enrollmentDate | date:'dd/MM/yyyy HH:mm'}}
+                </p>
+            </div>
+
+            <div>
+                <p class="text-xs uppercase text-gray-500">
+                    Último acceso
+                </p>
+                <p class="font-semibold">
+                    {{enrollment.lastAccess | date:'dd/MM/yyyy HH:mm'}}
+                </p>
+            </div>
+
+        </div>
+
+        <div class="space-y-5">
+
+            <div>
+
+                <div class="mb-2 flex justify-between">
+
+                    <span class="font-medium">
+                        Progreso del curso
+                    </span>
+
+                    <span class="font-bold">
+                        {{enrollment.totalProgress}}%
+                    </span>
+
+                </div>
+
+                <div class="h-3 rounded-full bg-gray-200 overflow-hidden">
+
+                    <div class="h-full rounded-full bg-[#E8592B] transition-all duration-500"
+                        [style.width.%]="enrollment.totalProgress">
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+
+                <div class="rounded-xl bg-gray-50 p-4">
+
+                    <p class="text-xs uppercase text-gray-500">
+                        Estado
+                    </p>
+
+                    <p class="mt-1 font-bold" [class.text-green-600]="enrollment.completed"
+                        [class.text-[#E8592B]]="!enrollment.completed">
+
+                        {{enrollment.completed?'Completado':'En progreso'}}
+
+                    </p>
+
+                </div>
+
+                <div class="rounded-xl bg-gray-50 p-4">
+
+                    <p class="text-xs uppercase text-gray-500">
+                        Avance
+                    </p>
+
+                    <p class="mt-1 text-2xl font-bold text-gray-900">
+                        {{enrollment.totalProgress}}%
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+}

@@ -71,7 +71,7 @@ export class Login implements OnInit {
 
     try {
 
-      const response = await this.authService.login(
+      await this.authService.login(
         this.email.value,
         this.password.value
       );
@@ -83,27 +83,7 @@ export class Login implements OnInit {
         return;
       }
 
-      const user = response.user;
-      switch (user.role) {
-
-        case 'ROLE_TEACHER':
-          await this.router.navigate([
-            '/dashboard/overview-teacher'
-          ]);
-          break;
-
-        case 'ROLE_ADMIN':
-          await this.router.navigate([
-            '/dashboard/admin'
-          ]);
-          break;
-        case 'ROLE_STUDENT':
-          await this.router.navigate([
-            '/dashboard/my-courses'
-          ]);
-          break;
-
-      }
+      await this.router.navigate(this.authService.getRoleHomeUrl());
 
     } catch (error) {
 

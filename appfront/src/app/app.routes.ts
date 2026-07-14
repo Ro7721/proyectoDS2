@@ -15,13 +15,15 @@ import { Catalog } from './page/catalogs/catalog/catalog';
 import { CourseDetail } from './page/catalogs/course-detail/course-detail';
 import { MyCourses } from './features/student/course/my-courses/my-courses';
 import { LearningCourse } from './features/student/course/learning-course/learning-course';
+import { GuestGuard } from './core/guards/guest.guard';
+import { TeacherEnrollments } from './features/teacher/student/teacher-enrollments/teacher-enrollments';
 
 export const routes: Routes = [
     { path: '', component: Home },
     { path: 'catalog', component: Catalog },
     { path: 'catalog/course/:id', component: CourseDetail },
     {
-        path: 'auth', component: AuthLayout, children: [
+        path: 'auth', component: AuthLayout, canActivate: [GuestGuard], children: [
             { path: '', redirectTo: 'login', pathMatch: 'full' },
             { path: 'login', component: Login },
             { path: 'register', component: RegisterUser }
@@ -35,6 +37,7 @@ export const routes: Routes = [
             { path: 'course-getall', component: CourseGetall, canActivate: [RoleGuard], data: { roles: ['ROLE_TEACHER'] } },
             { path: 'overview-teacher', component: OverviewTeacher, canActivate: [RoleGuard], data: { roles: ['ROLE_TEACHER'] } },
             { path: 'lesson-getall', component: LessonGetall, canActivate: [RoleGuard], data: { roles: ['ROLE_TEACHER'] } },
+            { path: 'students-enrollments', component: TeacherEnrollments, canActivate: [RoleGuard], data: { roles: ['ROLE_TEACHER'] } },
 
             { path: 'learning/course/:idCourse', component: LearningCourse, canActivate: [RoleGuard], data: { roles: ['ROLE_STUDENT'] } },
             { path: 'my-courses', component: MyCourses, canActivate: [RoleGuard], data: { roles: ['ROLE_STUDENT'] } }
