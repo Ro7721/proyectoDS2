@@ -1,32 +1,126 @@
-<nav class="lesson-sidebar" aria-label="Contenido del curso">
-    <h2 class="lesson-sidebar__title">Contenido del curso</h2>
+<nav class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm flex flex-col" style="max-height: calc(100vh - 180px)">
 
-    <ol class="lesson-sidebar__rail">
-        @for (lesson of lessons; track trackByLesson($index, lesson); let i = $index) {
-        <li class="lesson-sidebar__item" [class.lesson-sidebar__item--active]="isSelected(lesson)">
-            <button type="button" class="lesson-sidebar__row" (click)="select(lesson)">
-                <div class="lesson-sidebar__icon">
-                    <span class="material-icons" [style.color]="progressColor(lesson)">
-                        {{statusIcon(lesson)}}
-                    </span>
-                </div>
-                <div class="lesson-sidebar__content">
-                    <div class="lesson-sidebar__header">
-                        <span class="lesson-sidebar__title">
-                            {{lesson.lessonOrder}}. {{lesson.title}}
-                        </span>
-                        <span class="lesson-sidebar__time">
-                            {{lesson.durationMinutes}} min
-                        </span>
-                    </div>
-                    <div class="lesson-sidebar__status">{{statusLabel(lesson)}}</div>
-                    <div class="lesson-sidebar__progress">
-                        <div class="lesson-sidebar__progress-value" [style.width.%]="lesson.watchedPercentage"></div>
-                    </div>
-                </div>
+  <!-- Header -->
+  <div class="px-4 py-4 border-b border-gray-100 shrink-0">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-xs font-bold uppercase tracking-widest text-gray-500">Contenido del curso</h2>
+      <span class="text-xs font-semibold bg-emerald-50 text-emerald-700 rounded-full px-2.5 py-0.5">
+        {{ completedCount }}/{{ lessons.length }}
+      </span>
+    </div>
 
-            </button>
-        </li>
-        }
-    </ol>
+    <!-- Search -->
+    <div class="relative">
+      <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">search</span>
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        (input)="onSearch()"
+        placeholder="Buscar lección..."
+        class="w-full rounded-xl border border-gray-200 bg-gray-50 py-2 pl-9 pr-3 text-sm text-gray-700 placeholder-gray-400 outline-none focus:border-[#E8592B] focus:ring-1 focus:ring-[#E8592B]/30 focus:bg-white transition-all"
+      />
+    </div>
+  </div>
+
+  <!-- Lesson list -->
+  <ol class="flex-1 overflow-y-auto py-2 px-2 space-y-0.5" aria-label="Lecciones del curso">
+
+    @if (filteredLessons.length === 0) {
+    <li class="flex flex-col items-center justify-center py-10 text-gray-400 gap-2">
+      <span class="material-icons text-3xl">search_off</span>
+      <p class="text-sm">Sin resultados</p>
+    </li>
+    }
+
+    @for (lesson of filteredLessons; track lesson.idLesson; let i = $index) {
+    <li>
+      <button
+        type="button"
+        (click)="select(lesson)"
+        class="w-full text-left flex items-start gap-3 px-3 py-3 rounded-xl transition-all duration-150"
+        [class.bg-orange-50]="isSelected(lesson)"
+        [class.border-l-4]="isSelected(lesson)"
+        [class.border-[#E8592B]]="isSelected(lesson)"
+        [class.pl-2]="isSelected(lesson)"
+        [class.hover:bg-gray-50]="!isSelected(lesson)"
+      >
+        <!-- Status icon -->
+        <div class="shrink-0 mt-0.5">
+          @if (lesson.completed) {
+          <div class="w-7 h-7 rounded-full bg-emerald-100 flex items-center justify-center">
+            <span class="material-icons text-emerald-600 text-[16px]">check</span>
+          </div>
+          } @else if (lesson.watchedPercentage > 0) {
+          <div class="w-7 h-7 rounded-full bg-blue-50 border-2 border-blue-400 flex items-center justify-center">
+            <span class="material-icons text-blue-500 text-[14px]">play_arrow</span>
+          </div>
+          } @else {
+          <div class="w-7 h-7 rounded-full border-2 flex items-center justify-center"
+               [class.border-[#E8592B]]="isSelected(lesson)"
+               [class.border-gray-300]="!isSelected(lesson)">
+            <span class="text-[11px] font-bold"
+                  [class.text-[#E8592B]]="isSelected(lesson)"
+                  [class.text-gray-400]="!isSelected(lesson)">
+              {{ lesson.lessonOrder }}
+            </span>
+          </div>
+          }
+        </div>
+
+        <!-- Info -->
+        <div class="flex-1 min-w-0">
+          <div class="flex items-start justify-between gap-2">
+            <span class="text-sm font-semibold leading-snug"
+                  [class.text-[#E8592B]]="isSelected(lesson)"
+                  [class.text-gray-800]="!isSelected(lesson) && !lesson.completed"
+                  [class.text-emerald-700]="lesson.completed">
+              {{ lesson.lessonOrder }}. {{ lesson.title }}
+            </span>
+            <!-- Type icon -->
+            <span class="material-icons text-[14px] shrink-0 mt-0.5"
+                  [class.text-gray-400]="!isSelected(lesson)"
+                  [class.text-[#E8592B]]="isSelected(lesson)">
+              {{ typeIcon(lesson) }}
+            </span>
+          </div>
+
+          <div class="flex items-center gap-2 mt-1">
+            <span class="text-xs text-gray-400">{{ lesson.durationMinutes }} min</span>
+            @if (lesson.isFree) {
+            <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 rounded-full px-1.5 py-0.5">Gratis</span>
+            }
+            @if (lesson.completed) {
+            <span class="text-[10px] font-semibold text-emerald-600">✓ Completada</span>
+            } @else if (lesson.watchedPercentage > 0) {
+            <span class="text-[10px] text-blue-500 font-medium">{{ lesson.watchedPercentage }}% visto</span>
+            }
+          </div>
+
+          <!-- Progress bar -->
+          @if (!lesson.completed && lesson.watchedPercentage > 0) {
+          <div class="mt-2 h-1 bg-gray-200 rounded-full overflow-hidden">
+            <div class="h-full bg-[#E8592B] rounded-full transition-all duration-300" [style.width.%]="lesson.watchedPercentage"></div>
+          </div>
+          }
+        </div>
+
+      </button>
+    </li>
+    }
+
+  </ol>
+
+  <!-- Footer summary -->
+  <div class="border-t border-gray-100 px-4 py-3 shrink-0 bg-gray-50">
+    <div class="flex items-center justify-between text-xs text-gray-500">
+      <span>{{ completedCount }} completadas</span>
+      <span>{{ pendingCount }} pendientes</span>
+    </div>
+    <div class="mt-1.5 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+      <div class="h-full bg-emerald-500 rounded-full transition-all duration-500"
+           [style.width.%]="overallProgress">
+      </div>
+    </div>
+  </div>
+
 </nav>

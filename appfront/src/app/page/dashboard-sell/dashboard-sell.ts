@@ -34,7 +34,7 @@ export class DashboardSell implements OnInit {
         { label: 'Certificados', icon: 'pi pi-trophy', route: '#' },
       ]
     },
-    { label: 'Mi perfil', icon: 'pi pi-user', route: '#' },
+    { label: 'Mi perfil', icon: 'pi pi-user', route: '/dashboard/profile' },
     { label: 'Configuracion', icon: 'pi pi-cog', route: '#' },
     { label: 'Ayuda', icon: 'pi pi-question-circle', route: '#' }
   ];

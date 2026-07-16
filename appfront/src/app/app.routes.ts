@@ -17,6 +17,7 @@ import { MyCourses } from './features/student/course/my-courses/my-courses';
 import { LearningCourse } from './features/student/course/learning-course/learning-course';
 import { GuestGuard } from './core/guards/guest.guard';
 import { TeacherEnrollments } from './features/teacher/student/teacher-enrollments/teacher-enrollments';
+import { StudentProfile } from './features/student/profile/student-profile/student-profile';
 
 export const routes: Routes = [
     { path: '', component: Home },
@@ -40,7 +41,8 @@ export const routes: Routes = [
             { path: 'students-enrollments', component: TeacherEnrollments, canActivate: [RoleGuard], data: { roles: ['ROLE_TEACHER'] } },
 
             { path: 'learning/course/:idCourse', component: LearningCourse, canActivate: [RoleGuard], data: { roles: ['ROLE_STUDENT'] } },
-            { path: 'my-courses', component: MyCourses, canActivate: [RoleGuard], data: { roles: ['ROLE_STUDENT'] } }
+            { path: 'my-courses', component: MyCourses, canActivate: [RoleGuard], data: { roles: ['ROLE_STUDENT'] } },
+            { path: 'profile', component: StudentProfile, canActivate: [AuthGuard] }
         ]
     }
 ];

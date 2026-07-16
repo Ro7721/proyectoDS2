@@ -1,14 +1,14 @@
-<div class="min-h-screen flex items-center justify-center p-0 lg:p-3 xl:p-2 bg-[#9FB3A8]">
-    <div class="w-full max-w-[1650px] bg-white lg:rounded-[28px] shadow-2xl overflow-hidden min-h-screen lg:min-h-0">
+<div class="min-h-screen bg-white flex flex-col">
 
-        <!-- NAVBAR -->
-        <header class="px-6 lg:px-16 py-5 flex items-center justify-between relative z-50">
+    <header
+        class="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-gray-100 transition-all duration-300">
+        <div class="max-w-[1650px] mx-auto px-6 lg:px-16 py-5 flex items-center justify-between">
+
             <div class="flex items-center gap-2">
                 <mat-icon style="color: #3A9E5F">home</mat-icon>
                 <span class="text-[22px] font-bold text-[#3A9E5F] tracking-tight">EduLearn</span>
             </div>
 
-            <!-- Desktop Menu -->
             <nav class="hidden lg:flex items-center gap-10 absolute left-1/2 -translate-x-1/2">
                 <a routerLink="/catalog" class="text-[15px] text-gray-700 hover:text-[#3A9E5F] transition">Cursos</a>
                 <a class="text-[15px] text-gray-700 hover:text-[#3A9E5F] transition cursor-pointer">Profesores</a>
@@ -17,19 +17,18 @@
             </nav>
 
             <div class="flex items-center gap-3">
-                <!-- No logueado: mostrar login/register -->
+
                 <ng-container *ngIf="!authService.isAuthenticated()">
                     <a routerLink="/auth/login"
                         class="hidden lg:inline-block text-[15px] text-gray-700 hover:text-[#3A9E5F] transition">
                         Iniciar Sesión
                     </a>
                     <a routerLink="/auth/register"
-                        class="hidden sm:block bg-[#3A9E5F] hover:bg-[#2e7d4a] text-white px-6 py-2.5 rounded-full text-[15px] font-medium transition shadow-sm">
+                        class="hidden sm:block bg-[#3A9E5F] hover:bg-[#2e7d4a] text-white px-6 py-2.5 rounded-full text-[15px] font-medium transition shadow-sm hover:shadow-md hover:-translate-y-[1px] active:translate-y-0">
                         Registrarse
                     </a>
                 </ng-container>
 
-                <!-- Logueado: avatar con dropdown -->
                 <div *ngIf="authService.isAuthenticated()" class="relative profile-dropdown hidden sm:block">
                     <button (click)="toggleProfile()"
                         class="flex items-center gap-2 px-3 py-2 rounded-full hover:bg-gray-100 transition">
@@ -46,8 +45,9 @@
                     <div *ngIf="profileOpen"
                         class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50 animate-fadeIn">
                         <div class="px-4 py-3 border-b border-gray-100">
-                            <p class="text-sm font-semibold text-gray-800">{{ authService.user?.firstName }} {{
-                                authService.user?.surName }}</p>
+                            <p class="text-sm font-semibold text-gray-800">
+                                {{ authService.user?.firstName }} {{ authService.user?.surName }}
+                            </p>
                             <p class="text-xs text-gray-500 truncate">{{ authService.user?.email }}</p>
                         </div>
                         <button (click)="goToMyCourses()"
@@ -57,7 +57,7 @@
                         </button>
                         <div class="border-t border-gray-100 mt-1 pt-1">
                             <button (click)="logout()"
-                                class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition">
+                                class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-650 hover:bg-red-50 transition">
                                 <mat-icon class="text-red-500 text-[20px]">logout</mat-icon>
                                 Cerrar Sesión
                             </button>
@@ -65,41 +65,50 @@
                     </div>
                 </div>
 
-                <!-- Hamburger -->
-                <button (click)="toggleMenu()" class="lg:hidden p-2 text-gray-700">
+                <button (click)="toggleMenu()" class="lg:hidden p-2 text-gray-700 hover:bg-gray-50 rounded-xl">
                     <mat-icon *ngIf="!isMenuOpen">menu</mat-icon>
                     <mat-icon *ngIf="isMenuOpen">close</mat-icon>
                 </button>
             </div>
-        </header>
+        </div>
+    </header>
 
-        <!-- Mobile Menu -->
-        <div *ngIf="isMenuOpen"
-            class="lg:hidden absolute top-[72px] left-0 right-0 bg-white border-t shadow-lg z-40 mx-0 lg:mx-4">
-            <nav class="px-6 py-4 space-y-4">
-                <a routerLink="/catalog" (click)="toggleMenu()" class="block py-2 text-gray-700">Cursos</a>
-                <a (click)="toggleMenu()" class="block py-2 text-gray-700">Docentes</a>
-                <a (click)="toggleMenu()" class="block py-2 text-gray-700">Precios</a>
+    <div *ngIf="isMenuOpen"
+        class="lg:hidden fixed inset-x-0 top-[72px] bg-white border-b border-gray-100 shadow-lg z-40 animate-slideDown">
+        <nav class="px-6 py-4 space-y-4">
+            <a routerLink="/catalog" (click)="toggleMenu()" class="block py-2 text-gray-700">Cursos</a>
+            <a (click)="toggleMenu()" class="block py-2 text-gray-700">Docentes</a>
+            <a (click)="toggleMenu()" class="block py-2 text-gray-700">Precios</a>
 
-                <ng-container *ngIf="!authService.isAuthenticated()">
-                    <a routerLink="/auth/login" (click)="toggleMenu()" class="block py-2 text-gray-700">Iniciar
-                        Sesión</a>
-                    <a routerLink="/auth/register" (click)="toggleMenu()"
-                        class="block w-full text-center bg-[#3A9E5F] text-white py-3 rounded-xl mt-4">Registrarse</a>
-                </ng-container>
+            <ng-container *ngIf="!authService.isAuthenticated()">
+                <div class="h-[1px] bg-gray-100 my-2"></div>
+                <a routerLink="/auth/login" (click)="toggleMenu()" class="block py-2 text-gray-700">Iniciar Sesión</a>
+                <a routerLink="/auth/register" (click)="toggleMenu()"
+                    class="block w-full text-center bg-[#3A9E5F] text-white py-3 rounded-xl mt-4 font-medium">Registrarse</a>
+            </ng-container>
 
-                <ng-container *ngIf="authService.isAuthenticated()">
-                    <button (click)="goToMyCourses(); toggleMenu()"
-                        class="block w-full text-left py-2 text-gray-700">Mis Cursos</button>
-                    <button (click)="logout(); toggleMenu()" class="block w-full text-left py-2 text-red-600">Cerrar
-                        Sesión</button>
-                </ng-container>
-            </nav>
+            <ng-container *ngIf="authService.isAuthenticated()">
+                <div class="h-[1px] bg-gray-100 my-2"></div>
+                <button (click)="goToMyCourses(); toggleMenu()" class="block w-full text-left py-2 text-gray-700">Mis
+                    Cursos</button>
+                <button (click)="logout(); toggleMenu()" class="block w-full text-left py-2 text-red-600">Cerrar
+                    Sesión</button>
+            </ng-container>
+        </nav>
+    </div>
+
+    <section
+        class="relative bg-gradient-to-b from-[#F4F9F5] via-[#FCFDFD] to-white pt-8 lg:pt-16 pb-16 lg:pb-24 overflow-hidden">
+        <div
+            class="absolute top-1/4 right-0 w-96 h-96 bg-emerald-50 rounded-full blur-3xl opacity-60 pointer-events-none -mr-40">
+        </div>
+        <div
+            class="absolute bottom-10 left-10 w-72 h-72 bg-blue-50 rounded-full blur-3xl opacity-40 pointer-events-none">
         </div>
 
-        <!-- HERO -->
-        <section class="px-6 lg:px-16 pt-8 lg:pt-12 pb-12">
+        <div class="max-w-[1650px] mx-auto px-6 lg:px-16 relative z-10">
             <div class="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+
                 <div class="order-2 lg:order-1 text-center lg:text-left">
                     <h1
                         class="text-[38px] sm:text-[48px] lg:text-[56px] font-bold leading-[1.1] text-gray-900 tracking-tight">
@@ -111,59 +120,85 @@
                         tu crecimiento. Desde fundamentos hasta habilidades avanzadas, tu viaje de aprendizaje comienza
                         aquí.
                     </p>
+
                     <div
                         class="mt-8 lg:mt-10 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
                         <a routerLink="/catalog"
-                            class="w-full sm:w-auto bg-[#3A9E5F] hover:bg-[#2e7d4a] text-white px-8 py-3.5 rounded-xl font-medium shadow-md hover:shadow-lg transition text-center">
+                            class="w-full sm:w-auto bg-[#3A9E5F] hover:bg-[#2e7d4a] text-white px-8 py-3.5 rounded-xl font-medium shadow-md hover:shadow-lg transition text-center hover:-translate-y-0.5 active:translate-y-0">
                             Empieza a Aprender
                         </a>
                         <a routerLink="/catalog"
-                            class="text-[#3A9E5F] bg-green-100 px-8 py-3.5 rounded-xl hover:bg-[#2e7d4a] hover:text-white font-medium shadow-md hover:shadow-lg transition text-center">
+                            class="w-full sm:w-auto text-[#3A9E5F] bg-green-100 px-8 py-3.5 rounded-xl hover:bg-[#2e7d4a] hover:text-white font-medium shadow-md hover:shadow-lg transition text-center hover:-translate-y-0.5 active:translate-y-0">
                             Explorar Cursos
                         </a>
                     </div>
                 </div>
 
                 <div class="order-1 lg:order-2 relative">
+                    <div
+                        class="absolute -inset-2 rounded-[2rem] bg-gradient-to-tr from-emerald-100/50 to-blue-50/50 -z-10 blur-sm">
+                    </div>
                     <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?w=900" alt="Student learning"
-                        class="w-full h-[220px] sm:h-[360px] lg:h-[560px] object-cover rounded-2xl lg:rounded-3xl">
+                        class="w-full h-[220px] sm:h-[360px] lg:h-[560px] object-cover rounded-2xl lg:rounded-3xl shadow-xl">
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="max-w-[1650px] mx-auto px-6 lg:px-16 py-12 lg:py-20 flex-grow w-full">
+        <div
+            class="mb-8 lg:mb-10 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between border-b border-gray-150 pb-6">
+            <div>
+                <h2 class="text-[26px] lg:text-[32px] font-bold text-gray-900">Cursos Populares</h2>
+                <p class="mt-1 text-sm text-gray-500">Explora los cursos publicados por nuestros docentes.</p>
+            </div>
+            <a routerLink="/catalog"
+                class="text-sm font-semibold text-[#3A9E5F] hover:text-[#2e7d4a] transition-all flex items-center gap-1 group">
+                Ver todos
+                <span class="transition-transform group-hover:translate-x-1">&rarr;</span>
+            </a>
+        </div>
+
+        <div *ngIf="loadingCourses" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5">
+            <div *ngFor="let item of [1,2,3,4]" class="h-[340px] animate-pulse rounded-xl bg-gray-100"></div>
+        </div>
+
+        <div *ngIf="!loadingCourses && publicCourses.length > 0"
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5">
+            <app-course-card *ngFor="let course of publicCourses" [course]="course"
+                class="hover:-translate-y-1 transition-transform duration-300 block"></app-course-card>
+        </div>
+
+        <div *ngIf="!loadingCourses && publicCourses.length === 0"
+            class="rounded-xl border border-dashed border-gray-200 bg-gray-50 px-6 py-12 text-center max-w-xl mx-auto">
+            <mat-icon class="mb-2 text-[#3A9E5F] scale-125">school</mat-icon>
+            <h3 class="text-base font-semibold text-gray-800 mt-2">
+                {{ coursesLoadError ? 'No pudimos cargar los cursos' : 'Aún no hay cursos publicados' }}
+            </h3>
+            <p class="mt-1 text-sm text-gray-500 max-w-sm mx-auto">
+                {{ coursesLoadError ? 'Intenta nuevamente cuando el servidor esté disponible.' : 'Vuelve pronto para
+                descubrir nuevas clases.' }}
+            </p>
+        </div>
+    </section>
+
+    <footer class="bg-gray-900 text-gray-400 border-t border-gray-800 py-10 mt-auto w-full">
+        <div class="max-w-[1650px] mx-auto px-6 lg:px-16">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="flex items-center gap-2">
+                    <span class="text-lg font-bold text-white tracking-tight">Edu<span
+                            class="text-[#3A9E5F]">Learn</span></span>
+                    <span class="text-xs text-gray-700">|</span>
+                    <p class="text-xs">© 2026 Todos los derechos reservados.</p>
+                </div>
+                <div class="flex items-center gap-6 text-[13px]">
+                    <a class="hover:text-white transition-colors cursor-pointer">Términos de servicio</a>
+                    <a class="hover:text-white transition-colors cursor-pointer">Privacidad</a>
+                    <a class="hover:text-white transition-colors cursor-pointer">Ayuda</a>
                 </div>
             </div>
-        </section>
+        </div>
+    </footer>
 
-        <!-- PUBLIC COURSES -->
-        <section class="px-6 lg:px-16 pb-12 lg:pb-16">
-            <div class="mb-6 lg:mb-8 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-                <div>
-                    <h2 class="text-[26px] lg:text-[32px] font-bold text-gray-900">Cursos Populares</h2>
-                    <p class="mt-1 text-sm text-gray-500">Explora los cursos publicados por nuestros docentes.</p>
-                </div>
-                <a routerLink="/catalog" class="text-sm font-semibold text-[#3A9E5F] hover:text-[#2e7d4a]">
-                    Ver todos
-                </a>
-            </div>
-
-            <div *ngIf="loadingCourses" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5">
-                <div *ngFor="let item of [1,2,3,4]" class="h-[340px] animate-pulse rounded-xl bg-gray-100"></div>
-            </div>
-
-            <div *ngIf="!loadingCourses && publicCourses.length > 0"
-                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5">
-                <app-course-card *ngFor="let course of publicCourses" [course]="course"></app-course-card>
-            </div>
-
-            <div *ngIf="!loadingCourses && publicCourses.length === 0"
-                class="rounded-xl border border-dashed border-gray-200 bg-gray-50 px-6 py-10 text-center">
-                <mat-icon class="mb-2 text-[#3A9E5F]">school</mat-icon>
-                <h3 class="text-base font-semibold text-gray-800">
-                    {{ coursesLoadError ? 'No pudimos cargar los cursos' : 'Aún no hay cursos publicados' }}
-                </h3>
-                <p class="mt-1 text-sm text-gray-500">
-                    {{ coursesLoadError ? 'Intenta nuevamente cuando el servidor esté disponible.' : 'Vuelve pronto para
-                    descubrir nuevas clases.' }}
-                </p>
-            </div>
-        </section>
-
-    </div>
 </div>

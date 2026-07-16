@@ -1,0 +1,19 @@
+.enrollment-card {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.enrollment-card__header {
+    padding: 22px;
+}
+
+.enrollment-card__body {
+    padding: 22px;
+}
+
+@media (max-width: 640px) {
+    .enrollment-card__header,
+    .enrollment-card__body {
+        padding: 18px;
+    }
+}

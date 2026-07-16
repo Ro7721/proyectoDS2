@@ -52,3 +52,12 @@ export interface CourseProgressResponse {
     totalProgress: number;
     courseCompleted: boolean;
 }
+
+export interface CertificateResponse {
+    certificateId: string;
+    studentName: string;
+    courseName: string;
+    teacherName: string;
+    totalLessons: number;
+    completionDate: string;
+}

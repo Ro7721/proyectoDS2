@@ -1,63 +1,229 @@
 @if (lesson) {
 <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+
+  <!-- VIDEO PLAYER -->
   @if (lesson.type === 'VIDEO') {
-  <div class="aspect-video bg-black relative">
-    <div class="absolute inset-x-0 top-0 bg-gradient-to-b from-black/70 to-transparent p-4">
-      <div class="flex items-center justify-between text-white">
+  <div class="relative bg-black group/player select-none" (keydown)="onKeyDown($event)" tabindex="0">
+
+    <!-- Video element -->
+    <video
+      #videoPlayer
+      class="w-full aspect-video bg-black object-contain block"
+      [src]="lesson.contentUrl"
+      (loadedmetadata)="onLoadedMetadata(videoPlayer)"
+      (timeupdate)="onTimeUpdate($event)"
+      (pause)="onPause()"
+      (ended)="onEnded()"
+      (click)="togglePlay()"
+      (volumechange)="onVolumeChange(videoPlayer)"
+      (waiting)="buffering = true"
+      (canplay)="buffering = false"
+    ></video>
+
+    <!-- Buffering spinner -->
+    @if (buffering) {
+    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+      <div class="w-12 h-12 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
+    </div>
+    }
+
+    <!-- Big play/pause animation -->
+    @if (showPlayPulse) {
+    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+      <div class="w-20 h-20 rounded-full bg-black/60 flex items-center justify-center animate-ping-once">
+        <span class="material-icons text-white text-4xl">{{ isPaused ? 'pause' : 'play_arrow' }}</span>
+      </div>
+    </div>
+    }
+
+    <!-- TOP overlay: lesson info -->
+    <div class="absolute inset-x-0 top-0 bg-gradient-to-b from-black/80 via-black/30 to-transparent px-5 pt-4 pb-10 opacity-0 group-hover/player:opacity-100 transition-opacity duration-300">
+      <div class="flex items-start justify-between text-white">
         <div>
-          <p class="text-xs uppercase tracking-widest opacity-80">
-            Lección {{ lesson.lessonOrder }}
-          </p>
-          <h2 class="text-xl font-bold">
-            {{ lesson.title }}
-          </h2>
+          <p class="text-[10px] font-bold uppercase tracking-widest opacity-70">Lección {{ lesson.lessonOrder }}</p>
+          <h2 class="text-base font-bold leading-tight mt-0.5 max-w-[70%]">{{ lesson.title }}</h2>
         </div>
-        <span class="rounded-full bg-black/40 px-3 py-1 text-sm">
+        <span class="rounded-full bg-white/20 backdrop-blur-sm px-3 py-1 text-xs font-semibold">
           {{ lesson.durationMinutes }} min
         </span>
       </div>
     </div>
-    <video #videoPlayer controls class="w-full aspect-video bg-black rounded-t-2xl object-contain"
-      [src]="lesson.contentUrl" (loadedmetadata)="onLoadedMetadata(videoPlayer)" (timeupdate)="onTimeUpdate($event)"
-      (pause)="onPause()" (ended)="onEnded()">
-    </video>
+
+    <!-- BOTTOM controls -->
+    <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent px-4 pt-10 pb-3 opacity-0 group-hover/player:opacity-100 transition-opacity duration-300">
+
+      <!-- Progress bar -->
+      <div class="relative w-full h-1 bg-white/30 rounded-full cursor-pointer mb-3 group/bar hover:h-2.5 transition-all duration-150"
+           (click)="seek($event)" (mousemove)="onProgressHover($event)" #progressBar>
+        <!-- Buffered -->
+        <div class="absolute inset-y-0 left-0 bg-white/20 rounded-full" [style.width.%]="bufferedPercent"></div>
+        <!-- Watched -->
+        <div class="absolute inset-y-0 left-0 rounded-full transition-all duration-100"
+             [class]="completed ? 'bg-green-400' : 'bg-[#E8592B]'"
+             [style.width.%]="percentage">
+        </div>
+        <!-- Thumb -->
+        <div class="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-white shadow-md scale-0 group-hover/bar:scale-100 transition-transform"
+             [style.left]="percentage + '%'" style="transform: translate(-50%, -50%) scaleX(1)">
+        </div>
+        <!-- Hover time tooltip -->
+        @if (hoverTime !== null) {
+        <div class="absolute -top-7 bg-black/80 text-white text-xs px-2 py-0.5 rounded pointer-events-none"
+             [style.left]="hoverTimePercent + '%'" style="transform: translateX(-50%)">
+          {{ formatTime(hoverTime) }}
+        </div>
+        }
+      </div>
+
+      <!-- Controls row -->
+      <div class="flex items-center gap-3 text-white">
+
+        <!-- Play/Pause -->
+        <button (click)="togglePlay()" class="hover:text-[#E8592B] transition-colors" title="Play/Pausa (Espacio)">
+          <span class="material-icons text-2xl">{{ isPaused ? 'play_arrow' : 'pause' }}</span>
+        </button>
+
+        <!-- Skip back 10s -->
+        <button (click)="skipBackward()" class="hover:text-[#E8592B] transition-colors" title="Retroceder 10s (←)">
+          <span class="material-icons text-xl">replay_10</span>
+        </button>
+
+        <!-- Skip forward 10s -->
+        <button (click)="skipForward()" class="hover:text-[#E8592B] transition-colors" title="Adelantar 10s (→)">
+          <span class="material-icons text-xl">forward_10</span>
+        </button>
+
+        <!-- Volume -->
+        <div class="flex items-center gap-1.5 group/vol">
+          <button (click)="toggleMute()" class="hover:text-[#E8592B] transition-colors" title="Silenciar (M)">
+            <span class="material-icons text-xl">{{ isMuted ? 'volume_off' : (volume > 0.5 ? 'volume_up' : 'volume_down') }}</span>
+          </button>
+          <input
+            type="range" min="0" max="1" step="0.05"
+            [value]="isMuted ? 0 : volume"
+            (input)="setVolume($event)"
+            class="w-0 group-hover/vol:w-20 transition-all duration-200 accent-[#E8592B] cursor-pointer"
+          />
+        </div>
+
+        <!-- Time -->
+        <span class="text-xs font-mono tabular-nums ml-1">
+          {{ formatTime(currentTime) }} / {{ formatTime(duration) }}
+        </span>
+
+        <!-- Spacer -->
+        <div class="flex-1"></div>
+
+        <!-- Speed -->
+        <div class="relative group/speed">
+          <button class="text-xs font-bold px-2 py-1 rounded bg-white/15 hover:bg-white/30 transition-colors" title="Velocidad">
+            {{ playbackRate }}x
+          </button>
+          <div class="absolute bottom-full right-0 mb-2 bg-gray-900 rounded-xl overflow-hidden shadow-2xl w-24 opacity-0 group-hover/speed:opacity-100 pointer-events-none group-hover/speed:pointer-events-auto transition-opacity">
+            @for (rate of speedOptions; track rate) {
+            <button (click)="setSpeed(rate)"
+              class="w-full text-center text-xs py-2 px-3 hover:bg-white/10 transition-colors"
+              [class.text-[#E8592B]]="playbackRate === rate"
+              [class.font-bold]="playbackRate === rate">
+              {{ rate }}x
+            </button>
+            }
+          </div>
+        </div>
+
+        <!-- Fullscreen -->
+        <button (click)="toggleFullscreen()" class="hover:text-[#E8592B] transition-colors" title="Pantalla completa (F)">
+          <span class="material-icons text-xl">fullscreen</span>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Completed badge -->
+    @if (lesson.completed || completed) {
+    <div class="absolute top-4 right-4 flex items-center gap-2 bg-green-500/90 backdrop-blur-sm text-white rounded-full px-3 py-1.5 text-xs font-bold shadow-lg">
+      <span class="material-icons text-base">check_circle</span>
+      Completada
+    </div>
+    }
+
   </div>
-  } @else {
-  <div class="aspect-video bg-gray-100 flex items-center justify-center flex-col text-gray-500">
-    <span class="material-icons text-6xl mb-4">article</span>
-    <p>Este contenido es de tipo {{ lesson.type }} y no requiere reproductor de video.</p>
-    @if (lesson.contentUrl) {
-    <a [href]="lesson.contentUrl" target="_blank"
-      class="mt-4 px-6 py-2 bg-[#E8592B] text-white rounded-lg hover:bg-[#c2410c] transition">Abrir contenido</a>
+  }
+
+  <!-- PDF / TEXT content -->
+  @else {
+  <div class="bg-gray-50 flex flex-col items-center justify-center min-h-[320px] gap-4 text-gray-500 p-8">
+    @if (lesson.type === 'PDF' && lesson.contentUrl) {
+    <iframe [src]="lesson.contentUrl" class="w-full h-[480px] rounded-xl border border-gray-200 shadow-inner" title="Contenido PDF"></iframe>
+    } @else {
+    <div class="flex flex-col items-center gap-3">
+      <div class="w-20 h-20 rounded-2xl bg-gray-100 flex items-center justify-center">
+        <span class="material-icons text-5xl text-gray-300">article</span>
+      </div>
+      <p class="text-sm font-medium">Contenido de tipo <span class="font-bold">{{ lesson.type }}</span></p>
+      @if (lesson.contentUrl) {
+      <a [href]="lesson.contentUrl" target="_blank"
+        class="mt-2 inline-flex items-center gap-2 px-5 py-2.5 bg-[#E8592B] text-white rounded-xl hover:bg-[#c2410c] transition font-semibold text-sm shadow">
+        <span class="material-icons text-base">open_in_new</span>
+        Abrir contenido
+      </a>
+      }
+    </div>
     }
   </div>
   }
 
-  <div class="border-t p-6 space-y-4">
-    <div class="flex items-center justify-between">
+  <!-- Lesson info below player -->
+  <div class="border-t border-gray-100 p-6 space-y-3">
+    <div class="flex items-start justify-between gap-4">
       <div>
-        <h2 class="text-2xl font-bold">
-          {{ lesson.title }}
-        </h2>
-        <p class="text-gray-500">
-          {{ lesson.durationMinutes }} minutos
-        </p>
+        <h2 class="text-xl font-bold text-gray-900 leading-snug">{{ lesson.title }}</h2>
+        <div class="flex items-center gap-3 mt-1.5 text-sm text-gray-500">
+          <span class="flex items-center gap-1">
+            <span class="material-icons text-base">schedule</span>
+            {{ lesson.durationMinutes }} minutos
+          </span>
+          <span class="flex items-center gap-1">
+            <span class="material-icons text-base">{{ lesson.type === 'VIDEO' ? 'play_circle' : 'article' }}</span>
+            {{ lesson.type }}
+          </span>
+          @if (lesson.isFree) {
+          <span class="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-0.5 text-xs font-semibold text-green-700">
+            <span class="material-icons text-xs">lock_open</span> Gratuita
+          </span>
+          }
+        </div>
       </div>
+
       @if (lesson.completed) {
-      <span class="rounded-full bg-green-100 px-4 py-2 text-green-700 font-semibold">
-        ✓ Completada
+      <span class="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-green-100 px-4 py-2 text-green-700 font-semibold text-sm">
+        <span class="material-icons text-base">verified</span>
+        Completada
       </span>
+      } @else if (percentage > 0) {
+      <div class="shrink-0 flex flex-col items-end gap-1">
+        <span class="text-xs text-gray-500 font-medium">{{ percentage }}% visto</span>
+        <div class="w-24 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+          <div class="h-full bg-[#E8592B] rounded-full transition-all" [style.width.%]="percentage"></div>
+        </div>
+      </div>
       }
     </div>
 
-    <p class="leading-7 text-gray-600">
-      {{ lesson.description }}
-    </p>
+    @if (lesson.description) {
+    <p class="leading-7 text-gray-600 text-sm">{{ lesson.description }}</p>
+    }
   </div>
+
 </div>
 } @else {
-<div class="bg-white rounded-2xl border border-gray-200 p-12 text-center text-gray-500 shadow-sm">
-  <span class="material-icons text-4xl mb-2">video_library</span>
-  <p>Selecciona una lección para comenzar</p>
+<div class="bg-white rounded-2xl border border-gray-200 p-16 text-center text-gray-400 shadow-sm flex flex-col items-center gap-3">
+  <div class="w-20 h-20 rounded-2xl bg-gray-50 border border-gray-100 flex items-center justify-center">
+    <span class="material-icons text-4xl text-gray-300">video_library</span>
+  </div>
+  <div>
+    <p class="font-semibold text-gray-700">Selecciona una lección</p>
+    <p class="text-sm text-gray-400 mt-0.5">Elige una lección del panel izquierdo para comenzar</p>
+  </div>
 </div>
 }

@@ -15,11 +15,18 @@ export class EnrollmentFilter {
   search = '';
   status = 'ALL';
 
+  statusOptions = [
+    { label: 'Todos', value: 'ALL' },
+    { label: 'En progreso', value: 'PROGRESS' },
+    { label: 'Completados', value: 'COMPLETED' },
+  ];
+
   onSearch(): void {
     this.searchChange.emit(this.search);
   }
 
-  onStatus(): void {
+  setStatus(value: string): void {
+    this.status = value;
     this.statusChange.emit(this.status);
   }
 }

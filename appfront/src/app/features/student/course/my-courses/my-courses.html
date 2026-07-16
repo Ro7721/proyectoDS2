@@ -1,76 +1,232 @@
-<div class="max-w-7xl mx-auto px-6 py-8">
-    <div class="mb-8 flex items-end justify-between">
+<div class="max-w-7xl mx-auto px-6 py-8 space-y-6">
+
+    <!-- Header -->
+    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-            <h1 class="text-3xl font-bold text-gray-900">Mis cursos</h1>
-            <p class="mt-2 text-gray-500">Continúa aprendiendo donde lo dejaste.</p>
+            <p class="text-xs font-bold uppercase tracking-wider text-emerald-600 mb-1">Panel del estudiante</p>
+            <h1 class="text-3xl font-black text-gray-900 tracking-tight">Mis cursos</h1>
+            <p class="mt-1 text-gray-500">Continúa aprendiendo donde lo dejaste.</p>
         </div>
         <button (click)="exploreCourses()"
-            class="rounded-xl border border-green-600 px-5 py-2 text-green-600 transition hover:bg-green-600 hover:text-white">Explorar
-            cursos</button>
+            class="inline-flex items-center gap-2 rounded-xl border border-emerald-600 px-5 py-2.5 text-sm font-semibold text-emerald-600 transition hover:bg-emerald-600 hover:text-white shadow-sm">
+            <span class="material-icons text-base">explore</span>
+            Explorar catálogo
+        </button>
     </div>
 
-    <div *ngIf="loading" class="flex h-80 items-center justify-center">
-        <div class="h-12 w-12 animate-spin rounded-full border-4 border-green-600 border-t-transparent"></div>
+    <!-- Stats row -->
+    @if (!loading && courses.length > 0) {
+    <div class="grid grid-cols-3 gap-4">
+        <div class="bg-white rounded-2xl border border-gray-200 px-5 py-4 shadow-sm flex items-center gap-4">
+            <div class="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center">
+                <span class="material-icons text-blue-500">school</span>
+            </div>
+            <div>
+                <p class="text-2xl font-black text-gray-900">{{ courses.length }}</p>
+                <p class="text-xs text-gray-400 font-medium">Total inscritos</p>
+            </div>
+        </div>
+        <div class="bg-white rounded-2xl border border-gray-200 px-5 py-4 shadow-sm flex items-center gap-4">
+            <div class="w-11 h-11 rounded-xl bg-emerald-50 flex items-center justify-center">
+                <span class="material-icons text-emerald-500">task_alt</span>
+            </div>
+            <div>
+                <p class="text-2xl font-black text-gray-900">{{ completedCount }}</p>
+                <p class="text-xs text-gray-400 font-medium">Completados</p>
+            </div>
+        </div>
+        <div class="bg-white rounded-2xl border border-gray-200 px-5 py-4 shadow-sm flex items-center gap-4">
+            <div class="w-11 h-11 rounded-xl bg-orange-50 flex items-center justify-center">
+                <span class="material-icons text-[#E8592B]">trending_up</span>
+            </div>
+            <div>
+                <p class="text-2xl font-black text-gray-900">{{ inProgressCount }}</p>
+                <p class="text-xs text-gray-400 font-medium">En progreso</p>
+            </div>
+        </div>
+    </div>
+    }
+
+    <!-- Search & Filter bar -->
+    @if (!loading && courses.length > 0) {
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 flex flex-col sm:flex-row gap-3">
+
+        <!-- Search input -->
+        <div class="relative flex-1">
+            <span class="material-icons absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">search</span>
+            <input
+                type="text"
+                [(ngModel)]="searchQuery"
+                (input)="applyFilters()"
+                placeholder="Buscar curso por nombre o instructor..."
+                class="w-full rounded-xl border border-gray-200 bg-gray-50 py-2.5 pl-10 pr-4 text-sm text-gray-700 placeholder-gray-400 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30 focus:bg-white transition-all"
+            />
+        </div>
+
+        <!-- Status filter -->
+        <div class="flex gap-2 flex-wrap">
+            <button *ngFor="let f of statusFilters" (click)="setFilter(f.value)"
+                class="rounded-xl px-4 py-2.5 text-sm font-semibold transition-all border"
+                [class.bg-emerald-600]="activeFilter === f.value"
+                [class.text-white]="activeFilter === f.value"
+                [class.border-emerald-600]="activeFilter === f.value"
+                [class.bg-white]="activeFilter !== f.value"
+                [class.text-gray-600]="activeFilter !== f.value"
+                [class.border-gray-200]="activeFilter !== f.value"
+                [class.hover:border-emerald-400]="activeFilter !== f.value">
+                {{ f.label }}
+                <span class="ml-1.5 rounded-full px-1.5 py-0.5 text-[10px] font-bold"
+                    [class.bg-white/20]="activeFilter === f.value"
+                    [class.bg-gray-100]="activeFilter !== f.value"
+                    [class.text-white]="activeFilter === f.value"
+                    [class.text-gray-500]="activeFilter !== f.value">
+                    {{ getCount(f.value) }}
+                </span>
+            </button>
+        </div>
+
+        <!-- Sort -->
+        <select [(ngModel)]="sortBy" (change)="applyFilters()"
+            class="rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-600 outline-none focus:border-emerald-500 transition-all cursor-pointer">
+            <option value="recent">Más recientes</option>
+            <option value="progress">Mayor progreso</option>
+            <option value="alpha">Alfabético</option>
+        </select>
+    </div>
+    }
+
+    <!-- Loading skeleton -->
+    <div *ngIf="loading" class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+        <div *ngFor="let i of [1,2,3,4,5,6]" class="rounded-2xl border border-gray-100 bg-white shadow-sm overflow-hidden animate-pulse">
+            <div class="h-48 bg-gray-200"></div>
+            <div class="p-5 space-y-3">
+                <div class="h-3 bg-gray-200 rounded w-1/3"></div>
+                <div class="h-5 bg-gray-200 rounded w-3/4"></div>
+                <div class="h-3 bg-gray-200 rounded w-1/2"></div>
+                <div class="h-2 bg-gray-200 rounded-full"></div>
+                <div class="h-10 bg-gray-200 rounded-xl mt-2"></div>
+            </div>
+        </div>
     </div>
 
-    <div *ngIf="!loading && !courses.length"
+    <!-- Empty state (no courses at all) -->
+    <div *ngIf="!loading && courses.length === 0"
         class="rounded-2xl border border-dashed border-gray-300 bg-white p-16 text-center">
-        <span class="material-icons text-6xl text-gray-300">school</span>
-        <h2 class="mt-4 text-2xl font-bold">Todavía no tienes cursos inscritos</h2>
+        <div class="w-20 h-20 rounded-2xl bg-gray-50 border border-gray-100 flex items-center justify-center mx-auto mb-4">
+            <span class="material-icons text-4xl text-gray-300">school</span>
+        </div>
+        <h2 class="text-2xl font-bold text-gray-800">Todavía no tienes cursos inscritos</h2>
         <p class="mt-2 text-gray-500">Explora el catálogo y comienza tu aprendizaje.</p>
         <button (click)="exploreCourses()"
-            class="mt-6 rounded-xl bg-green-600 px-6 py-3 font-semibold text-white transition hover:bg-green-700">Explorar
-            catálogo</button>
+            class="mt-6 inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-6 py-3 font-semibold text-white transition hover:bg-emerald-700 shadow-sm">
+            <span class="material-icons text-base">explore</span>
+            Explorar catálogo
+        </button>
     </div>
 
-    <div *ngIf="!loading && courses.length" class="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
-        <div *ngFor="let course of courses"
-            class="group overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
-            <div class="relative">
-                <img [src]="course.coverImage" [alt]="course.title" class="h-52 w-full object-cover">
-                <div
-                    class="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-green-700">
-                    {{course.categoryName}}</div>
-                <div class="absolute right-4 top-4 rounded-full px-3 py-1 text-xs font-semibold"
-                    [ngClass]="course.completed ? 'bg-green-100 text-green-700':'bg-blue-100 text-blue-700'">
+    <!-- Empty search result -->
+    <div *ngIf="!loading && courses.length > 0 && filtered.length === 0"
+        class="rounded-2xl border border-gray-200 bg-white p-12 text-center">
+        <span class="material-icons text-5xl text-gray-300">search_off</span>
+        <h2 class="mt-3 text-xl font-bold text-gray-700">Sin resultados</h2>
+        <p class="mt-1 text-gray-400 text-sm">Intenta con otro término de búsqueda o cambia el filtro.</p>
+        <button (click)="clearFilters()" class="mt-4 text-sm font-semibold text-emerald-600 hover:underline">Limpiar filtros</button>
+    </div>
+
+    <!-- Courses grid -->
+    <div *ngIf="!loading && filtered.length > 0" class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+        <div *ngFor="let course of filtered"
+            class="group overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl hover:border-emerald-200">
+
+            <!-- Cover image -->
+            <div class="relative h-48 overflow-hidden">
+                <img [src]="course.coverImage" [alt]="course.title" class="h-full w-full object-cover transition duration-500 group-hover:scale-105">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+                <!-- Category badge -->
+                <div class="absolute left-3 top-3 rounded-full bg-white/90 backdrop-blur-sm px-3 py-1 text-xs font-semibold text-emerald-700">
+                    {{course.categoryName}}
+                </div>
+                <!-- Status badge -->
+                <div class="absolute right-3 top-3 rounded-full px-3 py-1 text-xs font-semibold"
+                    [ngClass]="course.completed ? 'bg-emerald-500 text-white' : 'bg-blue-100 text-blue-700'">
+                    <span class="material-icons text-[12px] align-middle mr-0.5">{{ course.completed ? 'check_circle' : 'play_circle' }}</span>
                     {{course.completed ? 'Completado' : 'En progreso'}}
                 </div>
             </div>
 
-            <div class="space-y-5 p-6">
+            <!-- Card body -->
+            <div class="space-y-4 p-5">
                 <div>
-                    <h2 class="line-clamp-2 text-xl font-bold text-gray-900">{{course.title}}</h2>
-                    <p class="mt-1 text-sm text-gray-500">{{course.teacherFullName}}</p>
+                    <h2 class="line-clamp-2 text-lg font-bold text-gray-900 group-hover:text-emerald-700 transition-colors">{{course.title}}</h2>
+                    <p class="mt-1 text-sm text-gray-500">{{ course.teacherFullName }}</p>
                 </div>
 
+                <!-- Progress -->
                 <div>
-                    <div class="mb-2 flex items-center justify-between text-sm">
+                    <div class="mb-1.5 flex items-center justify-between text-sm">
                         <span class="font-medium text-gray-600">Progreso</span>
-                        <span class="font-bold text-green-700">{{course.totalProgress}}%</span>
+                        <span class="font-bold" [class.text-emerald-600]="course.completed" [class.text-[#E8592B]]="!course.completed">
+                            {{course.totalProgress}}%
+                        </span>
                     </div>
-                    <div class="h-2.5 overflow-hidden rounded-full bg-gray-200">
-                        <div class="h-full rounded-full bg-green-600 transition-all duration-500"
-                            [style.width.%]="course.totalProgress"></div>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3 rounded-xl bg-gray-50 p-4 text-sm">
-                    <div>
-                        <p class="text-gray-400">Lecciones</p>
-                        <p class="font-semibold">{{course.totalLessons}}</p>
-                    </div>
-                    <div>
-                        <p class="text-gray-400">Último acceso</p>
-                        <p class="font-semibold">{{formatDate(course.lastAccess)}}</p>
+                    <div class="h-2 overflow-hidden rounded-full bg-gray-100">
+                        <div class="h-full rounded-full transition-all duration-500"
+                            [class.bg-emerald-500]="course.completed"
+                            [class.bg-[#E8592B]]="!course.completed"
+                            [style.width.%]="course.totalProgress">
+                        </div>
                     </div>
                 </div>
 
-                <button (click)="continueCourse(course)"
-                    class="flex w-full items-center justify-center gap-2 rounded-xl bg-green-600 py-3 font-semibold text-white transition hover:bg-green-700">
-                    <span class="material-icons text-[20px]">play_circle</span>
-                    Continuar curso
-                </button>
+                <!-- Meta -->
+                <div class="grid grid-cols-2 gap-2 rounded-xl bg-gray-50 p-3 text-sm">
+                    <div>
+                        <p class="text-gray-400 text-xs">Lecciones</p>
+                        <p class="font-semibold text-gray-800">{{course.totalLessons}}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-400 text-xs">Último acceso</p>
+                        <p class="font-semibold text-gray-800">{{formatDate(course.lastAccess)}}</p>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex gap-2">
+                    <button (click)="continueCourse(course)"
+                        class="flex flex-1 items-center justify-center gap-2 rounded-xl py-2.5 font-semibold text-sm transition"
+                        [class.bg-emerald-600]="!course.completed"
+                        [class.hover:bg-emerald-700]="!course.completed"
+                        [class.text-white]="!course.completed"
+                        [class.bg-gray-100]="course.completed"
+                        [class.hover:bg-gray-200]="course.completed"
+                        [class.text-gray-700]="course.completed">
+                        <span class="material-icons text-[18px]">{{ course.completed ? 'replay' : 'play_circle' }}</span>
+                        {{ course.completed ? 'Repasar' : 'Continuar' }}
+                    </button>
+
+                    <!-- Certificate button for completed courses -->
+                    @if (course.completed) {
+                    <button (click)="openCertificate(course)"
+                        class="flex items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 text-white px-3 py-2.5 font-semibold text-sm shadow-sm transition"
+                        title="Ver certificado">
+                        <span class="material-icons text-base">workspace_premium</span>
+                    </button>
+                    }
+                </div>
             </div>
         </div>
     </div>
+
 </div>
+
+<!-- Certificate modal -->
+<app-certificate-modal
+    [visible]="showCertificateModal"
+    [studentName]="studentName"
+    [courseName]="selectedCourseName"
+    [teacherName]="selectedTeacherName"
+    [totalLessons]="selectedTotalLessons"
+    [certId]="certificateData?.certificateId || ''"
+    [completedAt]="certificateData?.completionDate || ''"
+    (visibleChange)="showCertificateModal = $event">
+</app-certificate-modal>

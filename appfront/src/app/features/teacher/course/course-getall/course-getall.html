@@ -1,6 +1,8 @@
 <p-toast position="top-right" />
 
-<section class="space-y-6">
+<section class="space-y-5">
+
+    <!-- Header -->
     <header
         class="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:flex-row md:items-center md:justify-between">
         <div>
@@ -21,7 +23,60 @@
         </div>
     </header>
 
-    <div *ngIf="loading" class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+    <!-- Search & Filter bar -->
+    <div
+        class="flex flex-col md:flex-row items-end w-full shadow-sm hover:shadow-md transition-shadow duration-300 rounded-2xl border border-slate-200 bg-white p-5 gap-4">
+
+        <!-- Search -->
+        <div class="flex flex-col w-full md:flex-1">
+            <label for="search" class="mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                Buscar cursos
+            </label>
+            <div class="relative w-full">
+                <i class="pi pi-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input id="search" type="text" [(ngModel)]="searchQuery" (input)="onSearchInput()"
+                    placeholder="Escribe un nombre, palabra clave..."
+                    class="w-full rounded-xl border border-slate-200 bg-slate-50/50 py-2.5 pl-10 pr-4 text-sm text-slate-700 placeholder-slate-400 focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 focus:outline-none transition-all duration-200" />
+            </div>
+        </div>
+
+        <!-- Category filter -->
+        <div class="flex flex-col w-full md:w-64 lg:w-72">
+            <label for="category" class="mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                Filtrar por categoría
+            </label>
+            <p-select inputId="category" class="w-full" [options]="categoriesWithAll" optionLabel="name"
+                optionValue="idCategory" placeholder="Todas las categorías" [(ngModel)]="selectedCategoryId"
+                (onChange)="onCategoryChange($event.value)">
+            </p-select>
+        </div>
+
+        <!-- Results count + view toggle -->
+        <div class="flex items-center gap-3 shrink-0">
+            <span class="text-sm text-slate-500 font-medium whitespace-nowrap">
+                {{ filteredCourses.length }} resultado{{ filteredCourses.length !== 1 ? 's' : '' }}
+            </span>
+            <div class="flex border border-slate-200 rounded-lg overflow-hidden">
+                <button (click)="viewMode = 'grid'" class="px-3 py-2 text-sm transition"
+                    [class.bg-emerald-600]="viewMode === 'grid'" [class.text-white]="viewMode === 'grid'"
+                    [class.bg-white]="viewMode !== 'grid'" [class.text-slate-500]="viewMode !== 'grid'"
+                    title="Vista grilla">
+                    <i class="pi pi-th-large"></i>
+                </button>
+                <button (click)="viewMode = 'list'" class="px-3 py-2 text-sm transition border-l border-slate-200"
+                    [class.bg-emerald-600]="viewMode === 'list'" [class.text-white]="viewMode === 'list'"
+                    [class.bg-white]="viewMode !== 'list'" [class.text-slate-500]="viewMode !== 'list'"
+                    title="Vista lista">
+                    <i class="pi pi-list"></i>
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Loading skeleton -->
+    <div *ngIf="loading"
+        [class]="viewMode === 'grid' ? 'grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3' : 'flex flex-col gap-3'">
         <div *ngFor="let item of [1,2,3,4,5,6]"
             class="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
             <p-skeleton height="180px" styleClass="w-full" borderRadius="0" />
@@ -37,32 +92,8 @@
             </div>
         </div>
     </div>
-    <div
-        class="lg:col-span-5 flex flex-col md:flex-row items-end w-full shadow-sm hover:shadow-md transition-shadow duration-300 rounded-2xl border border-slate-200 bg-white p-5 gap-5 md:gap-6">
 
-        <div class="flex flex-col w-full md:flex-1">
-            <label for="search" class="mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wide">
-                Buscar cursos
-            </label>
-            <div class="relative w-full">
-                <i class="pi pi-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                <input id="search" formControlName="search" type="text"
-                    placeholder="Escribe un nombre, palabra clave..."
-                    class="w-full rounded-xl border border-slate-200 bg-slate-50/50 py-2.5 pl-10 pr-4 text-sm text-slate-700 placeholder-slate-400 focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 focus:outline-none transition-all duration-200" />
-            </div>
-        </div>
-
-        <div class="flex flex-col w-full md:w-64 lg:w-72">
-            <label for="category" class="mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wide">
-                Filtrar por categoría
-            </label>
-            <p-select inputId="category" class="w-full" [options]="categories" optionLabel="name"
-                optionValue="idCategory" placeholder="Selecciona una categoría"
-                (onChange)="courseFilterByCategory($event.value)">
-            </p-select>
-        </div>
-
-    </div>
+    <!-- Empty state (no courses) -->
     <div *ngIf="!loading && listCourses.length === 0"
         class="flex flex-col items-center justify-center rounded-2xl border border-dashed border-gray-200 bg-white px-6 py-20 text-center">
         <div class="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-50">
@@ -74,9 +105,23 @@
             class="p-button-sm mt-5" style="background:#16a34a; border-color:#16a34a;"></a>
     </div>
 
-    <div *ngIf="!loading && listCourses.length > 0" class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
-        <article *ngFor="let course of listCourses" (click)="openCourseDetail(course)"
+    <!-- Empty search result -->
+    <div *ngIf="!loading && listCourses.length > 0 && filteredCourses.length === 0"
+        class="flex flex-col items-center justify-center rounded-2xl border border-dashed border-amber-200 bg-amber-50 px-6 py-14 text-center">
+        <i class="pi pi-search text-3xl text-amber-400 mb-3"></i>
+        <h3 class="text-lg font-bold text-gray-800">Sin resultados</h3>
+        <p class="mt-1 text-sm text-gray-500">No se encontraron cursos con los filtros actuales.</p>
+        <button (click)="clearFilters()" class="mt-4 text-sm font-semibold text-emerald-600 hover:underline">
+            <i class="pi pi-times-circle mr-1"></i> Limpiar filtros
+        </button>
+    </div>
+
+    <!-- GRID VIEW -->
+    <div *ngIf="!loading && filteredCourses.length > 0 && viewMode === 'grid'"
+        class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+        <article *ngFor="let course of filteredCourses" (click)="openCourseDetail(course)"
             class="group flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition duration-200 hover:-translate-y-1 hover:border-emerald-100 hover:shadow-lg">
+
             <div class="relative h-44 overflow-hidden bg-emerald-50">
                 <img *ngIf="course.coverImage" [src]="course.coverImage" [alt]="course.title"
                     class="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
@@ -84,7 +129,6 @@
                     class="flex h-full w-full items-center justify-center bg-gradient-to-br from-emerald-50 to-sky-50">
                     <i class="pi pi-image text-4xl text-emerald-200"></i>
                 </div>
-
                 <div class="absolute left-3 top-3">
                     <p-tag [value]="course.status" [severity]="getStatusSeverity(course.status)"
                         styleClass="text-xs font-semibold" />
@@ -129,6 +173,54 @@
             </div>
         </article>
     </div>
+
+    <!-- LIST VIEW -->
+    <div *ngIf="!loading && filteredCourses.length > 0 && viewMode === 'list'" class="flex flex-col gap-3">
+        <div *ngFor="let course of filteredCourses" (click)="openCourseDetail(course)"
+            class="group flex cursor-pointer items-center gap-4 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+
+            <!-- Thumbnail -->
+            <div class="relative w-24 h-16 rounded-xl overflow-hidden shrink-0 bg-emerald-50">
+                <img *ngIf="course.coverImage" [src]="course.coverImage" [alt]="course.title"
+                    class="h-full w-full object-cover group-hover:scale-105 transition duration-500" />
+                <div *ngIf="!course.coverImage" class="flex h-full w-full items-center justify-center">
+                    <i class="pi pi-image text-2xl text-emerald-200"></i>
+                </div>
+            </div>
+
+            <!-- Info -->
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="text-xs font-semibold text-emerald-600 uppercase tracking-wide">{{ course.categoryName
+                        || 'Sin categoría' }}</span>
+                    <p-tag [value]="course.status" [severity]="getStatusSeverity(course.status)" styleClass="text-xs" />
+                    <p-tag [value]="course.level" [severity]="getLevelSeverity(course.level)" styleClass="text-xs" />
+                </div>
+                <h3 class="font-bold text-gray-900 group-hover:text-emerald-700 truncate transition">{{ course.title }}
+                </h3>
+                <p class="text-sm text-gray-500 truncate mt-0.5">{{ course.description }}</p>
+            </div>
+
+            <!-- Meta -->
+            <div class="hidden md:flex items-center gap-6 shrink-0 text-sm text-gray-500">
+                <div class="text-center">
+                    <p class="font-bold text-gray-800">{{ course.totalLessons || 0 }}</p>
+                    <p class="text-xs">Lecciones</p>
+                </div>
+                <div class="text-center">
+                    <p class="font-bold" [ngClass]="course.price === 0 ? 'text-emerald-600' : 'text-gray-800'">{{
+                        formatPrice(course.price) }}</p>
+                    <p class="text-xs">Precio</p>
+                </div>
+                <button type="button"
+                    class="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 transition group-hover:bg-emerald-600 group-hover:text-white">
+                    <i class="pi pi-arrow-right text-sm"></i>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
 </section>
 
 <app-course-details [visible]="showDetails" [courseId]="selectedCourseId"

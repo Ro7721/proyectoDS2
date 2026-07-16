@@ -1,0 +1,59 @@
+.teacher-enrollments {
+    display: flex;
+    flex-direction: column;
+}
+
+.teacher-enrollments__header {
+    margin-bottom: 28px;
+}
+
+.teacher-enrollments__filter {
+    margin-bottom: 36px;
+}
+
+.teacher-enrollments__content {
+    display: grid;
+    grid-template-columns: minmax(340px, 400px) minmax(0, 1fr);
+    gap: 40px;
+    align-items: start;
+}
+
+.teacher-enrollments__list {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-height: calc(100vh - 260px);
+    overflow-y: auto;
+    padding: 4px 12px 24px 2px;
+    scrollbar-gutter: stable;
+}
+
+@media (max-width: 1280px) {
+    .teacher-enrollments__content {
+        grid-template-columns: 1fr;
+    }
+
+    .teacher-enrollments__list {
+        max-height: none;
+        overflow: visible;
+        padding-right: 0;
+    }
+}
+
+@media (max-width: 640px) {
+    .teacher-enrollments {
+        padding: 16px;
+    }
+
+    .teacher-enrollments__header {
+        margin-bottom: 22px;
+    }
+
+    .teacher-enrollments__filter {
+        margin-bottom: 28px;
+    }
+
+    .teacher-enrollments__content {
+        gap: 28px;
+    }
+}

@@ -1,0 +1,31 @@
+/* Entry animation */
+@keyframes modal-in {
+  from { opacity: 0; transform: scale(0.92) translateY(20px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.animate-in {
+  animation: modal-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Slow spin for seal decoration */
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
+}
+
+/* Print styles */
+@media print {
+  body * { visibility: hidden; }
+  .certificate-content, .certificate-content * { visibility: visible; }
+  .certificate-content {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+  .no-print { display: none !important; }
+}

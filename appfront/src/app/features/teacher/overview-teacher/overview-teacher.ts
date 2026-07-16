@@ -1,6 +1,12 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LucideAngularModule} from 'lucide-angular';
+import { LucideAngularModule } from 'lucide-angular';
+import { Api } from '../../../api/api';
+import { apicoursesbyteacher, apiTeacherenrollments, Apicoursesbyteacher$Params } from '../../../api/functions';
+import { CourseResponse } from '../../../models/course.model';
+import { TeacherEnrollmentResponse } from '../../../models/teacher.model';
+import { MessageToast } from '../../../message/message-toast';
+import { AuthService } from '../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-overview-teacher',
@@ -8,23 +14,102 @@ import { LucideAngularModule} from 'lucide-angular';
   templateUrl: './overview-teacher.html',
   styleUrl: './overview-teacher.css',
 })
-export class OverviewTeacher {
+export class OverviewTeacher implements OnInit {
 
+  private cdk = inject(ChangeDetectorRef);
   mobileOpen = false;
+  loading = true;
 
+  realCourses: CourseResponse[] = [];
+  realEnrollments: TeacherEnrollmentResponse[] = [];
 
-  courses = [
-    { title: 'Curso de React', subtitle: 'Desarrollo web moderno con React 18 y hooks', progress: 85, color: '#5035B2' },
-    { title: 'Python para principiantes', subtitle: 'Aprende Python desde cero con ejemplos prácticos', progress: 60, color: '#3B82F6' },
-    { title: 'Fundamentos de UX/UI', subtitle: 'Crea interfaces atractivas y fáciles de usar', progress: 45, color: '#10B981' },
-    { title: 'Introducción a Java', subtitle: 'Domina los conceptos básicos de Java 17', progress: 30, color: '#F59E0B' },
-    { title: 'Desarrollo de aplicaciones móviles', subtitle: 'Crea apps para iOS y Android con React Native', progress: 70, color: '#8B5CF6' },
-    { title: 'SQL para análisis de datos', subtitle: 'Extrae información valiosa de bases de datos', progress: 20, color: '#EC4899' },
-    { title: 'Desarrollo web full stack', subtitle: 'Crea aplicaciones completas con tecnologías modernas', progress: 55, color: '#06B6D4' },
-    { title: 'Introducción a TypeScript', subtitle: 'Tipado estático para JavaScript', progress: 90, color: '#F97316' },
-    { title: 'Diseño responsivo', subtitle: 'Crea diseños que funcionan en cualquier dispositivo', progress: 40, color: '#6366F1' },
-    { title: 'Introducción a Dart', subtitle: 'Desarrollo multiplataforma con Dart', progress: 25, color: '#0EA5E9' },
-  ];
+  // Mapped list for the UI (using real data)
+  courses: { title: string, subtitle: string, progress: number, color: string, id: string }[] = [];
+
+  // Stats
+  totalStudents = 0;
+  totalCourses = 0;
+  totalIncome = 0; // mocked as enrollments * average price
+  completionRate = 0;
+  totalCompleted = 0;
+
+  private colors = ['#5035B2', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899', '#06B6D4', '#F97316'];
+
+  constructor(private api: Api, private toast: MessageToast, private authService: AuthService) { }
+
+  ngOnInit(): void {
+    this.loadDashboardData();
+  }
+
+  async loadDashboardData() {
+    this.loading = true;
+    try {
+      const teacherId = this.authService.user?.idUser || '';
+      const [coursesRes, enrollmentsRes] = await Promise.all([
+        this.api.invoke(apicoursesbyteacher, { teacherId } as Apicoursesbyteacher$Params),
+        this.api.invoke(apiTeacherenrollments)
+      ]);
+
+      const coursesData = (coursesRes as any).data || coursesRes;
+      const enrollmentsData = (enrollmentsRes as any).data || enrollmentsRes;
+
+      if (Array.isArray(coursesData)) {
+        this.realCourses = coursesData;
+      }
+
+      if (Array.isArray(enrollmentsData)) {
+        this.realEnrollments = enrollmentsData;
+      }
+
+      this.calculateStats();
+      this.mapCoursesForUI();
+
+    } catch (error: any) {
+      this.toast.toastError('Error al cargar datos del dashboard');
+    } finally {
+      this.loading = false;
+      this.cdk.detectChanges();
+    }
+  }
+
+  private calculateStats() {
+    this.totalCourses = this.realCourses.length;
+    this.totalStudents = this.realEnrollments.length;
+
+    // Average completion
+    const completed = this.realEnrollments.filter(e => e.completed).length;
+    this.totalCompleted = completed;
+    this.completionRate = this.totalStudents > 0 ? Math.round((completed / this.totalStudents) * 100) : 0;
+
+    // Mock income (sum of prices for active enrollments)
+    let income = 0;
+    this.realEnrollments.forEach(e => {
+      const course = this.realCourses.find(c => c.idCourse === e.idCourse);
+      if (course) {
+        income += course.price || 0;
+      }
+    });
+    this.totalIncome = income;
+  }
+
+  private mapCoursesForUI() {
+    this.courses = this.realCourses.map((c, index) => {
+      // Find avg progress for this course
+      const enrolls = this.realEnrollments.filter(e => e.idCourse === c.idCourse);
+      const avgProgress = enrolls.length > 0
+        ? Math.round(enrolls.reduce((sum, e) => sum + e.totalProgress, 0) / enrolls.length)
+        : 0;
+
+      return {
+        id: c.idCourse,
+        title: c.title,
+        subtitle: c.categoryName + ' - ' + c.totalLessons + ' lecciones',
+        progress: avgProgress,
+        color: this.colors[index % this.colors.length]
+      };
+    });
+  }
+
   toggleSidebar() {
     this.mobileOpen = !this.mobileOpen;
   }

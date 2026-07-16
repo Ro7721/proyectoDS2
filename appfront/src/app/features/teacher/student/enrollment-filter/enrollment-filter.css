@@ -1,0 +1,11 @@
+.enrollment-filter {
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, .06);
+}
+
+@media (max-width: 640px) {
+    .enrollment-filter {
+        padding: 18px;
+    }
+}

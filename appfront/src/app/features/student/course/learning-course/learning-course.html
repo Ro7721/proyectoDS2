@@ -1,6 +1,9 @@
 @if (loading) {
 <div class="flex h-64 items-center justify-center">
-    <span class="material-icons animate-spin text-4xl text-[#E8592B]">progress_activity</span>
+    <div class="flex flex-col items-center gap-3">
+        <div class="w-12 h-12 border-4 border-gray-200 border-t-[#E8592B] rounded-full animate-spin"></div>
+        <p class="text-sm text-gray-400 font-medium">Cargando curso...</p>
+    </div>
 </div>
 }
 
@@ -10,14 +13,20 @@
 
         <app-learnin-header [course]="course" />
 
-        <app-course-progress [progress]="course.totalProgress" [completed]="course.completed" />
+        <app-course-progress
+            [progress]="course.totalProgress"
+            [completed]="course.completed"
+            (showCertificate)="openCertificate()" />
 
         <div class="grid grid-cols-1 gap-6 lg:grid-cols-[320px_1fr]">
             <app-lesson-sidebar [lessons]="course.lessons" [selectedLesson]="selectedLesson"
                 (lessonSelected)="onLessonSelected($event)" />
 
             <div class="flex flex-col gap-4">
-                <app-lesson-player [lesson]="selectedLesson" (lessonProgress)="onLessonProgress($event)" />
+                <app-lesson-player
+                    [lesson]="selectedLesson"
+                    (lessonProgress)="onLessonProgress($event)"
+                    (lessonCompleted)="onLessonCompleted()" />
 
                 <app-lesson-resource [files]="selectedLesson?.files" />
             </div>
@@ -25,4 +34,42 @@
 
     </div>
 </div>
+
+<!-- Certificate modal -->
+<app-certificate-modal
+    [visible]="showCertificateModal"
+    [studentName]="studentName"
+    [courseName]="course.title"
+    [teacherName]="course.teacherFullName"
+    [totalLessons]="course.totalLessons"
+    [certId]="certificateData?.certificateId || ''"
+    [completedAt]="certificateData?.completionDate || ''"
+    (visibleChange)="showCertificateModal = $event">
+</app-certificate-modal>
+
+<!-- Course completed overlay (one-time) -->
+@if (showCompletedOverlay) {
+<div class="fixed inset-0 z-40 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+     (click)="dismissOverlay()">
+    <div class="bg-white rounded-3xl shadow-2xl p-10 text-center max-w-sm mx-4 animate-bounce-in">
+        <div class="w-24 h-24 rounded-full bg-gradient-to-br from-amber-400 to-yellow-500 flex items-center justify-center mx-auto mb-6 shadow-xl">
+            <span class="material-icons text-white text-5xl">workspace_premium</span>
+        </div>
+        <h2 class="text-2xl font-black text-gray-900 mb-2">¡Felicidades! 🎉</h2>
+        <p class="text-gray-500 mb-2">Completaste</p>
+        <p class="text-lg font-bold text-[#E8592B] mb-6 leading-snug">{{ course.title }}</p>
+        <div class="flex gap-3 justify-center">
+            <button (click)="openCertificate(); dismissOverlay()"
+                class="flex-1 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 text-white px-5 py-3 font-bold text-sm shadow-md transition">
+                <span class="material-icons text-base align-middle mr-1">workspace_premium</span>
+                Ver certificado
+            </button>
+            <button (click)="dismissOverlay()"
+                class="px-5 py-3 rounded-xl border border-gray-200 text-gray-600 font-semibold text-sm hover:bg-gray-50 transition">
+                Cerrar
+            </button>
+        </div>
+    </div>
+</div>
+}
 }

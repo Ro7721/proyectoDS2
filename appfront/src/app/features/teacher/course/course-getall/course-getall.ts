@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { Api } from '../../../../api/api';
 import { Apicoursesbyteacher$Params, apicoursesbyteacher, apigetallCategory } from '../../../../api/functions';
 import { CourseResponse } from '../../../../models/course.model';
@@ -16,7 +17,7 @@ import { SelectModule } from 'primeng/select';
 
 @Component({
   selector: 'app-course-getall',
-  imports: [CommonModule, RouterLink, ButtonModule, TagModule, SkeletonModule, Toast, CourseDetails, SelectModule],
+  imports: [CommonModule, RouterLink, FormsModule, ButtonModule, TagModule, SkeletonModule, Toast, CourseDetails, SelectModule],
   templateUrl: './course-getall.html',
   styleUrl: './course-getall.css',
 })
@@ -25,13 +26,26 @@ export class CourseGetall implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private authService = inject(AuthService);
 
+  // Data
   listCourses: CourseResponse[] = [];
+  filteredCourses: CourseResponse[] = [];
+  categories: CategoryResponse[] = [];
+
+  // UI state
   selectedCourseId: string | null = null;
   loading = true;
   showDetails = false;
-  notFound = false;
+  viewMode: 'grid' | 'list' = 'grid';
+
+  // Filter state
+  searchQuery = '';
+  selectedCategoryId: string | null = null;
+
   teacherId = this.authService.user?.idUser || '';
-  categories: CategoryResponse[] = [];
+
+  get categoriesWithAll(): any[] {
+    return [{ idCategory: '', name: 'Todas las categorías' }, ...this.categories];
+  }
 
   constructor(private toastMessage: MessageToast) { }
 
@@ -42,25 +56,64 @@ export class CourseGetall implements OnInit {
 
   loadCourses(): void {
     this.loading = true;
-    this.notFound = false;
+    this.searchQuery = '';
+    this.selectedCategoryId = null;
 
     this.api
-      .invoke<Apicoursesbyteacher$Params, any>(apicoursesbyteacher, {
-        teacherId: this.teacherId,
-      })
+      .invoke<Apicoursesbyteacher$Params, any>(apicoursesbyteacher, { teacherId: this.teacherId })
       .then((response) => {
         this.listCourses = response?.data ?? [];
-        this.notFound = this.listCourses.length === 0;
+        this.applyFilters();
         this.loading = false;
         this.cdr.detectChanges();
       })
       .catch((error) => {
-        this.toastMessage.toastError('Error al cargar cursos', error?.message || 'Ocurrio un error');
+        this.toastMessage.toastError('Error al cargar cursos', error?.message || 'Ocurrió un error');
         this.listCourses = [];
+        this.filteredCourses = [];
         this.loading = false;
-        this.notFound = true;
         this.cdr.detectChanges();
       });
+  }
+
+  onSearchInput(): void {
+    this.applyFilters();
+  }
+
+  onCategoryChange(categoryId: string | null): void {
+    this.selectedCategoryId = categoryId;
+    this.applyFilters();
+  }
+
+  private applyFilters(): void {
+    let result = [...this.listCourses];
+
+    // Text search
+    const q = this.searchQuery.trim().toLowerCase();
+    if (q) {
+      result = result.filter(c =>
+        c.title.toLowerCase().includes(q) ||
+        (c.description ?? '').toLowerCase().includes(q) ||
+        (c.categoryName ?? '').toLowerCase().includes(q)
+      );
+    }
+
+    // Category filter (filter by name since CourseResponse doesn't expose idCategory)
+    if (this.selectedCategoryId) {
+      const cat = this.categories.find(c => c.idCategory === this.selectedCategoryId);
+      if (cat) {
+        result = result.filter(c => c.categoryName === cat.name);
+      }
+    }
+
+    this.filteredCourses = result;
+    this.cdr.detectChanges();
+  }
+
+  clearFilters(): void {
+    this.searchQuery = '';
+    this.selectedCategoryId = null;
+    this.applyFilters();
   }
 
   openCourseDetail(course: CourseResponse): void {
@@ -78,8 +131,11 @@ export class CourseGetall implements OnInit {
   getLevelSeverity(level: string): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' {
     const map: Record<string, 'success' | 'info' | 'warn'> = {
       BASICO: 'success',
+      BASIC: 'success',
       INTERMEDIO: 'info',
+      INTERMEDIATE: 'info',
       AVANZADO: 'warn',
+      ADVANCED: 'warn',
     };
     return map[level?.toUpperCase()] ?? 'info';
   }
@@ -88,6 +144,8 @@ export class CourseGetall implements OnInit {
     const map: Record<string, 'success' | 'warn' | 'secondary'> = {
       PUBLICADO: 'success',
       BORRADOR: 'secondary',
+      DRAFT: 'secondary',
+      PUBLISHED: 'success',
       PAUSADO: 'warn',
     };
     return map[status?.toUpperCase()] ?? 'secondary';
@@ -108,31 +166,9 @@ export class CourseGetall implements OnInit {
       }
       this.cdr.detectChanges();
     }).catch((error) => {
-      this.toastMessage.toastError('Error al cargar categorias', error?.message || 'Ocurrio un error');
+      this.toastMessage.toastError('Error al cargar categorías', error?.message || 'Ocurrió un error');
       this.categories = [];
       this.cdr.detectChanges();
     });
-  }
-  courseFilterByCategory(category: CategoryResponse) {
-    this.loading = true;
-    this.notFound = false;
-
-    this.api
-      .invoke<Apicoursesbyteacher$Params, any>(apicoursesbyteacher, {
-        teacherId: this.teacherId,
-      })
-      .then((response) => {
-        this.listCourses = response?.data ?? [];
-        this.notFound = this.listCourses.length === 0;
-        this.loading = false;
-        this.cdr.detectChanges();
-      })
-      .catch((error) => {
-        this.toastMessage.toastError('Error al cargar cursos', error?.message || 'Ocurrio un error');
-        this.listCourses = [];
-        this.loading = false;
-        this.notFound = true;
-        this.cdr.detectChanges();
-      });
   }
 }

@@ -61,3 +61,7 @@ export type { ApiTeacherenrollments$Params as ApiTeacherenrollments$Params } fro
 export { apiTeacherenrollments as apiTeacherenrollments } from './fn/teacher-enrollment/api-teacherenrollments';
 export type { ApiTeacherenrollmentsbycourse$Params as ApiTeacherenrollmentsbycourse$Params } from './fn/teacher-enrollment/api-teacherenrollmentsbycourse';
 export { apiTeacherenrollmentsbycourse as apiTeacherenrollmentsbycourse } from './fn/teacher-enrollment/api-teacherenrollmentsbycourse';
+export type { ApiCertificate$Params as ApiCertificate$Params } from './fn/enrollment/api-certificate';
+export { apiCertificate as apiCertificate } from './fn/enrollment/api-certificate';
+export type { ApiUserUpdate$Params as ApiUserUpdate$Params } from './fn/user/api-user-update';
+export { apiUserUpdate as apiUserUpdate } from './fn/user/api-user-update';

@@ -1,122 +1,124 @@
 @if(enrollment){
 
-<div class="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+<div class="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden h-full flex flex-col">
 
-    <div class="bg-[#E8592B] p-6 text-white">
-
-        <h2 class="text-2xl font-bold">
-            {{enrollment.studentFullName}}
-        </h2>
-
-        <p class="opacity-90">
-            {{enrollment.studentEmail}}
-        </p>
-
+    <!-- Header with student avatar -->
+    <div class="relative bg-gradient-to-br from-[#E8592B] to-[#c2410c] p-6 text-white overflow-hidden">
+        <div class="absolute -top-6 -right-6 w-32 h-32 rounded-full bg-white/10"></div>
+        <div class="absolute -bottom-8 -left-8 w-28 h-28 rounded-full bg-white/10"></div>
+        <div class="relative z-10 flex items-center gap-4">
+            <!-- Avatar initials -->
+            <div class="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-xl font-black shadow-inner">
+                {{ getInitials(enrollment.studentFullName) }}
+            </div>
+            <div>
+                <h2 class="text-xl font-black leading-tight">{{ enrollment.studentFullName }}</h2>
+                <p class="text-sm opacity-80 mt-0.5">{{ enrollment.studentEmail }}</p>
+            </div>
+        </div>
     </div>
 
-    <div class="grid gap-6 p-6 md:grid-cols-2">
+    <!-- Body -->
+    <div class="flex-1 overflow-y-auto p-6 space-y-5">
 
-        <div class="space-y-5">
-
-            <div>
-                <p class="text-xs uppercase text-gray-500">
-                    Curso
-                </p>
-                <p class="font-semibold text-gray-900">
-                    {{enrollment.courseTitle}}
-                </p>
+        <!-- Course info -->
+        <div class="flex items-start gap-3 p-4 rounded-xl bg-gray-50 border border-gray-100">
+            @if (enrollment.courseImage) {
+            <img [src]="enrollment.courseImage" [alt]="enrollment.courseTitle"
+                class="w-16 h-12 rounded-xl object-cover shrink-0">
+            } @else {
+            <div class="w-16 h-12 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0">
+                <span class="material-icons text-emerald-400">school</span>
             </div>
-
-            <div>
-                <p class="text-xs uppercase text-gray-500">
-                    Categoría
-                </p>
-                <!--<p class="font-semibold text-gray-900">
-                    {{enrollment.categoryName}}
-                </p>-->
+            }
+            <div class="min-w-0">
+                <p class="text-xs text-gray-400 uppercase tracking-wide font-semibold">Curso</p>
+                <p class="font-bold text-gray-900 leading-snug">{{ enrollment.courseTitle }}</p>
             </div>
-
-            <div>
-                <p class="text-xs uppercase text-gray-500">
-                    Fecha de inscripción
-                </p>
-                <p class="font-semibold">
-                    {{enrollment.enrollmentDate | date:'dd/MM/yyyy HH:mm'}}
-                </p>
-            </div>
-
-            <div>
-                <p class="text-xs uppercase text-gray-500">
-                    Último acceso
-                </p>
-                <p class="font-semibold">
-                    {{enrollment.lastAccess | date:'dd/MM/yyyy HH:mm'}}
-                </p>
-            </div>
-
         </div>
 
-        <div class="space-y-5">
-
-            <div>
-
-                <div class="mb-2 flex justify-between">
-
-                    <span class="font-medium">
-                        Progreso del curso
-                    </span>
-
-                    <span class="font-bold">
-                        {{enrollment.totalProgress}}%
-                    </span>
-
-                </div>
-
-                <div class="h-3 rounded-full bg-gray-200 overflow-hidden">
-
-                    <div class="h-full rounded-full bg-[#E8592B] transition-all duration-500"
-                        [style.width.%]="enrollment.totalProgress">
-                    </div>
-
-                </div>
-
+        <!-- Progress section -->
+        <div class="space-y-2">
+            <div class="flex items-center justify-between">
+                <span class="text-sm font-semibold text-gray-700">Progreso del curso</span>
+                <span class="text-sm font-black" [class.text-emerald-600]="enrollment.completed" [class.text-[#E8592B]]="!enrollment.completed">
+                    {{ enrollment.totalProgress }}%
+                </span>
             </div>
-
-            <div class="grid grid-cols-2 gap-4">
-
-                <div class="rounded-xl bg-gray-50 p-4">
-
-                    <p class="text-xs uppercase text-gray-500">
-                        Estado
-                    </p>
-
-                    <p class="mt-1 font-bold" [class.text-green-600]="enrollment.completed"
-                        [class.text-[#E8592B]]="!enrollment.completed">
-
-                        {{enrollment.completed?'Completado':'En progreso'}}
-
-                    </p>
-
+            <div class="h-3 rounded-full bg-gray-100 overflow-hidden">
+                <div class="h-full rounded-full transition-all duration-700"
+                    [ngClass]="enrollment.completed ? 'bg-gradient-to-r from-emerald-400 to-emerald-600' : 'bg-gradient-to-r from-orange-400 to-[#E8592B]'"
+                    [style.width.%]="enrollment.totalProgress">
                 </div>
-
-                <div class="rounded-xl bg-gray-50 p-4">
-
-                    <p class="text-xs uppercase text-gray-500">
-                        Avance
-                    </p>
-
-                    <p class="mt-1 text-2xl font-bold text-gray-900">
-                        {{enrollment.totalProgress}}%
-                    </p>
-
-                </div>
-
             </div>
-
+            <p class="text-xs text-gray-400">
+                {{ enrollment.completed ? '¡Curso completado al 100%!' : (100 - enrollment.totalProgress) + '% restante para completar' }}
+            </p>
         </div>
+
+        <!-- Stats grid -->
+        <div class="grid grid-cols-2 gap-3">
+            <div class="rounded-xl bg-gray-50 border border-gray-100 p-4">
+                <p class="text-xs uppercase text-gray-400 font-semibold tracking-wide">Estado</p>
+                <div class="mt-2 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full" [class.bg-emerald-500]="enrollment.completed" [class.bg-orange-400]="!enrollment.completed"></span>
+                    <p class="font-bold text-sm" [class.text-emerald-600]="enrollment.completed" [class.text-[#E8592B]]="!enrollment.completed">
+                        {{ enrollment.completed ? 'Completado' : 'En progreso' }}
+                    </p>
+                </div>
+            </div>
+
+            <div class="rounded-xl bg-gray-50 border border-gray-100 p-4">
+                <p class="text-xs uppercase text-gray-400 font-semibold tracking-wide">Avance</p>
+                <p class="mt-2 text-2xl font-black text-gray-900">{{ enrollment.totalProgress }}%</p>
+            </div>
+
+            <div class="rounded-xl bg-gray-50 border border-gray-100 p-4">
+                <p class="text-xs uppercase text-gray-400 font-semibold tracking-wide">Inscripción</p>
+                <p class="mt-2 text-sm font-semibold text-gray-800">
+                    {{ enrollment.enrollmentDate | date:'dd/MM/yyyy' }}
+                </p>
+                <p class="text-xs text-gray-400">{{ enrollment.enrollmentDate | date:'HH:mm' }}</p>
+            </div>
+
+            <div class="rounded-xl bg-gray-50 border border-gray-100 p-4">
+                <p class="text-xs uppercase text-gray-400 font-semibold tracking-wide">Último acceso</p>
+                <p class="mt-2 text-sm font-semibold text-gray-800">
+                    {{ enrollment.lastAccess | date:'dd/MM/yyyy' }}
+                </p>
+                <p class="text-xs text-gray-400">{{ enrollment.lastAccess | date:'HH:mm' }}</p>
+            </div>
+        </div>
+
+        <!-- Certificate action (only when completed) -->
+        @if (enrollment.completed) {
+        <div class="rounded-xl border border-amber-200 bg-amber-50 p-4 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-yellow-500 flex items-center justify-center shadow-md shrink-0">
+                <span class="material-icons text-white">workspace_premium</span>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-bold text-amber-800">Certificado disponible</p>
+                <p class="text-xs text-amber-600 mt-0.5">Este estudiante completó el curso</p>
+            </div>
+            <button (click)="showCertificate = true"
+                class="shrink-0 flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 text-white px-4 py-2 font-semibold text-sm shadow transition hover:-translate-y-0.5">
+                <span class="material-icons text-base">open_in_new</span>
+                Ver
+            </button>
+        </div>
+        }
 
     </div>
-
 </div>
+
+<!-- Certificate modal for teacher (viewing student's certificate) -->
+<app-certificate-modal
+    [visible]="showCertificate"
+    [studentName]="enrollment.studentFullName"
+    [courseName]="enrollment.courseTitle"
+    [teacherName]="''"
+    [totalLessons]="0"
+    (visibleChange)="showCertificate = $event">
+</app-certificate-modal>
 
 }

@@ -1,0 +1,169 @@
+@if (visible) {
+<!-- Backdrop -->
+<div class="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-6 bg-black/60 backdrop-blur-sm"
+     (click)="onBackdropClick($event)">
+
+  <!-- Certificate container -->
+  <div class="certificate-printable-area relative bg-white overflow-hidden shadow-2xl flex flex-col sm:flex-row w-full max-w-[1100px] sm:aspect-[1.414] animate-in"
+       (click)="$event.stopPropagation()">
+
+    <!-- Certificate design (Left side - Main) -->
+    <div class="flex-1 bg-white p-6 sm:p-12 flex flex-col justify-between items-center relative z-10 h-full">
+      
+      <!-- Top Logo Area -->
+      <div class="flex items-center gap-4 mt-2 sm:mt-0 mb-6">
+        <!-- Logo Graphic (Book + Person) -->
+        <div class="relative w-20 h-20 text-[#0d276b] flex-shrink-0">
+          <svg viewBox="0 0 100 100" fill="currentColor">
+            <path d="M50 15 A12 12 0 1 0 50 39 A12 12 0 1 0 50 15 Z" />
+            <path d="M10 50 Q 50 30 90 50 L80 90 Q 50 70 20 90 Z" opacity="0.1"/>
+            <path d="M20 50 Q 50 30 80 50 L50 85 Z"/>
+            <path d="M10 65 Q 50 80 90 65" stroke="currentColor" stroke-width="4" fill="none"/>
+            <path d="M20 75 Q 50 90 80 75" stroke="currentColor" stroke-width="4" fill="none"/>
+            <text x="50" y="69" font-size="20" font-weight="900" fill="white" text-anchor="middle" font-family="sans-serif">CCD</text>
+          </svg>
+        </div>
+        <div class="text-[#0d276b] font-black leading-tight text-xl sm:text-2xl tracking-wide text-left">
+          CENTRO DE<br>CAPACITACIÓN<br>Y DESARROLLO
+        </div>
+      </div>
+
+      <!-- Main Titles -->
+      <div class="w-full text-center flex-1 flex flex-col justify-center max-w-3xl mx-auto">
+        <h1 class="text-[3rem] sm:text-[4.5rem] font-black text-[#0d276b] tracking-tighter leading-none mb-4">DIPLOMA</h1>
+        <p class="text-[#0d276b] text-sm sm:text-base font-medium mb-1">Otorgado a:</p>
+        <h2 class="text-2xl sm:text-[2.2rem] font-bold text-[#61a0ff] uppercase tracking-wide mb-5 px-4 leading-tight">{{ studentName }}</h2>
+        <p class="text-[#0d276b] text-xs sm:text-sm font-medium mb-2">Por haber concluido con éxito el diploma de alta especialización de:</p>
+        <h3 class="text-xl sm:text-[1.8rem] font-black text-[#0d276b] uppercase leading-tight px-6">{{ courseName }}</h3>
+      </div>
+
+      <!-- Description Text -->
+      <div class="text-center text-[0.65rem] sm:text-[0.8rem] text-gray-700 max-w-2xl mx-auto mt-6 mb-8 space-y-1">
+        <p>Emitido por el <strong>Centro de Capacitación y Desarrollo - CCD</strong>, con una duración de {{ totalLessons }} lecciones<br>académicas, realizado y culminado el {{ completionDate }}.</p>
+        <p>Por cuanto: Para que conste y sea reconocido, se otorga el presente diploma en calidad de:</p>
+        <p class="text-[#61a0ff] font-bold text-base sm:text-lg mt-2 mb-2">APROBADO</p>
+        <p>Firmado, el {{ completionDate }}.</p>
+      </div>
+
+      <!-- Footer Signatures -->
+      <div class="w-full flex justify-between items-end px-2 sm:px-12 mt-auto mb-2">
+        <!-- Left Stamp -->
+        <div class="flex flex-col items-center">
+          <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full border border-gray-400 relative flex items-center justify-center mb-2">
+            <svg viewBox="0 0 100 100" class="absolute inset-0 w-full h-full animate-spin-slow" style="animation-duration: 25s;">
+              <path id="curve" d="M 10 50 A 40 40 0 1 1 90 50 A 40 40 0 1 1 10 50" fill="transparent"/>
+              <text font-size="9" fill="#333" font-weight="bold" letter-spacing="1">
+                <textPath href="#curve">CENTRO DE CAPACITACIÓN Y DESARROLLO -</textPath>
+              </text>
+            </svg>
+            <div class="text-[#0d276b] font-black text-sm text-center leading-none z-10 font-sans">CCD</div>
+          </div>
+          <!-- Fake signature graphic -->
+          <div class="w-32 sm:w-48 h-12 relative -mb-4 opacity-80">
+             <svg viewBox="0 0 100 30" class="w-full h-full" fill="none" stroke="#111" stroke-width="1.5">
+               <path d="M 10 25 Q 15 10 20 20 T 30 15 T 40 25 T 50 10 T 60 25 T 70 5 T 80 20 T 90 15"/>
+             </svg>
+          </div>
+          <div class="w-32 sm:w-48 border-b border-black mb-1"></div>
+          <p class="text-[0.55rem] sm:text-[0.65rem] font-bold text-center leading-tight">ING. VICTOR ANDRÉ ARIZA FLORES<br><span class="font-normal text-[0.5rem] sm:text-[0.55rem]">Director Académico - ING<br>CIP - 185530</span></p>
+        </div>
+        
+        <!-- Right Stamp -->
+        <div class="flex flex-col items-center">
+          <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full border border-gray-400 relative flex items-center justify-center mb-2">
+            <svg viewBox="0 0 100 100" class="absolute inset-0 w-full h-full animate-spin-slow" style="animation-duration: 25s; animation-direction: reverse;">
+              <path id="curve2" d="M 10 50 A 40 40 0 1 1 90 50 A 40 40 0 1 1 10 50" fill="transparent"/>
+              <text font-size="9" fill="#333" font-weight="bold" letter-spacing="1">
+                <textPath href="#curve2">CENTRO DE CAPACITACIÓN Y DESARROLLO -</textPath>
+              </text>
+            </svg>
+            <div class="text-[#0d276b] font-black text-sm text-center leading-none z-10 font-sans">CCD</div>
+          </div>
+          <!-- Fake signature graphic -->
+          <div class="w-32 sm:w-48 h-12 relative -mb-4 opacity-80">
+             <svg viewBox="0 0 100 30" class="w-full h-full" fill="none" stroke="#111" stroke-width="1">
+               <path d="M 10 15 Q 20 5 25 15 T 35 15 T 45 25 T 55 5 T 65 25 T 75 10 T 90 15"/>
+             </svg>
+          </div>
+          <div class="w-32 sm:w-48 border-b border-black mb-1 text-center"></div>
+          <p class="text-[0.55rem] sm:text-[0.65rem] font-bold text-center leading-tight">ING. LIDUVINA M. DÍAZ CLAROS<br><span class="font-normal text-[0.5rem] sm:text-[0.55rem]">Coordinador Académico<br>CIP - 92173</span></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Sidebar (Blue Area) -->
+    <div class="w-full sm:w-[32%] bg-gradient-to-bl from-[#6bfadc] via-[#3a7afc] to-[#0e2051] flex flex-col items-center p-8 relative z-0 shrink-0 min-h-[300px] sm:min-h-full">
+      
+      <!-- Top Logo (White) -->
+      <div class="relative w-32 h-32 text-white mt-4 sm:mt-12">
+        <svg viewBox="0 0 100 100" fill="currentColor">
+          <path d="M50 15 A12 12 0 1 0 50 39 A12 12 0 1 0 50 15 Z" />
+          <path d="M10 50 Q 50 30 90 50 L80 90 Q 50 70 20 90 Z" opacity="0.3"/>
+          <path d="M20 50 Q 50 30 80 50 L50 85 Z"/>
+          <path d="M10 65 Q 50 80 90 65" stroke="currentColor" stroke-width="4" fill="none"/>
+          <path d="M20 75 Q 50 90 80 75" stroke="currentColor" stroke-width="4" fill="none"/>
+          <text x="50" y="69" font-size="20" font-weight="900" fill="#3a7afc" text-anchor="middle" font-family="sans-serif">CCD</text>
+        </svg>
+      </div>
+
+      <!-- Partner Logo -->
+      <div class="w-full text-center mt-12 mb-auto">
+        <div class="flex items-center justify-center text-white mb-2">
+          <svg viewBox="0 0 160 30" class="h-6" fill="currentColor">
+            <!-- Autodesk 'A' Logo -->
+            <path d="M10 25 L20 5 L30 25 L25 25 L22 18 L18 18 L15 25 Z" fill="currentColor"/>
+            <text x="38" y="22" font-size="19" font-family="sans-serif" font-weight="900" letter-spacing="1">AUTODESK</text>
+          </svg>
+        </div>
+        <div class="w-4/5 h-px bg-white/50 mx-auto mb-2"></div>
+        <p class="text-[0.65rem] text-white/90 tracking-wide font-normal">Authorized Training Center</p>
+      </div>
+
+      <!-- QR Code -->
+      <div class="mt-auto flex flex-col items-center mb-4 sm:mb-8">
+        <div class="bg-transparent border border-white p-2 mb-2">
+          <!-- Fake QR SVG -->
+          <svg viewBox="0 0 100 100" class="w-24 h-24" fill="white">
+            <rect x="0" y="0" width="100" height="100" fill="transparent"/>
+            <rect x="10" y="10" width="25" height="25" stroke="white" stroke-width="3" fill="none"/>
+            <rect x="15" y="15" width="15" height="15"/>
+            <rect x="65" y="10" width="25" height="25" stroke="white" stroke-width="3" fill="none"/>
+            <rect x="70" y="15" width="15" height="15"/>
+            <rect x="10" y="65" width="25" height="25" stroke="white" stroke-width="3" fill="none"/>
+            <rect x="15" y="70" width="15" height="15"/>
+            <rect x="45" y="10" width="10" height="10"/>
+            <rect x="45" y="25" width="10" height="10"/>
+            <rect x="10" y="45" width="10" height="10"/>
+            <rect x="25" y="45" width="10" height="10"/>
+            <rect x="40" y="40" width="20" height="20"/>
+            <rect x="65" y="45" width="25" height="10"/>
+            <rect x="45" y="65" width="10" height="25"/>
+            <rect x="60" y="60" width="15" height="15"/>
+            <rect x="80" y="65" width="10" height="10"/>
+            <rect x="75" y="80" width="15" height="10"/>
+            <rect x="35" y="75" width="10" height="15"/>
+            <rect x="55" y="85" width="15" height="5"/>
+          </svg>
+        </div>
+        <p class="text-white text-[0.7rem] font-medium tracking-wide">QR de verificación</p>
+      </div>
+
+    </div>
+
+    <!-- Floating action buttons (Top right of screen) -->
+    <div class="absolute top-4 right-4 flex gap-2 no-print z-50">
+      <button (click)="downloadPDF()"
+        title="Descargar PDF"
+        class="w-10 h-10 flex items-center justify-center rounded-full bg-black/10 hover:bg-black/30 backdrop-blur text-white transition-colors shadow-sm">
+        <span class="material-icons text-xl">download</span>
+      </button>
+      <button (click)="close()"
+        title="Cerrar"
+        class="w-10 h-10 flex items-center justify-center rounded-full bg-black/10 hover:bg-black/30 backdrop-blur text-white transition-colors">
+        <span class="material-icons text-xl">close</span>
+      </button>
+    </div>
+
+  </div>
+</div>
+}

@@ -78,7 +78,7 @@ export class Home implements OnInit {
       .then((response) => {
         this.publicCourses = response?.data ?? [];
         this.loadingCourses = false;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       })
       .catch((error) => {
         this.messageService.add({
@@ -89,7 +89,7 @@ export class Home implements OnInit {
         this.publicCourses = [];
         this.loadingCourses = false;
         this.coursesLoadError = true;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       });
   }
 }
