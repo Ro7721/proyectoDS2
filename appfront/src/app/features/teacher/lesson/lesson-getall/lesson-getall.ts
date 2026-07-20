@@ -276,7 +276,6 @@ export class LessonGetall implements OnInit {
       const responseData = await this.api.invoke<any, any>(apideleteLesson, {
         idLesson: lesson.idLesson,
       });
-      console.log(responseData)
       if (responseData && responseData.response && responseData.response.type === "success") {
         this.lessons = this.lessons.filter((item) => item.idLesson !== lesson.idLesson);
         this.applyFilters();

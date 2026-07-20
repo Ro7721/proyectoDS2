@@ -18,8 +18,8 @@ export class EnrollmentCard {
     this.selectedChange.emit();
   }
   get progressColor(): string {
-    if (this.enrollment.totalProgress >= 100) return '#16a34a';
-    if (this.enrollment.totalProgress >= 60) return '#2563eb';
-    return '#E8592B';
+    if (this.enrollment.totalProgress >= 100) return 'var(--color-success)';
+    if (this.enrollment.totalProgress >= 60) return 'var(--color-info)';
+    return 'var(--color-accent)';
   }
 }

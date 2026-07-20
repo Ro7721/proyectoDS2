@@ -1,74 +1,83 @@
-<aside class="w-64 bg-white border-r h-screen sticky top-0 hidden lg:flex flex-col">
-    <div class="p-6">
-        <div class="flex items-center gap-2 mb-10">
-            <span class="text-2xl font-bold text-[#3A9E5F]">EduLearn</span>
-            <span class="text-[11px] px-2 py-0.5 rounded-full font-medium"
-                [class]="role === 'ROLE_TEACHER'? 'bg-purple-100 text-purple-700' : 'bg-green-100 text-green-700'">
-                {{ role === 'ROLE_TEACHER'? 'Docente' : 'Alumno' }}
-            </span>
+<aside
+    class="bg-white/80 backdrop-blur-xl border-r border-gray-200 h-screen sticky top-0 flex-col transition-all duration-300 ease-in-out shadow-sm"
+    [ngClass]="isCollapsed? 'w-20' : 'w-72'">
+
+    <!-- Logo + Rol -->
+    <div class="py-6 border-b border-gray-100" [ngClass]="isCollapsed? 'px-2' : 'px-6'">
+        <div class="flex items-center gap-3 mb-8" [ngClass]="isCollapsed? 'justify-center' : ''">
+            <div class="p-2 flex items-center justify-center shadow-sm ml-3">
+                <i class="pi pi-graduation-cap text-3xl text-[#3A9E5F]"></i>
+            </div>
+            <div *ngIf="!isCollapsed">
+                <span
+                    class="text-xl font-bold bg-gradient-to-r from-[#3A9E5F] to-[#2d7a49] bg-clip-text text-transparent">EduLearning</span>
+                <div class="flex items-center gap-1 mt-1">
+                    <i class="pi pi-shield text-xs"
+                        [ngClass]="role === 'ROLE_TEACHER'? 'text-purple-500' : 'text-green-500'"></i>
+                    <span class="text-[11px] font-semibold"
+                        [ngClass]="role === 'ROLE_TEACHER'? 'text-purple-700' : 'text-green-700'">
+                        {{ role === 'ROLE_TEACHER'? 'Docente' : 'Alumno' }}
+                    </span>
+                </div>
+            </div>
         </div>
 
+        <!-- Navegación -->
         <nav class="space-y-1">
-
             <div *ngFor="let item of menu">
 
-                <!-- ITEM NORMAL -->
-                <a *ngIf="!item.items?.length" [routerLink]="item['route']"
-                    routerLinkActive="bg-[#3A9E5F]/10 text-[#3A9E5F]"
-                    class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-100 transition font-medium">
+                <!-- ITEM SIMPLE -->
+                <a *ngIf="!item.items?.length" [routerLink]="item['route']" routerLinkActive="active-link"
+                    (click)="onItemClick($event)"
+                    class="flex items-center gap-3 py-3 rounded-xl text-gray-600 hover:bg-gray-100 hover:text-[#3A9E5F] transition-all duration-200 font-medium group"
+                    [ngClass]="isCollapsed? 'justify-center px-0' : 'px-4'">
 
-                    <i [class]="item.icon"></i>
-                    <span>{{ item.label }}</span>
-
+                    <i [class]="item.icon || ''" class="text-lg group-hover:scale-110 transition-transform"></i>
+                    <span *ngIf="!isCollapsed" class="truncate">{{ item.label }}</span>
                 </a>
 
                 <!-- ITEM CON SUBMENU -->
                 <div *ngIf="item.items?.length">
-
-                    <div class="flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer hover:bg-gray-100"
+                    <div class="flex items-center py-3 rounded-xl cursor-pointer hover:bg-gray-100 transition-all"
                         [ngClass]="{
-                    'bg-[#3A9E5F]/10 text-[#3A9E5F]': isParentActive(item)
-                }" (click)="toggleSubmenu(item.label!)">
+                            'active-link': isParentActive(item),
+                            'justify-center px-0': isCollapsed,
+                            'justify-between px-4':!isCollapsed
+                        }" (click)="toggleSubmenu(item.label!, $event)">
 
                         <div class="flex items-center gap-3">
-                            <i [class]="item.icon"></i>
-                            <span>{{ item.label }}</span>
+                            <i [class]="item.icon || ''" class="text-lg"></i>
+                            <span *ngIf="!isCollapsed">{{ item.label }}</span>
                         </div>
 
-                        <i class="pi transition-transform" [ngClass]="
-                        isOpen(item.label!)
-                        ? 'pi-chevron-down'
-                        : 'pi-chevron-right'
-                    ">
+                        <i *ngIf="!isCollapsed" class="pi pi-chevron-right transition-transform duration-200"
+                            [ngClass]="isOpen(item.label!) ? 'rotate-90' : 'rotate-0'">
                         </i>
-
                     </div>
 
-                    <div *ngIf="isOpen(item.label!) || isParentActive(item)" class="ml-6 mt-1 space-y-1">
-
-                        <a *ngFor="let child of item.items" [routerLink]="child['route']"
-                            routerLinkActive="bg-[#3A9E5F]/10 text-[#3A9E5F]"
-                            class="flex items-center gap-3 px-4 py-2 rounded-lg text-sm hover:bg-gray-100 transition">
-
-                            <i [class]="child.icon"></i>
-                            <span>{{ child.label }}</span>
-
-                        </a>
-
+                    <div *ngIf="!isCollapsed" class="overflow-hidden transition-all duration-300"
+                        [ngClass]="isOpen(item.label!) || isParentActive(item)? 'max-h-96 mt-1' : 'max-h-0'">
+                        <div class="ml-6 space-y-1 border-l-2 border-gray-100 pl-3">
+                            <a *ngFor="let child of item.items" [routerLink]="child['route']"
+                                routerLinkActive="active-link"
+                                class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100 hover:text-[#3A9E5F] transition">
+                                <i [class]="child.icon || ''" class="text-base"></i>
+                                <span>{{ child.label }}</span>
+                            </a>
+                        </div>
                     </div>
-
                 </div>
-
             </div>
-
         </nav>
     </div>
 
-    <div class="mt-auto p-6 border-t">
+    <!-- Logout -->
+    <div class="mt-auto py-4 border-t border-gray-100" [ngClass]="isCollapsed? 'px-2' : 'px-4'">
         <button (click)="logout()"
-            class="w-full text-left text-sm text-gray-600 hover:text-red-600 bg-transparent hover:bg-red-50 hover:text-red-600 rounded-xl p-3 flex justify-between">
-            Cerrar sesión
-            <i class="pi pi-sign-out"></i>
+            class="w-full text-left text-sm text-gray-600 hover:text-red-600 bg-transparent hover:bg-red-50 rounded-xl py-3 flex items-center gap-3 transition-all"
+            [ngClass]="isCollapsed? 'justify-center px-0' : 'px-4'">
+            <i class="pi pi-sign-out text-lg"></i>
+            <span *ngIf="!isCollapsed">Cerrar sesión</span>
         </button>
     </div>
 </aside>

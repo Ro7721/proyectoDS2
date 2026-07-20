@@ -100,7 +100,7 @@ export class CourseDetail implements OnInit {
     this.api.invoke(apidetailsCourse, { idCourse: id }).then((response: any) => {
       const apiResponseData = typeof response == 'string' ? JSON.parse(response) : response;
       this.course = apiResponseData.data || apiResponseData;
-      
+
       if (this.authService.isAuthenticated()) {
         this.checkIfEnrolled(id);
       } else {
@@ -121,15 +121,25 @@ export class CourseDetail implements OnInit {
       this.changeDetectorRef.detectChanges();
     });
   }
+  calculatePrice(price: number): number {
+    if (price <= 0) {
+      return 0;
+    }
+    return +(price * 0.95).toFixed(2);
+  }
 
   formatPrice(price: number | undefined): string {
     if (!price || price <= 0) {
       return 'Gratis';
     }
+    const finalPrice = this.calculatePrice(price);
 
     return new Intl.NumberFormat('es-PE', {
       style: 'currency',
       currency: 'PEN'
-    }).format(price);
+    }).format(finalPrice);
+  }
+  regresar() {
+    this.router.navigate(['/catalog']);
   }
 }

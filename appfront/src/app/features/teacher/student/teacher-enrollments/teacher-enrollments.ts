@@ -1,54 +1,61 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
-import { Api } from '../../../../api/api';
-import { TeacherEnrollmentResponse } from '../../../../models/teacher.model';
-import { apiTeacherenrollments } from '../../../../api/functions';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { EnrollmentCard } from '../enrollment-card/enrollment-card';
 import { EnrollmentFilter } from '../enrollment-filter/enrollment-filter';
 import { TeacherEnrollmentDetail } from '../teacher-enrollment-detail/teacher-enrollment-detail';
+import { TeacherEnrollmentsService, CourseSummary } from './teacher-enrollments.service';
+import { TeacherEnrollmentResponse } from '../../../../models/teacher.model';
 
 @Component({
   selector: 'app-teacher-enrollments',
   imports: [CommonModule, EnrollmentCard, EnrollmentFilter, TeacherEnrollmentDetail],
   templateUrl: './teacher-enrollments.html',
   styleUrl: './teacher-enrollments.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TeacherEnrollments implements OnInit {
-  private api = inject(Api);
+  private enrollmentsService = inject(TeacherEnrollmentsService);
   private cdr = inject(ChangeDetectorRef);
 
+  // ── State ──
   loading = true;
-
   enrollments: TeacherEnrollmentResponse[] = [];
   filtered: TeacherEnrollmentResponse[] = [];
-
   selectedEnrollment?: TeacherEnrollmentResponse;
 
+  // ── Filter state ──
   search = '';
   status = 'ALL';
+
+  // ── Aggregates ──
+  totalEnrollments = 0;
+  courseSummary: CourseSummary[] = [];
 
   ngOnInit(): void {
     this.load();
   }
 
-  load(): void {
+  /** Fetch data from the service and compute aggregates */
+  private async load(): Promise<void> {
     this.loading = true;
 
-    this.api.invoke(apiTeacherenrollments)
-      .then(res => {
-        const data = this.unwrap<TeacherEnrollmentResponse[]>(res);
-        this.enrollments = data ?? [];
-        this.applyFilter();
+    const data = await this.enrollmentsService.getEnrollments();
 
-        if (this.filtered.length) {
-          this.selectedEnrollment = this.filtered[0];
-        }
-      })
-      .finally(() => {
-        this.loading = false;
-        this.cdr.markForCheck();
-      });
+    this.enrollments = data;
+    this.totalEnrollments = data.length;
+    this.courseSummary = this.enrollmentsService.computeCourseSummary(data);
+
+    this.applyFilter();
+
+    if (this.filtered.length) {
+      this.selectedEnrollment = this.filtered[0];
+    }
+
+    this.loading = false;
+    this.cdr.markForCheck();
   }
+
+  // ── UI event handlers ──
 
   onSearch(value: string): void {
     this.search = value;
@@ -64,25 +71,16 @@ export class TeacherEnrollments implements OnInit {
     this.selectedEnrollment = enrollment;
   }
 
+  // ── Filtering (delegated to service) ──
+
   private applyFilter(): void {
+    this.filtered = this.enrollmentsService.filterEnrollments(
+      this.enrollments,
+      this.search,
+      this.status,
+    );
 
-    const search = this.search.toLowerCase();
-
-    this.filtered = this.enrollments.filter(e => {
-
-      const matchesSearch =
-        e.studentFullName.toLowerCase().includes(search) ||
-        e.courseTitle.toLowerCase().includes(search);
-
-      const matchesStatus =
-        this.status === 'ALL' ||
-        (this.status === 'COMPLETED' && e.completed) ||
-        (this.status === 'PROGRESS' && !e.completed);
-
-      return matchesSearch && matchesStatus;
-
-    });
-
+    // Keep the selected item visible after a filter change
     if (
       this.selectedEnrollment &&
       !this.filtered.some(x => x.idEnrollment === this.selectedEnrollment!.idEnrollment)
@@ -90,13 +88,6 @@ export class TeacherEnrollments implements OnInit {
       this.selectedEnrollment = this.filtered[0];
     }
 
-  }
-
-  private unwrap<T>(response: unknown): T {
-    const parsed = typeof response === 'string'
-      ? JSON.parse(response)
-      : response;
-
-    return (parsed as any).data ?? parsed;
+    this.cdr.markForCheck();
   }
 }

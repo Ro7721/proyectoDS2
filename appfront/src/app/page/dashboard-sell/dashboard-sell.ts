@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, PLATFORM_ID, inject } from '@angular/core';
+import { Component, OnInit, PLATFORM_ID, inject, HostListener } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router, RouterOutlet } from '@angular/router';
 import { Sidebar } from '../../layout/sidebar/sidebar';
 import { Header } from '../../layout/header/header';
 import { Footer } from '../../layout/footer/footer';
-import { MenuItem, MessageService } from 'primeng/api';
+import { MenuItem } from 'primeng/api';
 import { AuthService } from '../../core/auth/auth.service';
 import { ToastModule } from "primeng/toast";
 import { MessageToast } from '../../message/message-toast';
@@ -21,7 +21,9 @@ export class DashboardSell implements OnInit {
 
   role: Role = 'ROLE_STUDENT';
   userName = '';
-  mobileOpen = false;
+  isSidebarCollapsed = false;
+  isMobile = false;
+  private sidebarManuallyToggled = false;
 
   constructor(private toast: MessageToast, private authService: AuthService) {
   }
@@ -74,6 +76,8 @@ export class DashboardSell implements OnInit {
     this.userName = `${user.firstName} ${user.surName}`;
     this.role = user.role as Role;
 
+    this.checkScreenSize();
+
     // Mostrar toast de bienvenida después de que el componente esté renderizado
     const welcome = sessionStorage.getItem('welcomeShown');
     if (!welcome) {
@@ -86,5 +90,26 @@ export class DashboardSell implements OnInit {
       sessionStorage.setItem('welcomeShown', 'true');
     }
 
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.checkScreenSize();
+  }
+
+  checkScreenSize() {
+    if (isPlatformBrowser(this.platformId)) {
+      this.isMobile = window.innerWidth < 1024;
+      if (this.isMobile && !this.sidebarManuallyToggled) {
+        this.isSidebarCollapsed = true;
+      } else if (!this.isMobile && !this.sidebarManuallyToggled) {
+        this.isSidebarCollapsed = false;
+      }
+    }
+  }
+
+  toggleSidebar() {
+    this.isSidebarCollapsed = !this.isSidebarCollapsed;
+    this.sidebarManuallyToggled = true;
   }
 }

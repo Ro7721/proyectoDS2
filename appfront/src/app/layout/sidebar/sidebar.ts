@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input, signal } from '@angular/core';
+import { Component, inject, Input, Output, EventEmitter, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { AuthService } from '../../core/auth/auth.service';
@@ -15,6 +15,8 @@ export class Sidebar {
 
   @Input() menu: MenuItem[] = [];
   @Input() role: 'ROLE_STUDENT' | 'ROLE_TEACHER' | 'ROLE_ADMIN' = 'ROLE_TEACHER';
+  @Input() isCollapsed = false;
+  @Output() onExpand = new EventEmitter<void>();
 
   constructor(private toast: MessageToast, private authService: AuthService, private router: Router) { }
   async logout() {
@@ -24,8 +26,19 @@ export class Sidebar {
 
   private openedMenus: Record<string, boolean> = {};
 
-  toggleSubmenu(label: string): void {
-    this.openedMenus[label] = !this.openedMenus[label];
+  onItemClick(event: Event) {
+    if (this.isCollapsed) {
+      event.preventDefault();
+      this.onExpand.emit();
+    }
+  }
+
+  toggleSubmenu(label: string, event?: Event): void {
+    if (this.isCollapsed) {
+      this.onExpand.emit();
+    } else {
+      this.openedMenus[label] = !this.openedMenus[label];
+    }
   }
 
   isOpen(label: string): boolean {

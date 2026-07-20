@@ -1,0 +1,5 @@
+.active-link {
+    background: linear-gradient(90deg, rgba(58, 158, 95, 0.1) 0%, transparent 100%);
+    color: #3A9E5F;
+    border-left: 3px solid #3A9E5F;
+}

@@ -5,7 +5,7 @@
         <div class="relative">
             <span class="material-icons absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">search</span>
             <input type="text" [(ngModel)]="search" (input)="onSearch()" placeholder="Buscar estudiante o curso..."
-                class="w-full rounded-xl border border-gray-200 bg-gray-50 py-2.5 pl-10 pr-4 text-sm text-gray-700 placeholder-gray-400 outline-none transition focus:border-[#E8592B] focus:ring-1 focus:ring-[#E8592B]/30 focus:bg-white" />
+                class="w-full rounded-xl border border-gray-200 bg-gray-50 py-2.5 pl-10 pr-4 text-sm text-gray-700 placeholder-gray-400 outline-none transition focus:border-accent focus:ring-1 focus:ring-accent/30 focus:bg-white" />
         </div>
 
         <!-- Status filter buttons -->
@@ -13,13 +13,13 @@
             <button *ngFor="let opt of statusOptions"
                 (click)="setStatus(opt.value)"
                 class="rounded-xl px-4 py-2.5 text-sm font-semibold border transition-all whitespace-nowrap"
-                [class.bg-[#E8592B]]="status === opt.value"
+                [class.bg-accent]="status === opt.value"
                 [class.text-white]="status === opt.value"
-                [class.border-[#E8592B]]="status === opt.value"
+                [class.border-accent]="status === opt.value"
                 [class.bg-white]="status !== opt.value"
                 [class.text-gray-600]="status !== opt.value"
                 [class.border-gray-200]="status !== opt.value"
-                [class.hover:border-[#E8592B]]="status !== opt.value">
+                [class.hover:border-accent]="status !== opt.value">
                 {{ opt.label }}
             </button>
         </div>

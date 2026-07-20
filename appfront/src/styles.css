@@ -4,11 +4,42 @@
 @import "primeicons/primeicons.css";
 
 @theme {
-    --color-brand: #3A9E5F;
+    /* ── Design System Palette ── */
+    --color-primary: #E8592B;
+    --color-background: #F7F6F3;
+    --color-surface: #FFFFFF;
+
+    /* ── Semantic Colors ── */
+    --color-success: #16A34A;
+    --color-warning: #F59E0B;
+    --color-danger: #DC2626;
+
+    /* ── Typography & Borders ── */
+    --color-text: #111827;
+    --color-muted: #6B7280;
+    --color-border: #E5E7EB;
+
+    /* ── Typography ── */
     --font-sans: Inter, system-ui, sans-serif;
 }
 
-/* Tus clases personalizadas */
+/* ── Utility classes built on the theme ── */
 @utility btn-primary {
-    @apply bg-brand hover:bg-[#2e7d4a] text-white font-medium px-6 py-3 rounded-xl transition;
+    @apply bg-primary hover:bg-[#c44520] text-white font-medium px-6 py-3 rounded-xl transition;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+nav a {
+    animation: slideIn 0.3s ease-out;
 }

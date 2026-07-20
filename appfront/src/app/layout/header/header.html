@@ -1,17 +1,28 @@
-<header class="bg-white border-b px-6 py-4 flex items-center justify-between sticky top-0 z-30">
+<header
+    class="bg-white/80 backdrop-blur-xl border-b border-gray-200 px-4 md:px-6 py-4 flex items-center justify-between sticky top-0 z-30 shadow-sm">
     <div class="flex items-center gap-4">
-        <p-button (click)="toggleSidebar()" [text]="true" severity="contrast" class="lg:hidden p-2 -ml-2">
-            <i class="pi pi-bars"></i>
+        <p-button (click)="toggleSidebar()" [text]="true" severity="secondary" class="lg:hidden">
+            <i class="pi pi-bars text-xl"></i>
         </p-button>
-        <h1 class="text-xl font-semibold text-gray-900">{{ title }}</h1>
+        <h1 class="text-xl md:text-2xl font-bold text-gray-900">{{ title }}</h1>
     </div>
 
     <div class="flex items-center gap-3">
-        <div class="flex items-center gap-2 hover:cursor-pointer hover:bg-gray-100 rounded-xl p-2">
-            <div class="w-9 h-9 rounded-full bg-[#3A9E5F] text-white grid place-items-center font-medium">
+        <!-- Notificaciones -->
+        <p-button [text]="true" severity="secondary" [rounded]="true">
+            <i class="pi pi-bell text-lg"></i>
+        </p-button>
+
+        <!-- Perfil -->
+        <div class="flex items-center gap-3 hover:bg-gray-100 rounded-xl p-2 cursor-pointer transition">
+            <div
+                class="w-10 h-10 rounded-full bg-gradient-to-br bg-green-400 to-green-600 text-white grid place-items-center font-semibold shadow-sm">
                 {{ initials }}
             </div>
-            <span class="hidden sm:block text-sm text-gray-600">{{ userName }}</span>
+            <div class="hidden sm:block">
+                <p class="text-sm font-semibold text-gray-800">{{ userName }}</p>
+                <p class="text-xs text-gray-500">{{ role === 'ROLE_TEACHER'? 'Docente' : 'Alumno' }}</p>
+            </div>
         </div>
     </div>
 </header>

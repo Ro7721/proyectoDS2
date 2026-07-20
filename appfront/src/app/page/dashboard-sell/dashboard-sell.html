@@ -1,26 +1,23 @@
-<p-toast position="top-right" [pt]="{
-    summary: { class: 'text-[#3A9E5F]! font-bold' },
-    detail: { class: 'text-black! font-medium' }
-  }" />
+<p-toast position="top-right" [life]="3000" />
 
-<div class="min-h-screen bg-gray-50 flex">
-    <!-- Desktop sidebar -->
-    <app-sidebar [menu]="menu" [role]="role" class="hidden lg:flex" />
-    <!-- Mobile sidebar con animación -->
-    <div class="lg:hidden">
-        <div class="fixed inset-0 bg-black/50 z-40 transition-opacity duration-300" [class.opacity-100]="mobileOpen"
-            [class.opacity-0]="!mobileOpen" [class.pointer-events-none]="!mobileOpen" (click)="mobileOpen = false">
-        </div>
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex">
 
-        <div class="fixed left-0 top-0 h-full z-50 transform transition-transform duration-300 ease-in-out"
-            [class.translate-x-0]="mobileOpen" [class.-translate-x-full]="!mobileOpen">
-            <app-sidebar [menu]="menu" [role]="role" />
-        </div>
+    <!-- Backdrop móvil -->
+    <div *ngIf="!isSidebarCollapsed && isMobile"
+        class="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 lg:hidden transition-opacity duration-300"
+        (click)="isSidebarCollapsed = true">
     </div>
 
+    <!-- Sidebar -->
+    <app-sidebar [menu]="menu" [role]="role" [isCollapsed]="isMobile? isSidebarCollapsed : false"
+        (onExpand)="isSidebarCollapsed = false"
+        class="h-screen sticky top-0 z-40 flex-shrink-0 transition-all duration-300 ease-in-out">
+    </app-sidebar>
+
+    <!-- Contenido principal -->
     <div class="flex-1 flex flex-col min-w-0">
-        <app-header [title]="pageTitle" [userName]="userName" (menuToggle)="mobileOpen = true" />
-        <main class="flex-1 p-6 lg:p-8 overflow-auto">
+        <app-header [title]="pageTitle" [userName]="userName" (menuToggle)="toggleSidebar()" />
+        <main class="flex-1 p-4 md:p-6 lg:p-8 overflow-auto">
             <router-outlet></router-outlet>
         </main>
         <app-footer />

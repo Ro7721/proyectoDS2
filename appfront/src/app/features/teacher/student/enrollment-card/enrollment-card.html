@@ -1,8 +1,8 @@
 <div (click)="select()"
     class="enrollment-card cursor-pointer border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
-    [class.border-[#E8592B]]="selected" [class.ring-2]="selected" [class.ring-[#E8592B]/30]="selected">
+    [class.border-accent]="selected" [class.ring-2]="selected" [class.ring-accent/30]="selected">
     <div class="enrollment-card__header flex items-center gap-4 border-b border-gray-100">
-        <div class="flex h-14 w-14 items-center justify-center rounded-full bg-[#E8592B] text-lg font-bold text-white">
+        <div class="flex h-14 w-14 items-center justify-center rounded-full bg-accent text-lg font-bold text-white">
             {{ enrollment.studentFullName.charAt(0) }}
         </div>
 
@@ -16,14 +16,14 @@
         </div>
         <span class="rounded-full px-3 py-1 text-xs font-semibold" [ngClass]="enrollment.completed
                 ? 'bg-green-100 text-green-700'
-                : 'bg-orange-100 text-[#E8592B]'">
+                : 'bg-accent-light text-accent'">
             {{ enrollment.completed ? 'Completado' : 'En progreso' }}
         </span>
     </div>
 
     <div class="enrollment-card__body space-y-5">
         <div class="flex items-start gap-3">
-            <span class="material-icons mt-0.5 text-[#E8592B]">
+            <span class="material-icons mt-0.5 text-accent">
                 menu_book
             </span>
             <div>

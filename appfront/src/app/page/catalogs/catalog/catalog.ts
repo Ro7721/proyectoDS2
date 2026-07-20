@@ -23,6 +23,7 @@ export class Catalog {
 
   loading = false;
   searchText = '';
+  filtersOpen = false;
   categories: CategoryResponse[] = [];
   courses: CourseResponse[] = [];
   filteredCourses: CourseResponse[] = [];

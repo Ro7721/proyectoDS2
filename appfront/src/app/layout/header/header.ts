@@ -16,8 +16,11 @@ export class Header {
   @Input() userName = 'Usuario';
   @Input() role: 'ROLE_STUDENT' | 'ROLE_TEACHER' | 'ROLE_ADMIN' = 'ROLE_STUDENT';
 
+  @Output() menuToggle = new EventEmitter<void>();
+
   toggleSidebar() {
     this.sidebarVisible.update((value) => !value);
+    this.menuToggle.emit();
   }
 
   get initials(): string {
