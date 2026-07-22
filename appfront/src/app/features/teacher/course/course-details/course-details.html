@@ -137,8 +137,8 @@
                     class="p-button-outlined p-button-sm"></button>
                 <button pButton type="button" icon="pi pi-plus" label="Nueva lección" class="p-button-sm"
                     style="background:#16a34a; border-color:#16a34a;" (click)="openNewLessonDialog()"></button>
-                <button pButton type="button" icon="pi pi-trash" label="Eliminar"
-                    class="p-button-danger p-button-sm"></button>
+                <button pButton type="button" icon="pi pi-trash" label="Eliminar" class="p-button-danger p-button-sm"
+                    (click)="confirmDeleteCourse($event)"></button>
             </div>
         </div>
     </ng-template>

@@ -15,9 +15,9 @@ import { MessageService } from 'primeng/api';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { Api } from '../../../../api/api';
 import {
-  apicreateCourse,
-  apigetallCategory,
-  apicreateLesson,
+  createCourse,
+  getAll1,
+  create,
 } from '../../../../api/functions';
 import { LessonInsert, LessonFormPayload } from '../lesson-insert/lesson-insert';
 import { MessageToast } from '../../../../message/message-toast';
@@ -92,16 +92,24 @@ export class CourseInsert implements OnInit {
   constructor(
     private fb: FormBuilder,
     private api: Api,
-    private messageToast: MessageToast
+    private messageToast: MessageToast,
   ) {
     this.courseForm = this.fb.group({
-      courseTitle: ['', Validators.required],
-      courseDescription: ['', Validators.required],
+      courseTitle: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(100)]],
+      courseDescription: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
       selectedCategoryId: [null, Validators.required],
       courseLevel: ['', Validators.required],
-      coursePrice: [0, [Validators.required, Validators.min(0)]],
+      coursePrice: [0, [Validators.required, Validators.min(0), Validators.max(10000)]],
     });
   }
+
+  get f() { return this.courseForm.controls; }
+
+  isFieldInvalid(field: string): boolean {
+    const ctrl = this.courseForm.get(field);
+    return !!(ctrl && ctrl.invalid && ctrl.touched);
+  }
+
 
   ngOnInit(): void {
     this.loadCategories();
@@ -110,7 +118,7 @@ export class CourseInsert implements OnInit {
   // ── Categorías ────────────────────────────────────────────────────────────
 
   private loadCategories(): void {
-    this.api.invoke(apigetallCategory)
+    this.api.invoke(getAll1)
       .then((response: any) => {
 
         const responseData =
@@ -216,20 +224,20 @@ export class CourseInsert implements OnInit {
     this.courseStatus = status;
 
     try {
-      const resp = await this.api.invoke$Response(apicreateCourse, {
+      const resp = await this.api.invoke$Response(createCourse, {
         body: {
           title: formValue.courseTitle,
           description: formValue.courseDescription,
           idCategory: String(formValue.selectedCategoryId),
           idTeacher: this.idTeacher,
           level: formValue.courseLevel,
-          price: String(formValue.coursePrice),
+          price: Number(formValue.coursePrice),
           status: this.courseStatus,
-          coverImage: [this.coverImageFile],
+          coverImage: this.coverImageFile,
         },
       });
 
-      const body = JSON.parse(resp.body as any);
+      const body = typeof resp.body === 'string' ? JSON.parse(resp.body) : resp.body;
       this.createdCourseId = body?.data?.idCourse ?? null;
       this.courseCreated = true;
 
@@ -244,12 +252,15 @@ export class CourseInsert implements OnInit {
       );
 
     } catch (e) {
+      console.error(e);
       this.messageToast.toastError('Error al guardar', 'Ocurrió un problema al procesar el curso. Intenta de nuevo.');
     } finally {
       this.loading = false;
       this.cdr.detectChanges();
     }
   }
+
+
 
   // ── Guardar lecciones ─────────────────────────────────────────────────────
 
@@ -262,13 +273,13 @@ export class CourseInsert implements OnInit {
       if (lesson.saved) continue;
 
       try {
-        await this.api.invoke$Response(apicreateLesson, {
+        await this.api.invoke$Response(create, {
           body: {
             title: lesson.title,
             description: lesson.description,
             type: lesson.type,
             contenUrl: lesson.contenUrl,
-            isFree: String(lesson.isFree),
+            free: lesson.isFree === 'true' || lesson.isFree === true as any,
             courseId,
             mainVideoFile: lesson.mainVideoFile,
             adjunctFiles: lesson.adjunctFiles

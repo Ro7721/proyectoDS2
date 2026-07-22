@@ -2,8 +2,7 @@ import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Api } from '../../../api/api';
 import { CourseResponse } from '../../../models/course.model';
-import { apidetailsCourse, enrollmentInsert, EnrollmentInsert$Params } from '../../../api/functions';
-import { checkEnrollment } from '../../../api/fn/enrollment/check-enrollment';
+import { getById1, enrollInCourse, EnrollInCourse$Params, checkEnrollment } from '../../../api/functions';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../core/auth/auth.service';
 
@@ -70,7 +69,7 @@ export class CourseDetail implements OnInit {
     this.changeDetectorRef.detectChanges();
 
     try {
-      await this.api.invoke<EnrollmentInsert$Params, void>(enrollmentInsert, {
+      await this.api.invoke<EnrollInCourse$Params, any>(enrollInCourse, {
         body: {
           courseId: this.course.idCourse
         }
@@ -97,7 +96,7 @@ export class CourseDetail implements OnInit {
 
   loadCourse(id: string) {
     this.loading = true;
-    this.api.invoke(apidetailsCourse, { idCourse: id }).then((response: any) => {
+    this.api.invoke(getById1, { idCourse: id }).then((response: any) => {
       const apiResponseData = typeof response == 'string' ? JSON.parse(response) : response;
       this.course = apiResponseData.data || apiResponseData;
 

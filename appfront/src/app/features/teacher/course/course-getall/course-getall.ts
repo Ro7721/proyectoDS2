@@ -3,7 +3,7 @@ import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Api } from '../../../../api/api';
-import { Apicoursesbyteacher$Params, apicoursesbyteacher, apigetallCategory } from '../../../../api/functions';
+import { FindByTeacher$Params, findByTeacher, getAll1 } from '../../../../api/functions';
 import { CourseResponse } from '../../../../models/course.model';
 import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
@@ -14,6 +14,8 @@ import { AuthService } from '../../../../core/auth/auth.service';
 import { MessageToast } from '../../../../message/message-toast';
 import { CategoryResponse } from '../../../../models/category.model';
 import { SelectModule } from 'primeng/select';
+import { ConfirmationService } from 'primeng/api';
+import { deleteCourse } from '../../../../api/functions';
 
 @Component({
   selector: 'app-course-getall',
@@ -47,7 +49,8 @@ export class CourseGetall implements OnInit {
     return [{ idCategory: '', name: 'Todas las categorías' }, ...this.categories];
   }
 
-  constructor(private toastMessage: MessageToast) { }
+  constructor(private toastMessage: MessageToast,
+    private Confirmation: ConfirmationService) { }
 
   ngOnInit(): void {
     this.loadCourses();
@@ -60,7 +63,7 @@ export class CourseGetall implements OnInit {
     this.selectedCategoryId = null;
 
     this.api
-      .invoke<Apicoursesbyteacher$Params, any>(apicoursesbyteacher, { teacherId: this.teacherId })
+      .invoke<FindByTeacher$Params, any>(findByTeacher, { teacherId: this.teacherId })
       .then((response) => {
         this.listCourses = response?.data ?? [];
         this.applyFilters();
@@ -157,7 +160,7 @@ export class CourseGetall implements OnInit {
   }
 
   loadCategories() {
-    this.api.invoke(apigetallCategory).then((response: any) => {
+    this.api.invoke(getAll1).then((response: any) => {
       const apiResponse = typeof response == 'string' ? JSON.parse(response) : response;
       if (Array.isArray(apiResponse)) {
         this.categories = apiResponse;

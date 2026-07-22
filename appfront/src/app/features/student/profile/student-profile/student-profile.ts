@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { AuthService } from '../../../../core/auth/auth.service';
 import { Api } from '../../../../api/api';
 import { CurrentUser } from '../../../../models/auth.model';
-import { apiUserUpdate } from '../../../../api/functions';
+import { updateUser } from '../../../../api/functions';
 
 @Component({
   selector: 'app-student-profile',
@@ -18,6 +18,7 @@ export class StudentProfile implements OnInit {
   saving = false;
   message = '';
   isError = false;
+  showEditModal = false;
   public form: FormGroup;
 
   constructor(
@@ -59,6 +60,25 @@ export class StudentProfile implements OnInit {
     }
   }
 
+  openEditModal(): void {
+    if (this.user) {
+      this.form.patchValue({
+        firstName: this.user.firstName,
+        surName: this.user.surName,
+        email: this.user.email,
+        idUser: this.user.idUser,
+        password: '',
+        confirmPassword: ''
+      });
+    }
+    this.message = '';
+    this.showEditModal = true;
+  }
+
+  closeEditModal(): void {
+    this.showEditModal = false;
+  }
+
   async saveProfile(): Promise<void> {
     if (!this.user || !this.user.idUser) return;
 
@@ -72,17 +92,16 @@ export class StudentProfile implements OnInit {
     this.message = '';
 
     try {
-      this.api.invoke(apiUserUpdate, { idUser: this.user.idUser, body: this.form.value }).then((response: any) => {
+      this.api.invoke(updateUser, { idUser: this.user.idUser, body: this.form.value }).then((response: any) => {
         const apiResponse = typeof response === 'string' ? JSON.parse(response) : response;
 
         if (!apiResponse.success) {
           throw new Error(apiResponse.response?.listMessage?.[0] || 'Error al actualizar');
         }
+        
         this.showMessage('Perfil actualizado con éxito.', false);
-        this.form.patchValue({
-          password: '',
-          confirmPassword: ''
-        });
+        this.closeEditModal();
+        this.loadProfile();
       }).catch((error: any) => {
         console.error('Error saving profile', error);
         this.showMessage(error.message || 'Error al guardar los cambios', true);

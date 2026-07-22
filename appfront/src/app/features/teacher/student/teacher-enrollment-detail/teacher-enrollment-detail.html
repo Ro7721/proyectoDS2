@@ -3,7 +3,7 @@
 <div class="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden h-full flex flex-col">
 
     <!-- Header with student avatar -->
-    <div class="relative bg-gradient-to-br from-[#E8592B] to-[#c2410c] p-6 text-white overflow-hidden">
+    <div class="relative bg-gradient-to-br from-emerald-500 to-emerald-700 p-6 text-white overflow-hidden">
         <div class="absolute -top-6 -right-6 w-32 h-32 rounded-full bg-white/10"></div>
         <div class="absolute -bottom-8 -left-8 w-28 h-28 rounded-full bg-white/10"></div>
         <div class="relative z-10 flex items-center gap-4">
@@ -28,7 +28,7 @@
                 class="w-16 h-12 rounded-xl object-cover shrink-0">
             } @else {
             <div class="w-16 h-12 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0">
-                <span class="material-icons text-emerald-400">school</span>
+                <span class="material-icons text-emerald-500">school</span>
             </div>
             }
             <div class="min-w-0">
@@ -41,13 +41,13 @@
         <div class="space-y-2">
             <div class="flex items-center justify-between">
                 <span class="text-sm font-semibold text-gray-700">Progreso del curso</span>
-                <span class="text-sm font-black" [class.text-emerald-600]="enrollment.completed" [class.text-[#E8592B]]="!enrollment.completed">
+                <span class="text-sm font-black" [class.text-emerald-600]="enrollment.completed" [class.text-blue-500]="!enrollment.completed">
                     {{ enrollment.totalProgress }}%
                 </span>
             </div>
             <div class="h-3 rounded-full bg-gray-100 overflow-hidden">
                 <div class="h-full rounded-full transition-all duration-700"
-                    [ngClass]="enrollment.completed ? 'bg-gradient-to-r from-emerald-400 to-emerald-600' : 'bg-gradient-to-r from-orange-400 to-[#E8592B]'"
+                    [ngClass]="enrollment.completed ? 'bg-gradient-to-r from-emerald-400 to-emerald-600' : 'bg-gradient-to-r from-blue-400 to-blue-500'"
                     [style.width.%]="enrollment.totalProgress">
                 </div>
             </div>
@@ -61,8 +61,8 @@
             <div class="rounded-xl bg-gray-50 border border-gray-100 p-4">
                 <p class="text-xs uppercase text-gray-400 font-semibold tracking-wide">Estado</p>
                 <div class="mt-2 flex items-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full" [class.bg-emerald-500]="enrollment.completed" [class.bg-orange-400]="!enrollment.completed"></span>
-                    <p class="font-bold text-sm" [class.text-emerald-600]="enrollment.completed" [class.text-[#E8592B]]="!enrollment.completed">
+                    <span class="w-2 h-2 rounded-full" [class.bg-emerald-500]="enrollment.completed" [class.bg-blue-400]="!enrollment.completed"></span>
+                    <p class="font-bold text-sm" [class.text-emerald-600]="enrollment.completed" [class.text-blue-600]="!enrollment.completed">
                         {{ enrollment.completed ? 'Completado' : 'En progreso' }}
                     </p>
                 </div>

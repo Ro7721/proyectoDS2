@@ -67,24 +67,36 @@
             <!-- Título -->
             <div class="flex flex-col gap-1.5">
               <label class="text-sm font-medium text-gray-700"
-                [ngClass]="{'text-red-500': courseForm.get('courseTitle')?.invalid && courseForm.get('courseTitle')?.touched}">
+                [ngClass]="{'text-red-500': isFieldInvalid('courseTitle')}">
                 Título del curso <span class="text-red-400">*</span>
               </label>
               <input pInputText formControlName="courseTitle" placeholder="Ej: Diseño Web con Tailwind CSS"
                 class="w-full"
-                [ngClass]="{'border-red-400': courseForm.get('courseTitle')?.invalid && courseForm.get('courseTitle')?.touched}" />
+                [ngClass]="{'border-red-400': isFieldInvalid('courseTitle')}" />
+              <div *ngIf="isFieldInvalid('courseTitle')" class="mt-1 space-y-0.5">
+                <p *ngIf="f['courseTitle'].errors?.['required']" class="text-xs text-red-500">El título es requerido.</p>
+                <p *ngIf="f['courseTitle'].errors?.['minlength']" class="text-xs text-red-500">Mínimo 5 caracteres.</p>
+                <p *ngIf="f['courseTitle'].errors?.['maxlength']" class="text-xs text-red-500">Máximo 100 caracteres.</p>
+              </div>
+              <p class="text-xs text-gray-400 text-right mt-0.5">{{ f['courseTitle'].value?.length || 0 }}/100</p>
             </div>
 
             <!-- Descripción -->
             <div class="flex flex-col gap-1.5">
               <label class="text-sm font-medium text-gray-700"
-                [ngClass]="{'text-red-500': courseForm.get('courseDescription')?.invalid && courseForm.get('courseDescription')?.touched}">
+                [ngClass]="{'text-red-500': isFieldInvalid('courseDescription')}">
                 Descripción <span class="text-red-400">*</span>
               </label>
               <textarea pTextarea formControlName="courseDescription" rows="4"
                 placeholder="Describe el contenido y objetivos del curso..." class="w-full resize-none"
-                [ngClass]="{'border-red-400': courseForm.get('courseDescription')?.invalid && courseForm.get('courseDescription')?.touched}">
+                [ngClass]="{'border-red-400': isFieldInvalid('courseDescription')}">
               </textarea>
+              <div *ngIf="isFieldInvalid('courseDescription')" class="mt-1 space-y-0.5">
+                <p *ngIf="f['courseDescription'].errors?.['required']" class="text-xs text-red-500">La descripción es requerida.</p>
+                <p *ngIf="f['courseDescription'].errors?.['minlength']" class="text-xs text-red-500">Mínimo 10 caracteres.</p>
+                <p *ngIf="f['courseDescription'].errors?.['maxlength']" class="text-xs text-red-500">Máximo 500 caracteres.</p>
+              </div>
+              <p class="text-xs text-gray-400 text-right mt-0.5">{{ f['courseDescription'].value?.length || 0 }}/500</p>
             </div>
 
           </div>
@@ -99,28 +111,45 @@
             <!-- Categoría y Nivel -->
             <div class="grid grid-cols-2 gap-4">
               <div class="flex flex-col gap-1.5">
-                <label class="text-sm font-medium text-gray-700">
+                <label class="text-sm font-medium text-gray-700"
+                  [ngClass]="{'text-red-500': isFieldInvalid('selectedCategoryId')}">
                   Categoría <span class="text-red-400">*</span>
                 </label>
                 <p-select formControlName="selectedCategoryId" [options]="listCategories" optionLabel="name"
-                  optionValue="idCategory" placeholder="Seleccionar" class="w-full" />
+                  optionValue="idCategory" placeholder="Seleccionar" class="w-full"
+                  [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('selectedCategoryId')}" />
+                <p *ngIf="isFieldInvalid('selectedCategoryId')" class="mt-1 text-xs text-red-500">
+                  Debes seleccionar una categoría.
+                </p>
               </div>
               <div class="flex flex-col gap-1.5">
-                <label class="text-sm font-medium text-gray-700">
+                <label class="text-sm font-medium text-gray-700"
+                  [ngClass]="{'text-red-500': isFieldInvalid('courseLevel')}">
                   Nivel <span class="text-red-400">*</span>
                 </label>
                 <p-select formControlName="courseLevel" [options]="levelOptions" optionLabel="label" optionValue="value"
-                  placeholder="Seleccionar" class="w-full" />
+                  placeholder="Seleccionar" class="w-full"
+                  [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('courseLevel')}" />
+                <p *ngIf="isFieldInvalid('courseLevel')" class="mt-1 text-xs text-red-500">
+                  Debes indicar el nivel.
+                </p>
               </div>
             </div>
 
             <!-- Precio -->
             <div class="flex flex-col gap-1.5">
-              <label class="text-sm font-medium text-gray-700">
+              <label class="text-sm font-medium text-gray-700"
+                [ngClass]="{'text-red-500': isFieldInvalid('coursePrice')}">
                 Precio (USD) <span class="text-red-400">*</span>
               </label>
               <p-inputNumber formControlName="coursePrice" mode="currency" currency="USD" locale="en-US" [min]="0"
-                placeholder="0.00" class="w-full" [inputStyle]="{'width':'100%'}" />
+                placeholder="0.00" class="w-full" [inputStyle]="{'width':'100%'}"
+                [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('coursePrice')}" />
+              <div *ngIf="isFieldInvalid('coursePrice')" class="mt-1 space-y-0.5">
+                <p *ngIf="f['coursePrice'].errors?.['required']" class="text-xs text-red-500">El precio es requerido.</p>
+                <p *ngIf="f['coursePrice'].errors?.['min']" class="text-xs text-red-500">El precio no puede ser negativo.</p>
+                <p *ngIf="f['coursePrice'].errors?.['max']" class="text-xs text-red-500">El precio es demasiado alto.</p>
+              </div>
             </div>
 
           </div>

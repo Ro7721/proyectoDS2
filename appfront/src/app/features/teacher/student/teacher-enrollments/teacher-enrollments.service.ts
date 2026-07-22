@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Api } from '../../../../api/api';
-import { apiTeacherenrollments } from '../../../../api/functions';
+import { getTeacherEnrollments } from '../../../../api/functions';
 import { TeacherEnrollmentResponse } from '../../../../models/teacher.model';
 import { MessageToast } from '../../../../message/message-toast';
 
@@ -15,12 +15,12 @@ export interface CourseSummary {
 
 @Injectable({ providedIn: 'root' })
 export class TeacherEnrollmentsService {
-  private api = inject(Api);
-  private toast = inject(MessageToast);
+  readonly api = inject(Api);
+  readonly toast = inject(MessageToast);
 
   async getEnrollments(): Promise<TeacherEnrollmentResponse[]> {
     try {
-      const response: any = await this.api.invoke(apiTeacherenrollments);
+      const response: any = await this.api.invoke(getTeacherEnrollments);
       return this.unwrap<TeacherEnrollmentResponse[]>(response) ?? [];
     } catch (error: any) {
       this.toast.toastError(

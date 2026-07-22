@@ -1,0 +1,182 @@
+<div class="space-y-5">
+  <!-- Header -->
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h2 class="text-xl font-bold text-gray-900 tracking-tight sm:text-2xl">Categorías</h2>
+      <p class="text-sm text-gray-500 mt-0.5">Organiza el contenido de la plataforma por temáticas.</p>
+    </div>
+    <div class="flex items-center gap-2 self-start sm:self-auto">
+      <button (click)="loadCategories()"
+        class="p-2 text-gray-500 bg-white border border-gray-200 hover:bg-gray-50 rounded-xl transition-colors shadow-sm">
+        <i class="pi pi-refresh" [class.pi-spin]="loading"></i>
+      </button>
+      <button (click)="openCreateModal()"
+        class="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl shadow-sm transition-colors">
+        <i class="pi pi-plus text-xs"></i>
+        <span>Nueva categoría</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Search -->
+  <div class="relative max-w-sm">
+    <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+    <input type="text" [value]="searchQuery" (input)="onSearch($event)" placeholder="Buscar categorías..."
+      class="w-full pl-9 pr-4 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="flex justify-center py-16">
+    <div class="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+  </div>
+
+  <!-- Categories Grid -->
+  <div *ngIf="!loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+    <div *ngFor="let category of filteredCategories"
+      class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all group relative overflow-hidden">
+      <div
+        class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 group-hover:scale-110 transition-all pointer-events-none">
+        <i class="pi text-6xl text-emerald-600" [ngClass]="getCategoryIcon(category.name)"></i>
+      </div>
+
+      <div class="relative z-10 flex flex-col h-full">
+        <div class="flex items-start justify-between mb-4">
+          <div
+            class="w-11 h-11 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 shadow-sm flex-shrink-0">
+            <i class="pi text-lg" [ngClass]="getCategoryIcon(category.name)"></i>
+          </div>
+          <div class="flex gap-1">
+            <button (click)="openEditModal(category)" title="Editar"
+              class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+              <i class="pi pi-pencil text-sm"></i>
+            </button>
+            <button (click)="openDeleteModal(category)" title="Eliminar"
+              class="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+              <i class="pi pi-trash text-sm"></i>
+            </button>
+          </div>
+        </div>
+
+        <h3 class="text-base font-bold text-gray-900 mb-1.5 line-clamp-1">{{ category.name }}</h3>
+        <p class="text-sm text-gray-500 line-clamp-2 flex-1">{{ category.description || 'Sin descripción disponible' }}
+        </p>
+
+        <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
+          <span class="text-xs text-gray-400">ID: {{ category.idCategory?.substring(0, 8) }}...</span>
+          <span class="text-xs text-emerald-600 font-medium">Activa</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add new card -->
+    <button (click)="openCreateModal()"
+      class="bg-white rounded-2xl p-5 border-2 border-dashed border-gray-200 hover:border-emerald-400 hover:bg-emerald-50/30 transition-all flex flex-col items-center justify-center gap-3 text-gray-400 hover:text-emerald-600 min-h-[160px] group">
+      <div
+        class="w-11 h-11 rounded-xl border-2 border-dashed border-current flex items-center justify-center group-hover:scale-110 transition-transform">
+        <i class="pi pi-plus text-lg"></i>
+      </div>
+      <span class="text-sm font-medium">Añadir categoría</span>
+    </button>
+
+    <div *ngIf="filteredCategories.length === 0 && !loading"
+      class="col-span-full py-12 text-center bg-white rounded-2xl border border-gray-100 shadow-sm">
+      <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-emerald-50 mb-3 text-emerald-400">
+        <i class="pi pi-tags text-2xl"></i>
+      </div>
+      <p class="text-sm font-medium text-gray-700">No hay categorías</p>
+      <p class="text-sm text-gray-500 mt-1">Crea la primera categoría haciendo clic en "Nueva categoría".</p>
+    </div>
+  </div>
+
+  <p *ngIf="!loading" class="text-xs text-gray-400 text-right">{{ filteredCategories.length }} categorías</p>
+</div>
+
+<!-- ============ MODAL: CREAR / EDITAR CATEGORÍA ============ -->
+<div *ngIf="showFormModal"
+  class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/40 backdrop-blur-sm"
+  (click)="closeFormModal()">
+  <div class="bg-white w-full sm:w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl shadow-2xl overflow-hidden"
+    (click)="$event.stopPropagation()">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+      <h3 class="text-base font-bold text-gray-900">
+        {{ isEditing ? 'Editar categoría' : 'Nueva categoría' }}
+      </h3>
+      <button (click)="closeFormModal()" class="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg">
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+    <form [formGroup]="categoryForm" (ngSubmit)="saveCategory()" class="p-6 space-y-4">
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-1.5">
+          Nombre <span class="text-red-500">*</span>
+        </label>
+        <input type="text" formControlName="name" placeholder="Ej: Programación Web"
+          class="w-full px-3 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-1 transition-all" [ngClass]="isFieldInvalid('name')
+            ? 'border-red-400 focus:border-red-400 focus:ring-red-200'
+            : 'border-gray-200 focus:border-emerald-500 focus:ring-emerald-200'">
+        <div *ngIf="isFieldInvalid('name')" class="mt-1 space-y-0.5">
+          <p *ngIf="f['name'].errors?.['required']" class="text-xs text-red-500">El nombre es requerido.</p>
+          <p *ngIf="f['name'].errors?.['minlength']" class="text-xs text-red-500">Mínimo 2 caracteres.</p>
+          <p *ngIf="f['name'].errors?.['maxlength']" class="text-xs text-red-500">Máximo 60 caracteres.</p>
+        </div>
+        <!-- Counter -->
+        <p class="text-xs text-gray-400 text-right mt-0.5">{{ f['name'].value?.length || 0 }}/60</p>
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-1.5">
+          Descripción <span class="font-normal text-gray-400">(opcional)</span>
+        </label>
+        <textarea formControlName="description" rows="3" placeholder="Describe brevemente esta categoría..."
+          class="w-full px-3 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-1 resize-none transition-all"
+          [ngClass]="isFieldInvalid('description')
+            ? 'border-red-400 focus:border-red-400 focus:ring-red-200'
+            : 'border-gray-200 focus:border-emerald-500 focus:ring-emerald-200'"></textarea>
+        <div *ngIf="isFieldInvalid('description')" class="mt-1">
+          <p *ngIf="f['description'].errors?.['maxlength']" class="text-xs text-red-500">Máximo 200 caracteres.</p>
+        </div>
+        <p class="text-xs text-gray-400 text-right mt-0.5">{{ f['description'].value?.length || 0 }}/200</p>
+      </div>
+    </form>
+    <div class="px-6 py-4 border-t border-gray-100 flex flex-col-reverse sm:flex-row gap-2 sm:justify-end">
+      <button (click)="closeFormModal()"
+        class="w-full sm:w-auto px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">
+        Cancelar
+      </button>
+      <button (click)="saveCategory()" [disabled]="actionLoading || !categoryForm.valid"
+        class="w-full sm:w-auto px-5 py-2.5 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
+        <i *ngIf="actionLoading" class="pi pi-spin pi-spinner"></i>
+        {{ isEditing ? 'Guardar cambios' : 'Crear categoría' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL: ELIMINAR CATEGORÍA ============ -->
+<div *ngIf="showDeleteModal"
+  class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/40 backdrop-blur-sm"
+  (click)="closeDeleteModal()">
+  <div class="bg-white w-full sm:w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl shadow-2xl"
+    (click)="$event.stopPropagation()">
+    <div class="p-6 text-center">
+      <div class="w-14 h-14 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+        <i class="pi pi-trash text-2xl text-red-500"></i>
+      </div>
+      <h3 class="text-base font-bold text-gray-900 mb-2">¿Eliminar categoría?</h3>
+      <p class="text-sm text-gray-500 mb-1">
+        Se eliminará <strong class="text-gray-700">{{ categoryToDelete?.name }}</strong>.
+      </p>
+      <p class="text-xs text-red-500">Los cursos de esta categoría quedarán sin categoría asignada.</p>
+    </div>
+    <div class="px-6 pb-6 flex flex-col-reverse sm:flex-row gap-2 sm:justify-center">
+      <button (click)="closeDeleteModal()"
+        class="w-full sm:w-auto px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">
+        Cancelar
+      </button>
+      <button (click)="confirmDelete()" [disabled]="actionLoading"
+        class="w-full sm:w-auto px-5 py-2.5 text-sm font-semibold text-white bg-red-500 hover:bg-red-600 rounded-xl transition-colors disabled:opacity-60 flex items-center justify-center gap-2">
+        <i *ngIf="actionLoading" class="pi pi-spin pi-spinner"></i>
+        Sí, eliminar
+      </button>
+    </div>
+  </div>
+</div>

@@ -4,7 +4,7 @@ import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, firstValueFrom } from 'rxjs';
 import { Api } from '../../../../api/api';
-import { apicoursesbyteacher, apigetlessonsbyteacher, apideleteLesson } from '../../../../api/functions';
+import { findByTeacher, getLessonsByTeacher, delete$ } from '../../../../api/functions';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { MessageToast } from '../../../../message/message-toast';
 import { CourseResponse, FileResponse, LessonResponse } from '../../../../models/course.model';
@@ -123,7 +123,7 @@ export class LessonGetall implements OnInit {
     this.loadingCourses = true;
 
     try {
-      const coursesResponse = await this.api.invoke<any, any>(apicoursesbyteacher, {
+      const coursesResponse = await this.api.invoke<any, any>(findByTeacher, {
         teacherId: this.teacherId,
       });
       this.courses = coursesResponse?.data ?? [];
@@ -144,7 +144,7 @@ export class LessonGetall implements OnInit {
   }
 
   private async loadLessonsFromTeacher(): Promise<LessonRow[]> {
-    const response = await this.api.invoke<any, any>(apigetlessonsbyteacher, {
+    const response = await this.api.invoke<any, any>(getLessonsByTeacher, {
       teacherId: this.teacherId,
     });
     return this.normalizeLessons(response);
@@ -273,7 +273,7 @@ export class LessonGetall implements OnInit {
 
   private async deleteLesson(lesson: LessonRow): Promise<void> {
     try {
-      const responseData = await this.api.invoke<any, any>(apideleteLesson, {
+      const responseData = await this.api.invoke<any, any>(delete$, {
         idLesson: lesson.idLesson,
       });
       if (responseData && responseData.response && responseData.response.type === "success") {

@@ -1,87 +1,77 @@
 <div (click)="select()"
-    class="enrollment-card cursor-pointer border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
-    [class.border-accent]="selected" [class.ring-2]="selected" [class.ring-accent/30]="selected">
-    <div class="enrollment-card__header flex items-center gap-4 border-b border-gray-100">
-        <div class="flex h-14 w-14 items-center justify-center rounded-full bg-accent text-lg font-bold text-white">
+    class="enrollment-card cursor-pointer border bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md rounded-2xl overflow-hidden"
+    [ngClass]="selected ? 'border-emerald-500 ring-2 ring-emerald-500/20' : 'border-gray-200'">
+    
+    <div class="enrollment-card__header flex items-center gap-4 border-b border-gray-100 p-4">
+        <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-lg font-bold text-white shadow-inner">
             {{ enrollment.studentFullName.charAt(0) }}
         </div>
 
         <div class="min-w-0 flex-1">
-            <h3 class="truncate text-lg font-bold text-gray-900">
+            <h3 class="truncate text-base font-bold text-gray-900 leading-tight">
                 {{ enrollment.studentFullName }}
             </h3>
-            <p class="truncate text-sm text-gray-500">
+            <p class="truncate text-sm text-gray-500 mt-0.5">
                 {{ enrollment.studentEmail }}
             </p>
         </div>
-        <span class="rounded-full px-3 py-1 text-xs font-semibold" [ngClass]="enrollment.completed
-                ? 'bg-green-100 text-green-700'
-                : 'bg-accent-light text-accent'">
+        <span class="shrink-0 rounded-full px-3 py-1 text-[10px] uppercase tracking-wider font-bold" [ngClass]="enrollment.completed
+                ? 'bg-emerald-100 text-emerald-700'
+                : 'bg-blue-50 text-blue-600'">
             {{ enrollment.completed ? 'Completado' : 'En progreso' }}
         </span>
     </div>
 
-    <div class="enrollment-card__body space-y-5">
+    <div class="enrollment-card__body p-4 space-y-4">
         <div class="flex items-start gap-3">
-            <span class="material-icons mt-0.5 text-accent">
-                menu_book
-            </span>
+            <div class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gray-50 border border-gray-100">
+                <span class="material-icons text-emerald-500 text-[18px]">
+                    menu_book
+                </span>
+            </div>
             <div>
-                <p class="font-semibold text-gray-900">
+                <p class="font-semibold text-gray-900 text-sm leading-snug">
                     {{ enrollment.courseTitle }}
                 </p>
             </div>
-
         </div>
 
         <div>
-
-            <div class="mb-2 flex justify-between text-sm">
-
-                <span class="font-medium text-gray-600">
+            <div class="mb-2 flex justify-between items-end">
+                <span class="text-xs uppercase font-bold tracking-wider text-gray-500">
                     Progreso
                 </span>
-
-                <span class="font-bold text-gray-900">
+                <span class="text-sm font-black text-gray-900">
                     {{ enrollment.totalProgress }}%
                 </span>
             </div>
-            <div class="h-2.5 overflow-hidden rounded-full bg-gray-200">
-                <div class="h-full rounded-full transition-all duration-500" [style.width.%]="enrollment.totalProgress"
-                    [style.background]="progressColor">
+            <div class="h-2 overflow-hidden rounded-full bg-gray-100">
+                <div class="h-full rounded-full transition-all duration-500" 
+                    [style.width.%]="enrollment.totalProgress"
+                    [ngClass]="enrollment.completed ? 'bg-emerald-500' : 'bg-blue-400'">
                 </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-4 text-sm text-gray-500">
-            <div class="flex items-center gap-2">
-                <span class="material-icons text-base">
-                    event
-                </span>
-                <div>
-
-                    <p class="text-xs uppercase">
-                        Inscripción
-                    </p>
-                    <p class="font-medium text-gray-700">
-                        {{ enrollment.enrollmentDate | date:'dd/MM/yyyy' }}
-                    </p>
+        <div class="grid grid-cols-2 gap-3 pt-2 border-t border-gray-50">
+            <div>
+                <div class="flex items-center gap-1.5 mb-1 text-gray-400">
+                    <span class="material-icons text-[14px]">event</span>
+                    <p class="text-[10px] uppercase font-bold tracking-wider">Inscripción</p>
                 </div>
+                <p class="font-semibold text-gray-800 text-sm ml-5">
+                    {{ enrollment.enrollmentDate | date:'dd/MM/yyyy' }}
+                </p>
             </div>
 
-            <div class="flex items-center gap-2">
-                <span class="material-icons text-base">
-                    schedule
-                </span>
-
-                <div>
-                    <p class="text-xs uppercase">
-                        Último acceso
-                    </p>
-                    <p class="font-medium text-gray-700">
-                        {{ enrollment.lastAccess | date:'dd/MM/yyyy' }}
-                    </p>
+            <div>
+                <div class="flex items-center gap-1.5 mb-1 text-gray-400">
+                    <span class="material-icons text-[14px]">schedule</span>
+                    <p class="text-[10px] uppercase font-bold tracking-wider">Acceso</p>
                 </div>
+                <p class="font-semibold text-gray-800 text-sm ml-5">
+                    {{ enrollment.lastAccess | date:'dd/MM/yyyy' }}
+                </p>
             </div>
         </div>
     </div>

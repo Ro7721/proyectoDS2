@@ -3,7 +3,7 @@ import { ChangeDetectorRef, Component, HostListener, PLATFORM_ID, inject, OnInit
 import { Router, RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { Api } from '../../api/api';
-import { PublicCourseCard$Params, publicCourseCard } from '../../api/functions';
+import { getPublicCourses } from '../../api/functions';
 import { CourseCardResponse } from '../../models/course.model';
 import { CourseCard } from '../../features/coursecard/course-card/course-card';
 import { MessageService } from 'primeng/api';
@@ -74,12 +74,11 @@ export class Home implements OnInit {
     this.loadingCourses = true;
     this.coursesLoadError = false;
 
-    this.api.invoke<PublicCourseCard$Params, any>(publicCourseCard)
-      .then((response) => {
-        this.publicCourses = response?.data ?? [];
-        this.loadingCourses = false;
-        this.cdr.markForCheck();
-      })
+    this.api.invoke(getPublicCourses).then((response: any) => {
+      this.publicCourses = response?.data ?? [];
+      this.loadingCourses = false;
+      this.cdr.markForCheck();
+    })
       .catch((error) => {
         this.messageService.add({
           severity: 'error',

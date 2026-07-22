@@ -1,0 +1,406 @@
+<div class="space-y-5">
+  <!-- Header -->
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h2 class="text-xl font-bold text-gray-900 tracking-tight sm:text-2xl">Usuarios</h2>
+      <p class="text-sm text-gray-500 mt-0.5">Gestiona todos los usuarios registrados en la plataforma.</p>
+    </div>
+    <button (click)="loadUsers()"
+      class="self-start sm:self-auto p-2 text-gray-500 bg-white border border-gray-200 hover:bg-gray-50 rounded-xl transition-colors shadow-sm">
+      <i class="pi pi-refresh" [class.pi-spin]="loading"></i>
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+    <div class="relative flex-1 min-w-0 sm:min-w-[200px] sm:max-w-xs">
+      <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+      <input type="text" [value]="searchQuery" (input)="onSearch($event)" placeholder="Buscar por nombre o correo..."
+        class="w-full pl-9 pr-4 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+    </div>
+    <select (change)="onFilterRole($event)"
+      class="py-2 pl-3 pr-8 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 text-gray-700 w-full sm:w-auto">
+      <option value="">Todos los roles</option>
+      <option value="ROLE_ADMIN">Administrador</option>
+      <option value="ROLE_TEACHER">Docente</option>
+      <option value="ROLE_STUDENT">Estudiante</option>
+    </select>
+    <select (change)="onFilterStatus($event)"
+      class="py-2 pl-3 pr-8 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 text-gray-700 w-full sm:w-auto">
+      <option value="">Todos los estados</option>
+      <option value="true">Activos</option>
+      <option value="false">Inactivos</option>
+    </select>
+    <button *ngIf="searchQuery || filterRole || filterStatus" (click)="clearFilters()"
+      class="text-xs text-gray-400 hover:text-gray-600 underline whitespace-nowrap transition-colors">
+      Limpiar filtros
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="flex justify-center py-16">
+    <div class="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+  </div>
+
+  <ng-container *ngIf="!loading">
+    <!-- Desktop Table -->
+    <div class="hidden md:block bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse min-w-[700px]">
+          <thead>
+            <tr class="bg-gray-50/70 border-b border-gray-100 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              <th class="px-5 py-4">Usuario</th>
+              <th class="px-5 py-4">Correo</th>
+              <th class="px-5 py-4">Rol</th>
+              <th class="px-5 py-4 text-center">Estado</th>
+              <th class="px-5 py-4 text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <tr *ngFor="let user of filteredUsers" class="hover:bg-gray-50/40 transition-colors group">
+              <td class="px-5 py-3.5">
+                <div class="flex items-center gap-3">
+                  <div class="h-9 w-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold"
+                    [ngClass]="{
+                      'bg-purple-100 text-purple-700': user.role === 'ROLE_ADMIN',
+                      'bg-orange-100 text-orange-700': user.role === 'ROLE_TEACHER',
+                      'bg-blue-100 text-blue-700': user.role === 'ROLE_STUDENT'
+                    }">
+                    {{ getInitials(user) }}
+                  </div>
+                  <div>
+                    <div class="text-sm font-medium text-gray-900">{{ user.firstName }} {{ user.surName }}</div>
+                    <div class="text-xs text-gray-400">ID: {{ user.idUser?.substring(0,8) }}...</div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-5 py-3.5 text-sm text-gray-600">{{ user.email }}</td>
+              <td class="px-5 py-3.5">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border"
+                  [ngClass]="{
+                    'bg-purple-50 text-purple-700 border-purple-200': user.role === 'ROLE_ADMIN',
+                    'bg-orange-50 text-orange-700 border-orange-200': user.role === 'ROLE_TEACHER',
+                    'bg-blue-50 text-blue-700 border-blue-200': user.role === 'ROLE_STUDENT'
+                  }">
+                  {{ getRoleLabel(user.role) }}
+                </span>
+              </td>
+              <td class="px-5 py-3.5 text-center">
+                <button (click)="toggleStatus(user)" [disabled]="actionLoading"
+                  class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border transition-all hover:opacity-75 cursor-pointer disabled:cursor-not-allowed"
+                  [ngClass]="user.active
+                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                    : 'bg-red-50 text-red-600 border-red-200'">
+                  <span class="w-1.5 h-1.5 rounded-full" [ngClass]="user.active ? 'bg-emerald-500' : 'bg-red-500'"></span>
+                  {{ user.active ? 'Activo' : 'Inactivo' }}
+                </button>
+              </td>
+              <td class="px-5 py-3.5">
+                <div class="flex items-center justify-center gap-1">
+                  <button (click)="openEditModal(user)" title="Editar"
+                    class="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                    <i class="pi pi-pencil text-sm"></i>
+                  </button>
+                  <button (click)="openRoleModal(user)" title="Cambiar Rol"
+                    class="p-1.5 text-amber-600 hover:bg-amber-50 rounded-lg transition-colors">
+                    <i class="pi pi-shield text-sm"></i>
+                  </button>
+                  <button (click)="toggleStatus(user)" [disabled]="actionLoading"
+                    [title]="user.active ? 'Desactivar usuario' : 'Activar usuario'"
+                    class="p-1.5 rounded-lg transition-colors disabled:opacity-50"
+                    [ngClass]="user.active ? 'text-orange-500 hover:bg-orange-50' : 'text-emerald-600 hover:bg-emerald-50'">
+                    <i class="pi text-sm" [ngClass]="user.active ? 'pi-lock' : 'pi-unlock'"></i>
+                  </button>
+                  <button (click)="openDeleteModal(user)" title="Eliminar"
+                    class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                    <i class="pi pi-trash text-sm"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="filteredUsers.length === 0">
+              <td colspan="5" class="px-6 py-14 text-center">
+                <div class="inline-flex flex-col items-center gap-3">
+                  <div class="w-14 h-14 rounded-full bg-gray-50 flex items-center justify-center">
+                    <i class="pi pi-users text-2xl text-gray-300"></i>
+                  </div>
+                  <p class="text-sm text-gray-500">No se encontraron usuarios</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Mobile Cards -->
+    <div class="md:hidden space-y-3">
+      <div *ngFor="let user of filteredUsers" class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
+        <div class="flex items-start justify-between gap-3">
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="h-10 w-10 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold"
+              [ngClass]="{
+                'bg-purple-100 text-purple-700': user.role === 'ROLE_ADMIN',
+                'bg-orange-100 text-orange-700': user.role === 'ROLE_TEACHER',
+                'bg-blue-100 text-blue-700': user.role === 'ROLE_STUDENT'
+              }">
+              {{ getInitials(user) }}
+            </div>
+            <div class="min-w-0">
+              <p class="text-sm font-semibold text-gray-900 truncate">{{ user.firstName }} {{ user.surName }}</p>
+              <p class="text-xs text-gray-500 truncate">{{ user.email }}</p>
+            </div>
+          </div>
+          <button (click)="toggleStatus(user)"
+            class="flex-shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border"
+            [ngClass]="user.active ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-red-50 text-red-600 border-red-200'">
+            <span class="w-1.5 h-1.5 rounded-full" [ngClass]="user.active ? 'bg-emerald-500' : 'bg-red-500'"></span>
+            {{ user.active ? 'Activo' : 'Inactivo' }}
+          </button>
+        </div>
+        <div class="mt-3 flex items-center justify-between">
+          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border"
+            [ngClass]="{
+              'bg-purple-50 text-purple-700 border-purple-200': user.role === 'ROLE_ADMIN',
+              'bg-orange-50 text-orange-700 border-orange-200': user.role === 'ROLE_TEACHER',
+              'bg-blue-50 text-blue-700 border-blue-200': user.role === 'ROLE_STUDENT'
+            }">
+            {{ getRoleLabel(user.role) }}
+          </span>
+          <div class="flex gap-1">
+            <button (click)="openEditModal(user)" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+              <i class="pi pi-pencil text-sm"></i>
+            </button>
+            <button (click)="openRoleModal(user)" class="p-2 text-amber-600 hover:bg-amber-50 rounded-lg transition-colors">
+              <i class="pi pi-shield text-sm"></i>
+            </button>
+            <button (click)="openDeleteModal(user)" class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+              <i class="pi pi-trash text-sm"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="filteredUsers.length === 0" class="text-center py-12 bg-white rounded-2xl border border-gray-100">
+        <i class="pi pi-users text-3xl text-gray-300 mb-2 block"></i>
+        <p class="text-sm text-gray-500">No se encontraron usuarios</p>
+      </div>
+    </div>
+
+    <p class="text-xs text-gray-400 text-right">{{ filteredUsers.length }} de {{ users.length }} usuarios</p>
+  </ng-container>
+</div>
+
+<!-- ============ MODAL: EDITAR USUARIO ============ -->
+<div *ngIf="showEditModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 backdrop-blur-sm" (click)="closeEditModal()">
+  <div class="bg-white w-full sm:w-full sm:max-w-lg rounded-t-3xl sm:rounded-2xl shadow-2xl overflow-hidden" (click)="$event.stopPropagation()">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+      <h3 class="text-base font-bold text-gray-900">Editar Usuario</h3>
+      <button (click)="closeEditModal()" class="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+
+    <form [formGroup]="editForm" (ngSubmit)="saveEdit()" class="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+      <!-- Nombre + Apellido -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1.5">
+            Nombre <span class="text-red-500">*</span>
+          </label>
+          <input type="text" formControlName="firstName" placeholder="Nombre"
+            class="w-full px-3 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-1 transition-all"
+            [ngClass]="isFieldInvalid('firstName')
+              ? 'border-red-400 focus:border-red-400 focus:ring-red-200'
+              : 'border-gray-200 focus:border-blue-500 focus:ring-blue-200'">
+          <div *ngIf="isFieldInvalid('firstName')" class="mt-1 text-xs text-red-500">
+            <span *ngIf="f['firstName'].errors?.['required']">El nombre es requerido.</span>
+            <span *ngIf="f['firstName'].errors?.['minlength']">Mínimo 2 caracteres.</span>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1.5">
+            Apellido <span class="text-red-500">*</span>
+          </label>
+          <input type="text" formControlName="surName" placeholder="Apellido"
+            class="w-full px-3 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-1 transition-all"
+            [ngClass]="isFieldInvalid('surName')
+              ? 'border-red-400 focus:border-red-400 focus:ring-red-200'
+              : 'border-gray-200 focus:border-blue-500 focus:ring-blue-200'">
+          <div *ngIf="isFieldInvalid('surName')" class="mt-1 text-xs text-red-500">
+            <span *ngIf="f['surName'].errors?.['required']">El apellido es requerido.</span>
+            <span *ngIf="f['surName'].errors?.['minlength']">Mínimo 2 caracteres.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-1.5">
+          Correo electrónico <span class="text-red-500">*</span>
+        </label>
+        <input type="email" formControlName="email" placeholder="correo@ejemplo.com"
+          class="w-full px-3 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-1 transition-all"
+          [ngClass]="isFieldInvalid('email')
+            ? 'border-red-400 focus:border-red-400 focus:ring-red-200'
+            : 'border-gray-200 focus:border-blue-500 focus:ring-blue-200'">
+        <div *ngIf="isFieldInvalid('email')" class="mt-1 text-xs text-red-500">
+          <span *ngIf="f['email'].errors?.['required']">El correo es requerido.</span>
+          <span *ngIf="f['email'].errors?.['email']">Ingresa un correo electrónico válido.</span>
+        </div>
+      </div>
+
+      <!-- Password (opcional) -->
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-1.5">
+          Nueva contraseña
+          <span class="font-normal text-gray-400">(dejar vacío para no cambiar)</span>
+        </label>
+        <input type="password" formControlName="password" placeholder="Nueva contraseña"
+          class="w-full px-3 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-1 transition-all"
+          [ngClass]="isFieldInvalid('password')
+            ? 'border-red-400 focus:border-red-400 focus:ring-red-200'
+            : 'border-gray-200 focus:border-blue-500 focus:ring-blue-200'">
+
+        <!-- Indicadores de fuerza de contraseña -->
+        <div *ngIf="f['password'].value && f['password'].touched && passwordError" class="mt-2 space-y-1">
+          <p class="text-xs text-gray-500 font-medium">La contraseña debe tener:</p>
+          <div class="grid grid-cols-2 gap-x-4 gap-y-0.5">
+            <div class="flex items-center gap-1.5 text-xs" [ngClass]="passwordError.hasMin ? 'text-emerald-600' : 'text-gray-400'">
+              <i class="pi text-xs" [ngClass]="passwordError.hasMin ? 'pi-check-circle' : 'pi-circle'"></i>
+              Mínimo 8 caracteres
+            </div>
+            <div class="flex items-center gap-1.5 text-xs" [ngClass]="passwordError.hasUpper ? 'text-emerald-600' : 'text-gray-400'">
+              <i class="pi text-xs" [ngClass]="passwordError.hasUpper ? 'pi-check-circle' : 'pi-circle'"></i>
+              Una mayúscula
+            </div>
+            <div class="flex items-center gap-1.5 text-xs" [ngClass]="passwordError.hasLower ? 'text-emerald-600' : 'text-gray-400'">
+              <i class="pi text-xs" [ngClass]="passwordError.hasLower ? 'pi-check-circle' : 'pi-circle'"></i>
+              Una minúscula
+            </div>
+            <div class="flex items-center gap-1.5 text-xs" [ngClass]="passwordError.hasNum ? 'text-emerald-600' : 'text-gray-400'">
+              <i class="pi text-xs" [ngClass]="passwordError.hasNum ? 'pi-check-circle' : 'pi-circle'"></i>
+              Un número
+            </div>
+            <div class="flex items-center gap-1.5 text-xs" [ngClass]="passwordError.hasSpecial ? 'text-emerald-600' : 'text-gray-400'">
+              <i class="pi text-xs" [ngClass]="passwordError.hasSpecial ? 'pi-check-circle' : 'pi-circle'"></i>
+              Un carácter especial
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div class="px-6 py-4 border-t border-gray-100 flex flex-col-reverse sm:flex-row gap-2 sm:justify-end">
+      <button type="button" (click)="closeEditModal()"
+        class="w-full sm:w-auto px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">
+        Cancelar
+      </button>
+      <button type="button" (click)="saveEdit()" [disabled]="actionLoading"
+        class="w-full sm:w-auto px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors disabled:opacity-60 flex items-center justify-center gap-2">
+        <i *ngIf="actionLoading" class="pi pi-spin pi-spinner"></i>
+        Guardar cambios
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL: ELIMINAR USUARIO ============ -->
+<div *ngIf="showDeleteModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 backdrop-blur-sm" (click)="closeDeleteModal()">
+  <div class="bg-white w-full sm:w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl shadow-2xl" (click)="$event.stopPropagation()">
+    <div class="p-6 text-center">
+      <div class="w-14 h-14 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+        <i class="pi pi-trash text-2xl text-red-500"></i>
+      </div>
+      <h3 class="text-base font-bold text-gray-900 mb-2">¿Eliminar usuario?</h3>
+      <p class="text-sm text-gray-500 mb-1">
+        Se eliminará permanentemente a
+        <strong class="text-gray-700">{{ userToDelete?.firstName }} {{ userToDelete?.surName }}</strong>.
+      </p>
+      <p class="text-xs text-red-500 mt-1">Esta acción no se puede deshacer.</p>
+    </div>
+    <div class="px-6 pb-6 flex flex-col-reverse sm:flex-row gap-2 sm:justify-center">
+      <button (click)="closeDeleteModal()"
+        class="w-full sm:w-auto px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">
+        Cancelar
+      </button>
+      <button (click)="confirmDelete()" [disabled]="actionLoading"
+        class="w-full sm:w-auto px-5 py-2.5 text-sm font-semibold text-white bg-red-500 hover:bg-red-600 rounded-xl transition-colors disabled:opacity-60 flex items-center justify-center gap-2">
+        <i *ngIf="actionLoading" class="pi pi-spin pi-spinner"></i>
+        Sí, eliminar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL: CAMBIAR ROL ============ -->
+<div *ngIf="showRoleModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 backdrop-blur-sm" (click)="closeRoleModal()">
+  <div class="bg-white w-full sm:w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl shadow-2xl" (click)="$event.stopPropagation()">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+      <h3 class="text-base font-bold text-gray-900">Cambiar Rol</h3>
+      <button (click)="closeRoleModal()" class="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+    <div class="p-6 space-y-3">
+      <p class="text-sm text-gray-500 mb-1">
+        Cambiando rol de <strong class="text-gray-800">{{ userToChangeRole?.firstName }} {{ userToChangeRole?.surName }}</strong>
+      </p>
+      <label class="flex items-center gap-3 p-3 border-2 rounded-xl cursor-pointer transition-all"
+        [ngClass]="newRole === 'ROLE_STUDENT' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'"
+        (click)="newRole = 'ROLE_STUDENT'">
+        <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 flex-shrink-0">
+          <i class="pi pi-user text-sm"></i>
+        </div>
+        <div>
+          <p class="text-sm font-semibold text-gray-900">Estudiante</p>
+          <p class="text-xs text-gray-500">Acceso a cursos y aprendizaje</p>
+        </div>
+        <div class="ml-auto w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0"
+          [ngClass]="newRole === 'ROLE_STUDENT' ? 'border-blue-500 bg-blue-500' : 'border-gray-300'">
+          <span *ngIf="newRole === 'ROLE_STUDENT'" class="w-1.5 h-1.5 rounded-full bg-white block"></span>
+        </div>
+      </label>
+      <label class="flex items-center gap-3 p-3 border-2 rounded-xl cursor-pointer transition-all"
+        [ngClass]="newRole === 'ROLE_TEACHER' ? 'border-orange-500 bg-orange-50' : 'border-gray-200 hover:border-gray-300'"
+        (click)="newRole = 'ROLE_TEACHER'">
+        <div class="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-700 flex-shrink-0">
+          <i class="pi pi-graduation-cap text-sm"></i>
+        </div>
+        <div>
+          <p class="text-sm font-semibold text-gray-900">Docente</p>
+          <p class="text-xs text-gray-500">Crear y gestionar cursos</p>
+        </div>
+        <div class="ml-auto w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0"
+          [ngClass]="newRole === 'ROLE_TEACHER' ? 'border-orange-500 bg-orange-500' : 'border-gray-300'">
+          <span *ngIf="newRole === 'ROLE_TEACHER'" class="w-1.5 h-1.5 rounded-full bg-white block"></span>
+        </div>
+      </label>
+      <label class="flex items-center gap-3 p-3 border-2 rounded-xl cursor-pointer transition-all"
+        [ngClass]="newRole === 'ROLE_ADMIN' ? 'border-purple-500 bg-purple-50' : 'border-gray-200 hover:border-gray-300'"
+        (click)="newRole = 'ROLE_ADMIN'">
+        <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 flex-shrink-0">
+          <i class="pi pi-shield text-sm"></i>
+        </div>
+        <div>
+          <p class="text-sm font-semibold text-gray-900">Administrador</p>
+          <p class="text-xs text-gray-500">Acceso completo a la plataforma</p>
+        </div>
+        <div class="ml-auto w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0"
+          [ngClass]="newRole === 'ROLE_ADMIN' ? 'border-purple-500 bg-purple-500' : 'border-gray-300'">
+          <span *ngIf="newRole === 'ROLE_ADMIN'" class="w-1.5 h-1.5 rounded-full bg-white block"></span>
+        </div>
+      </label>
+    </div>
+    <div class="px-6 pb-6 flex flex-col-reverse sm:flex-row gap-2 sm:justify-end">
+      <button (click)="closeRoleModal()"
+        class="w-full sm:w-auto px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">
+        Cancelar
+      </button>
+      <button (click)="confirmChangeRole()" [disabled]="actionLoading"
+        class="w-full sm:w-auto px-5 py-2.5 text-sm font-semibold text-white bg-amber-500 hover:bg-amber-600 rounded-xl transition-colors disabled:opacity-60 flex items-center justify-center gap-2">
+        <i *ngIf="actionLoading" class="pi pi-spin pi-spinner"></i>
+        Confirmar cambio
+      </button>
+    </div>
+  </div>
+</div>

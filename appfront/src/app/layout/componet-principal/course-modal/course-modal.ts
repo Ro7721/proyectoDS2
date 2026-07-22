@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ButtonModule } from "primeng/button";
 import { CourseResponse } from '../../../models/course.model';
 import { Api } from '../../../api/api';
-import { apigetallCourse } from '../../../api/functions';
+import { getAllCourses } from '../../../api/functions';
 import { MessageToast } from '../../../message/message-toast';
 @Component({
   selector: 'app-course-modal',
@@ -45,7 +45,7 @@ export class CourseModal {
   }
 
   loadCourseDetails() {
-    this.api.invoke(apigetallCourse).then((response: any) => {
+    this.api.invoke(getAllCourses).then((response: any) => {
       const apiResponseData = typeof response == 'string' ? JSON.parse(response) : response;
 
       if (Array.isArray(apiResponseData) && apiResponseData.length > 0) {

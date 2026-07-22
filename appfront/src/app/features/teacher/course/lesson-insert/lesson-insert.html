@@ -11,11 +11,17 @@
             <!-- Título -->
             <div class="flex flex-col gap-1.5">
                 <label class="text-sm font-medium text-gray-700"
-                    [ngClass]="{'text-red-500': frmInserLesson.get('title')?.invalid && frmInserLesson.get('title')?.touched}">
+                    [ngClass]="{'text-red-500': isFieldInvalid('title')}">
                     Título <span class="text-red-400">*</span>
                 </label>
                 <input pInputText formControlName="title" placeholder="Ej: Introducción al curso" class="w-full"
-                    [ngClass]="{'border-red-400': frmInserLesson.get('title')?.invalid && frmInserLesson.get('title')?.touched}" />
+                    [ngClass]="{'border-red-400': isFieldInvalid('title')}" />
+                <div *ngIf="isFieldInvalid('title')" class="mt-1 space-y-0.5">
+                    <p *ngIf="f['title'].errors?.['required']" class="text-xs text-red-500">El título es requerido.</p>
+                    <p *ngIf="f['title'].errors?.['minlength']" class="text-xs text-red-500">Mínimo 5 caracteres.</p>
+                    <p *ngIf="f['title'].errors?.['maxlength']" class="text-xs text-red-500">Máximo 100 caracteres.</p>
+                </div>
+                <p class="text-xs text-gray-400 text-right mt-0.5">{{ f['title'].value?.length || 0 }}/100</p>
             </div>
 
             <!-- Tipo (Ocupa el ancho completo al remover el campo Orden) -->
@@ -27,8 +33,15 @@
 
             <!-- URL Alternativa -->
             <div class="flex flex-col gap-1.5">
-                <label class="text-sm font-medium text-gray-700">URL del contenido alternativo</label>
-                <input pInputText formControlName="contenUrl" placeholder="https://youtube.com..." class="w-full" />
+                <label class="text-sm font-medium text-gray-700"
+                    [ngClass]="{'text-red-500': isFieldInvalid('contenUrl')}">
+                    URL del contenido alternativo
+                </label>
+                <input pInputText formControlName="contenUrl" placeholder="https://youtube.com..." class="w-full"
+                    [ngClass]="{'border-red-400': isFieldInvalid('contenUrl')}" />
+                <div *ngIf="isFieldInvalid('contenUrl')" class="mt-1 space-y-0.5">
+                    <p *ngIf="f['contenUrl'].errors?.['maxlength']" class="text-xs text-red-500">Máximo 255 caracteres.</p>
+                </div>
             </div>
 
             <!-- Subida del Video Principal (Solo visible si Tipo == VIDEO) -->
@@ -41,16 +54,27 @@
                     (onSelect)="onVideoSelect($event)"
                     styleClass="p-button-outlined p-button-info w-full rounded-md border-gray-200" />
 
-                <p *ngIf=" mainVideoFile.length> 0" class="text-xs text-green-600 font-medium mt-1">
+                <p *ngIf=" mainVideoFile.length > 0" class="text-xs text-green-600 font-medium mt-1">
                     <i class="pi pi-check-circle mr-1"></i> Video cargado: 1 archivo listo para subir.
                 </p>
             </div>
 
             <!-- Descripción -->
             <div class="flex flex-col gap-1.5">
-                <label class="text-sm font-medium text-gray-700">Descripción</label>
+                <label class="text-sm font-medium text-gray-700"
+                    [ngClass]="{'text-red-500': isFieldInvalid('description')}">
+                    Descripción <span class="text-red-400">*</span>
+                </label>
                 <textarea pTextarea formControlName="description" rows="3"
-                    placeholder="Breve descripción de la lección..." class="w-full resize-none"></textarea>
+                    placeholder="Breve descripción de la lección..." class="w-full resize-none"
+                    [ngClass]="{'border-red-400': isFieldInvalid('description')}">
+                </textarea>
+                <div *ngIf="isFieldInvalid('description')" class="mt-1 space-y-0.5">
+                    <p *ngIf="f['description'].errors?.['required']" class="text-xs text-red-500">La descripción es requerida.</p>
+                    <p *ngIf="f['description'].errors?.['minlength']" class="text-xs text-red-500">Mínimo 10 caracteres.</p>
+                    <p *ngIf="f['description'].errors?.['maxlength']" class="text-xs text-red-500">Máximo 500 caracteres.</p>
+                </div>
+                <p class="text-xs text-gray-400 text-right mt-0.5">{{ f['description'].value?.length || 0 }}/500</p>
             </div>
 
             <!-- Archivos Adjuntos / Recursos Complementarios -->

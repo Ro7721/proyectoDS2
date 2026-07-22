@@ -50,11 +50,6 @@ export class Login implements OnInit {
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.plataformId)) {
-      const message = localStorage.getItem('logoutMessage');
-      if (message) {
-        this.toast.toastSuccess('Éxito', message);
-        localStorage.removeItem('logoutMessage');
-      }
 
       const message2 = localStorage.getItem('access-error');
       if (message2) {

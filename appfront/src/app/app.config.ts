@@ -6,7 +6,7 @@ import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { LucideAngularModule, BookOpen, TrendingUp, Award, Heart, LayoutDashboard, Library, PlusCircle, Users, BarChart, GraduationCap, Play, ChevronRight, Plus, DollarSign, Clock } from 'lucide-angular';
 import { environment } from './environments/environment';
-import { MessageService } from 'primeng/api';
+import { MessageService, ConfirmationService } from 'primeng/api';
 import { tokenInterceptor } from './core/auth/token.interceptor';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
@@ -20,6 +20,7 @@ export const appConfig: ApplicationConfig = {
       }
     }),
     MessageService,
+    ConfirmationService,
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideHttpClient(withFetch(), withInterceptors([tokenInterceptor])),

@@ -3,7 +3,7 @@ import { HeaderCatalog } from "../../../layout/componet-principal/header-catalog
 import { CourseModal } from "../../../layout/componet-principal/course-modal/course-modal";
 import { CourseResponse } from '../../../models/course.model';
 import { Api } from '../../../api/api';
-import { apidetailsCourse, apigetallCategory, apigetallCourse } from '../../../api/functions';
+import { getAll1, getAllCourses } from '../../../api/functions';
 import { CommonModule } from '@angular/common';
 import { CategoryResponse } from '../../../models/category.model';
 import { Router } from '@angular/router';
@@ -59,7 +59,7 @@ export class Catalog {
   //---------------------------------------------------
 
   loadCategories(): void {
-    this.api.invoke(apigetallCategory).then((response: any) => {
+    this.api.invoke(getAll1).then((response: any) => {
       const apiResponseData = typeof response == 'string' ? JSON.parse(response) : response;
       if (Array.isArray(apiResponseData)) {
         this.categories = apiResponseData;
@@ -74,7 +74,7 @@ export class Catalog {
 
   loadCourses(): void {
     this.loading = true;
-    this.api.invoke(apigetallCourse).then((response: any) => {
+    this.api.invoke(getAllCourses).then((response: any) => {
       const apiResponseData = typeof response == 'string' ? JSON.parse(response) : response;
       if (Array.isArray(apiResponseData)) {
         this.courses = apiResponseData;

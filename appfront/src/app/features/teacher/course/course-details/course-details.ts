@@ -10,10 +10,10 @@ import {
   inject,
 } from '@angular/core';
 import { Api } from '../../../../api/api';
-import { ApidetailsCourse$Params, apidetailsCourse, apicreateLesson, ApicreateLesson$Params } from '../../../../api/functions';
+import { GetById1$Params, getById1, create, Create$Params } from '../../../../api/functions';
 import { LessonInsert, LessonFormPayload } from '../lesson-insert/lesson-insert';
 import { CourseResponse } from '../../../../models/course.model';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { AccordionModule } from 'primeng/accordion';
 import { ButtonModule } from 'primeng/button';
 import { ChipModule } from 'primeng/chip';
@@ -21,7 +21,8 @@ import { DialogModule } from 'primeng/dialog';
 import { DividerModule } from 'primeng/divider';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TagModule } from 'primeng/tag';
-
+import { MessageToast } from '../../../../message/message-toast';
+import { deleteCourse } from '../../../../api/functions';
 @Component({
   selector: 'app-course-details',
   imports: [
@@ -43,6 +44,7 @@ export class CourseDetails implements OnChanges {
   @Input() courseId: string | null = null;
   @Output() visibleChange = new EventEmitter<boolean>();
 
+  constructor(private confirmation: ConfirmationService, private toastMessage: MessageToast) { }
   private api = inject(Api);
   private cdr = inject(ChangeDetectorRef);
   private messageService = inject(MessageService);
@@ -77,7 +79,7 @@ export class CourseDetails implements OnChanges {
     this.selectedCourse = null;
 
     this.api
-      .invoke<ApidetailsCourse$Params, any>(apidetailsCourse, { idCourse })
+      .invoke<GetById1$Params, any>(getById1, { idCourse })
       .then((response) => {
         this.selectedCourse = response?.data ?? null;
         this.loading = false;
@@ -145,10 +147,10 @@ export class CourseDetails implements OnChanges {
   openNewLessonDialog(): void {
     // Indicamos que estamos abriendo la lección para evitar que `close()` limpie el estado
     this.isOpeningLesson = true;
-    
+
     // Cerramos el modal de detalles (esto disparará onHide que llama a close())
     this.visible = false;
-    
+
     // Esperamos a que termine la animación de PrimeNG antes de abrir el otro modal
     setTimeout(() => {
       if (!this.courseId) return;
@@ -172,21 +174,21 @@ export class CourseDetails implements OnChanges {
     if (!this.courseId) return;
 
     this.loading = true;
-    const params: ApicreateLesson$Params = {
+    const params: Create$Params = {
       body: {
         courseId: this.courseId,
         title: payload.title,
         description: payload.description,
         type: payload.type,
         contenUrl: payload.contenUrl,
-        isFree: payload.isFree,
+        free: payload.isFree === 'true' || payload.isFree === true as any,
         mainVideoFile: payload.mainVideoFile,
         adjunctFiles: payload.adjunctFiles,
       }
     };
 
     this.api
-      .invoke<ApicreateLesson$Params, any>(apicreateLesson, params)
+      .invoke<Create$Params, any>(create, params)
       .then(() => {
         this.messageService.add({
           severity: 'success',
@@ -210,5 +212,47 @@ export class CourseDetails implements OnChanges {
         this.onLessonDialogClose(false);
         this.cdr.detectChanges();
       });
+  }
+
+  confirmDeleteCourse(event: Event): void {
+    this.confirmation.confirm({
+      target: event.target as HTMLElement,
+      message: '¿Estás seguro de que deseas eliminar este curso? Esta acción no se puede deshacer.',
+      header: 'Confirmar Eliminación',
+      icon: 'pi pi-trash',
+      acceptLabel: 'Sí, eliminar',
+      rejectLabel: 'No, cancelar',
+      acceptButtonStyleClass: 'p-button-danger',
+      rejectButtonStyleClass: 'p-button-secondary p-button-text',
+      accept: () => {
+        this.deleteCourse();
+      },
+      reject: () => {
+        this.toastMessage.toastInfo('Cancelado', 'La eliminación del curso fue cancelada');
+      }
+    });
+  }
+  deleteCourse(): void {
+    if (!this.courseId) return;
+    this.api.invoke(deleteCourse, { idCourse: this.courseId }).then((response: any) => {
+      const body = typeof response === 'string' ? JSON.parse(response) : response;
+      const genericResponse = body?.response;
+      const message = genericResponse?.listMessage?.[0] || 'Operación completada';
+      
+      if (genericResponse?.type === 'success' || genericResponse?.type === 'SUCCESS') {
+        this.toastMessage.toastSuccess('Curso eliminado', message);
+        this.close();
+      } else {
+        this.toastMessage.toastWarn('Atención', message);
+      }
+    }).catch(error => {
+      let errorMessage = 'Ocurrió un error al eliminar';
+      if (error?.error?.response?.listMessage?.length) {
+        errorMessage = error.error.response.listMessage.join(', ');
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+      this.toastMessage.toastError('Error', errorMessage);
+    });
   }
 }

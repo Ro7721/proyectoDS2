@@ -1,0 +1,147 @@
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h2 class="text-2xl font-bold text-gray-900 tracking-tight">Resumen General</h2>
+      <p class="text-sm text-gray-500 mt-1">Estadísticas y métricas clave de la plataforma.</p>
+    </div>
+    <button (click)="loadStats()" class="p-2 text-gray-500 hover:bg-gray-100 rounded-xl transition-colors">
+      <i class="pi pi-refresh" [class.pi-spin]="loading"></i>
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="flex justify-center p-12">
+    <div class="w-8 h-8 border-4 border-[#E8592B] border-t-transparent rounded-full animate-spin"></div>
+  </div>
+
+  <div *ngIf="error" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl flex items-center gap-3">
+    <i class="pi pi-exclamation-circle text-xl"></i>
+    <p>{{ error }}</p>
+  </div>
+
+  <ng-container *ngIf="!loading && !error && stats">
+    <!-- Stat Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      
+      <!-- Users Card -->
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow relative overflow-hidden group">
+        <div class="absolute top-0 right-0 p-6 opacity-10 group-hover:scale-110 transition-transform">
+          <i class="pi pi-users text-6xl text-blue-500"></i>
+        </div>
+        <div class="relative z-10">
+          <p class="text-sm font-medium text-gray-500 mb-1">Usuarios Totales</p>
+          <h3 class="text-3xl font-bold text-gray-900">{{ stats.totalUsers }}</h3>
+          <div class="mt-4 flex items-center text-sm gap-4">
+            <span class="text-gray-600"><span class="font-medium text-gray-900">{{ stats.totalTeachers }}</span> Docentes</span>
+            <span class="text-gray-600"><span class="font-medium text-gray-900">{{ stats.totalStudents }}</span> Estudiantes</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Courses Card -->
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow relative overflow-hidden group">
+        <div class="absolute top-0 right-0 p-6 opacity-10 group-hover:scale-110 transition-transform">
+          <i class="pi pi-book text-6xl text-[#E8592B]"></i>
+        </div>
+        <div class="relative z-10">
+          <p class="text-sm font-medium text-gray-500 mb-1">Cursos Totales</p>
+          <h3 class="text-3xl font-bold text-gray-900">{{ stats.totalCourses }}</h3>
+          <div class="mt-4 flex items-center text-sm gap-4">
+            <span class="text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md font-medium"><i class="pi pi-check-circle text-xs mr-1"></i> {{ stats.activeCourses }} Activos</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Enrollments Card -->
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow relative overflow-hidden group">
+        <div class="absolute top-0 right-0 p-6 opacity-10 group-hover:scale-110 transition-transform">
+          <i class="pi pi-id-card text-6xl text-purple-500"></i>
+        </div>
+        <div class="relative z-10">
+          <p class="text-sm font-medium text-gray-500 mb-1">Inscripciones Totales</p>
+          <h3 class="text-3xl font-bold text-gray-900">{{ stats.totalEnrollments }}</h3>
+          <p class="mt-4 text-sm text-gray-500">En todos los cursos</p>
+        </div>
+      </div>
+
+      <!-- Revenue/Extra Card -->
+      <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 shadow-sm border border-gray-700 hover:shadow-lg transition-shadow relative overflow-hidden group text-white">
+        <div class="absolute top-0 right-0 p-6 opacity-10 group-hover:scale-110 transition-transform">
+          <i class="pi pi-chart-line text-6xl text-white"></i>
+        </div>
+        <div class="relative z-10">
+          <p class="text-sm font-medium text-gray-400 mb-1">Cursos Completados</p>
+          <h3 class="text-3xl font-bold">{{ stats.completedCourses }}</h3>
+          <div class="mt-4 flex items-center text-sm text-emerald-400">
+            <i class="pi pi-arrow-up mr-1 text-xs"></i> <span>Tasa de éxito</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Charts Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+      
+      <!-- Enrollments by month (Simulated UI) -->
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 lg:col-span-2">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-lg font-semibold text-gray-900">Inscripciones por mes</h3>
+          <span class="text-xs font-medium bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full">Este Año</span>
+        </div>
+        
+        <div class="flex items-end gap-2 h-64 mt-4">
+          <ng-container *ngFor="let item of stats.enrollmentsByMonth">
+            <div class="flex-1 flex flex-col items-center gap-2 group">
+              <!-- Bar -->
+              <div class="w-full bg-orange-100 rounded-t-lg relative flex items-end justify-center group-hover:bg-orange-200 transition-colors"
+                   [style.height.%]="(item.value / 30) * 100"> <!-- Assuming max 30 for demo -->
+                <div class="absolute -top-8 bg-gray-900 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                  {{ item.value }} inscripciones
+                </div>
+              </div>
+              <!-- Label -->
+              <span class="text-xs font-medium text-gray-500 truncate w-full text-center">{{ item.label.substring(0, 3) }}</span>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+        <h3 class="text-lg font-semibold text-gray-900 mb-6">Módulos de Gestión</h3>
+        <div class="space-y-3">
+          <a routerLink="/dashboard/admin/users" class="flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:border-gray-300 hover:bg-gray-50 transition-all group">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                <i class="pi pi-users"></i>
+              </div>
+              <span class="font-medium text-gray-900">Usuarios</span>
+            </div>
+            <i class="pi pi-chevron-right text-gray-400 group-hover:text-gray-600 transition-colors"></i>
+          </a>
+          
+          <a routerLink="/dashboard/admin/courses" class="flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:border-gray-300 hover:bg-gray-50 transition-all group">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center text-[#E8592B]">
+                <i class="pi pi-book"></i>
+              </div>
+              <span class="font-medium text-gray-900">Cursos</span>
+            </div>
+            <i class="pi pi-chevron-right text-gray-400 group-hover:text-gray-600 transition-colors"></i>
+          </a>
+
+          <a routerLink="/dashboard/admin/categories" class="flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:border-gray-300 hover:bg-gray-50 transition-all group">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
+                <i class="pi pi-tags"></i>
+              </div>
+              <span class="font-medium text-gray-900">Categorías</span>
+            </div>
+            <i class="pi pi-chevron-right text-gray-400 group-hover:text-gray-600 transition-colors"></i>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </ng-container>
+</div>

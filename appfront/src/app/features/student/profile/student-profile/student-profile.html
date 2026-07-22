@@ -1,87 +1,150 @@
-<div class="max-w-3xl mx-auto p-4 sm:p-6 lg:p-8">
+<div class="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
   <!-- Header -->
   <div class="mb-8 flex items-center justify-between">
     <div>
-      <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Mi Perfil</h1>
-      <p class="mt-2 text-sm text-gray-500">Gestiona tu información personal y credenciales.</p>
-    </div>
-    <div class="h-16 w-16 rounded-full bg-gradient-to-tr from-[#E8592B] to-orange-400 flex items-center justify-center text-2xl font-bold text-white shadow-lg">
-      {{ user?.firstName?.charAt(0) || '' }}{{ user?.surName?.charAt(0) || '' }}
+      <h1 class="text-3xl font-black text-gray-900 tracking-tight">Mi Perfil</h1>
+      <p class="mt-2 text-sm text-gray-500">Consulta y gestiona tu información personal.</p>
     </div>
   </div>
 
   <div *ngIf="loading" class="flex justify-center p-12">
-    <div class="w-8 h-8 border-4 border-[#E8592B] border-t-transparent rounded-full animate-spin"></div>
+    <div class="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
   </div>
 
-  <div *ngIf="!loading && user" class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden transition-all">
-    
-    <!-- Alertas -->
-    <div *ngIf="message" 
-         class="px-6 py-4 border-l-4 text-sm font-medium transition-all"
-         [ngClass]="isError ? 'bg-red-50 border-red-500 text-red-700' : 'bg-emerald-50 border-emerald-500 text-emerald-700'">
-      {{ message }}
+  <div *ngIf="!loading && user" class="space-y-6">
+
+    <!-- Alertas Generales -->
+    <div *ngIf="message && !showEditModal" class="px-6 py-4 rounded-xl text-sm font-semibold transition-all shadow-sm"
+      [ngClass]="isError ? 'bg-red-50 text-red-600 border border-red-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'">
+      <div class="flex items-center gap-2">
+        <span class="material-icons text-[20px]">{{ isError ? 'error_outline' : 'check_circle' }}</span>
+        {{ message }}
+      </div>
     </div>
 
-    <form [formGroup]="form" (ngSubmit)="saveProfile()" class="p-6 sm:p-8 space-y-6">
+    <!-- Profile Card (View Mode) -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+      <!-- Cover/Header of the card -->
+      <div class="h-32 bg-gradient-to-r from-emerald-500 to-emerald-700 relative">
+        <button (click)="openEditModal()"
+          class="absolute top-4 right-4 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-4 py-2 rounded-xl text-sm font-semibold transition-colors flex items-center gap-2">
+          <span class="material-icons text-[18px]">edit</span>
+          Editar Perfil
+        </button>
+      </div>
       
-      <!-- Personal Info Grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        <div class="space-y-2">
-          <label class="block text-sm font-semibold text-gray-700">Nombres</label>
-          <input type="text" formControlName="firstName" required
-            class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 focus:bg-white focus:border-[#E8592B] focus:ring-2 focus:ring-[#E8592B]/20 transition-all outline-none"
-            placeholder="Tus nombres">
+      <div class="px-8 pb-8 relative">
+        <!-- Avatar -->
+        <div class="absolute -top-12 border-4 border-white h-24 w-24 rounded-2xl bg-white shadow-md flex items-center justify-center text-3xl font-black text-emerald-600">
+          {{ user?.firstName?.charAt(0) || '' }}{{ user?.surName?.charAt(0) || '' }}
         </div>
         
-        <div class="space-y-2">
-          <label class="block text-sm font-semibold text-gray-700">Apellidos</label>
-          <input type="text" formControlName="surName" required
-            class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 focus:bg-white focus:border-[#E8592B] focus:ring-2 focus:ring-[#E8592B]/20 transition-all outline-none"
-            placeholder="Tus apellidos">
-        </div>
-      </div>
-
-      <!-- Account Info -->
-      <div class="space-y-2">
-        <label class="block text-sm font-semibold text-gray-700">Correo Electrónico</label>
-        <div class="relative">
-          <span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">email</span>
-          <input type="email" formControlName="email" required
-            class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 focus:bg-white focus:border-[#E8592B] focus:ring-2 focus:ring-[#E8592B]/20 transition-all outline-none"
-            placeholder="tu@correo.com">
-        </div>
-      </div>
-
-      <!-- Password Update -->
-      <div class="pt-6 mt-6 border-t border-gray-100">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Cambiar Contraseña</h3>
-        <p class="text-sm text-gray-500 mb-4">Deja este campo en blanco si no deseas cambiar tu contraseña actual.</p>
-        
-        <div class="space-y-2">
-          <label class="block text-sm font-semibold text-gray-700">Nueva Contraseña</label>
-          <div class="relative">
-            <span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">lock</span>
-            <input type="password" formControlName="password"
-              class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 focus:bg-white focus:border-[#E8592B] focus:ring-2 focus:ring-[#E8592B]/20 transition-all outline-none"
-              placeholder="Min. 8 caracteres (A-Z, a-z, 0-9, @$!%*?&)">
+        <div class="pt-16 grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
+            <h2 class="text-2xl font-bold text-gray-900">{{ user.firstName }} {{ user.surName }}</h2>
+            <p class="text-sm font-medium text-emerald-600 mt-1 uppercase tracking-wider">{{ user.role === 'ROLE_TEACHER' ? 'Docente' : (user.role === 'ROLE_ADMIN' ? 'Administrador' : 'Estudiante') }}</p>
+          </div>
+          
+          <div class="space-y-4">
+            <div>
+              <p class="text-xs uppercase font-bold text-gray-400 tracking-wider mb-1">Correo Electrónico</p>
+              <div class="flex items-center gap-2 text-gray-800 font-medium">
+                <span class="material-icons text-gray-400 text-[18px]">email</span>
+                {{ user.email }}
+              </div>
+            </div>
+            
+            <div>
+              <p class="text-xs uppercase font-bold text-gray-400 tracking-wider mb-1">Estado de la cuenta</p>
+              <div class="flex items-center gap-2 text-gray-800 font-medium">
+                <span class="material-icons text-emerald-500 text-[18px]">verified_user</span>
+                Activa
+              </div>
+            </div>
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
 
-      <!-- Actions -->
-      <div class="pt-6 mt-6 border-t border-gray-100 flex justify-end gap-4">
-        <button type="button" (click)="loadProfile()"
-          class="px-6 py-2.5 rounded-xl border border-gray-200 text-gray-600 font-semibold hover:bg-gray-50 transition-colors">
-          Descartar
-        </button>
-        <button type="submit" [disabled]="saving || form.invalid"
-          class="px-6 py-2.5 rounded-xl bg-[#E8592B] text-white font-semibold hover:bg-orange-600 focus:ring-4 focus:ring-orange-500/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
-          <div *ngIf="saving" class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-          {{ saving ? 'Guardando...' : 'Guardar Cambios' }}
-        </button>
+<!-- Edit Profile Modal -->
+<div *ngIf="showEditModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    
+    <!-- Modal Header -->
+    <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+      <h3 class="text-xl font-bold text-gray-900">Editar Perfil</h3>
+      <button type="button" (click)="closeEditModal()" class="text-gray-400 hover:text-gray-700 transition-colors">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <!-- Modal Body (Form) -->
+    <div class="overflow-y-auto flex-1">
+      <div *ngIf="message && showEditModal" class="m-6 px-4 py-3 rounded-xl text-sm font-semibold border"
+        [ngClass]="isError ? 'bg-red-50 text-red-600 border-red-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200'">
+        {{ message }}
       </div>
 
-    </form>
+      <form [formGroup]="form" (ngSubmit)="saveProfile()" class="p-6 space-y-6">
+        <!-- Personal Info Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div class="space-y-2">
+            <label class="block text-sm font-semibold text-gray-700">Nombres <span class="text-red-500">*</span></label>
+            <input type="text" formControlName="firstName"
+              class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none"
+              placeholder="Tus nombres">
+          </div>
+
+          <div class="space-y-2">
+            <label class="block text-sm font-semibold text-gray-700">Apellidos <span class="text-red-500">*</span></label>
+            <input type="text" formControlName="surName"
+              class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none"
+              placeholder="Tus apellidos">
+          </div>
+        </div>
+
+        <!-- Account Info -->
+        <div class="space-y-2">
+          <label class="block text-sm font-semibold text-gray-700">Correo Electrónico <span class="text-red-500">*</span></label>
+          <div class="relative">
+            <span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">email</span>
+            <input type="email" formControlName="email"
+              class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none"
+              placeholder="tu@correo.com">
+          </div>
+        </div>
+
+        <!-- Password Update -->
+        <div class="pt-6 border-t border-gray-100">
+          <h4 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-2">Seguridad</h4>
+          <p class="text-xs text-gray-500 mb-4">Deja este campo en blanco si no deseas cambiar tu contraseña actual.</p>
+
+          <div class="space-y-2">
+            <label class="block text-sm font-semibold text-gray-700">Nueva Contraseña</label>
+            <div class="relative">
+              <span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">lock_reset</span>
+              <input type="password" formControlName="password"
+                class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none"
+                placeholder="Min. 8 caracteres (Opcional)">
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex justify-end gap-3 rounded-b-2xl">
+      <button type="button" (click)="closeEditModal()"
+        class="px-5 py-2.5 rounded-xl text-sm font-semibold text-gray-600 bg-white border border-gray-300 hover:bg-gray-50 transition-colors">
+        Cancelar
+      </button>
+      <button type="button" (click)="saveProfile()" [disabled]="saving || form.invalid"
+        class="px-5 py-2.5 rounded-xl bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 focus:ring-4 focus:ring-emerald-500/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-sm">
+        <div *ngIf="saving" class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+        {{ saving ? 'Guardando...' : 'Guardar Cambios' }}
+      </button>
+    </div>
   </div>
 </div>

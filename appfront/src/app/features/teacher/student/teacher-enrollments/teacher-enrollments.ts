@@ -14,7 +14,7 @@ import { TeacherEnrollmentResponse } from '../../../../models/teacher.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TeacherEnrollments implements OnInit {
-  private enrollmentsService = inject(TeacherEnrollmentsService);
+  readonly enrollmentsService = inject(TeacherEnrollmentsService);
   private cdr = inject(ChangeDetectorRef);
 
   // ── State ──

@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { Api } from '../../api/api';
 import { isPlatformBrowser } from '@angular/common';
 import { CurrentUser, LoginResponse, RefreshTokenResponse } from '../../models/auth.model';
-import { login, Login$Params, me, Me$Params, refreshToken, RefreshToken$Params } from '../../api/functions';
+import { login, getCurrentUser1, refreshToken } from '../../api/functions';
 
 export type AppRole = 'ROLE_ADMIN' | 'ROLE_TEACHER' | 'ROLE_STUDENT';
 
@@ -17,22 +17,21 @@ export class AuthService {
   constructor(private api: Api) { }
 
   async login(email: string, password: string): Promise<LoginResponse> {
-    const response = await this.api.invoke<Login$Params, LoginResponse>(login, {
+    const rawResponse: any = await this.api.invoke(login, {
       body: {
         email,
         password
       }
     });
+    const response: LoginResponse = rawResponse.data ?? rawResponse;
     this.saveSession(response);
     return response;
   }
 
   // Traer el usuario actual para mostrar información en el header
   async getCurrentUser(): Promise<CurrentUser> {
-    const response = await this.api.invoke<
-      Me$Params,
-      CurrentUser
-    >(me, {});
+    const rawResponse: any = await this.api.invoke(getCurrentUser1, {});
+    const response: CurrentUser = rawResponse.data ?? rawResponse;
     return response;
   }
   //Verifica si el usuario esta autenticado
@@ -53,9 +52,10 @@ export class AuthService {
     const storedRefreshToken = this.refreshToken;
     if (!storedRefreshToken) return null;
 
-    const response = await this.api.invoke<RefreshToken$Params, RefreshTokenResponse>(refreshToken, {
+    const rawResponse: any = await this.api.invoke(refreshToken, {
       body: { refreshToken: storedRefreshToken },
     });
+    const response: RefreshTokenResponse = rawResponse.data ?? rawResponse;
 
     if (this.isBrowser()) {
       localStorage.setItem('accessToken', response.accessToken);
@@ -68,9 +68,7 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.setItem('logoutMessage', 'Sesión cerrada correctamente');
     this.clearSession();
-
     this.router.navigate(['']);
   }
   // Verifica si el usuario esta autenticado

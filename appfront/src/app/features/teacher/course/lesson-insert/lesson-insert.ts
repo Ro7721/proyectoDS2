@@ -20,7 +20,7 @@ export interface LessonFormPayload {
   type: string;
   contenUrl?: string;
   isFree: string;
-  mainVideoFile?: Blob[];
+  mainVideoFile?: Blob;
   adjunctFiles?: Blob[];
 }
 
@@ -64,12 +64,19 @@ export class LessonInsert implements OnInit, OnChanges {
 
   constructor(private fb: FormBuilder, private toastMessage: MessageToast) {
     this.frmInserLesson = this.fb.group({
-      title: ['', Validators.required],
+      title: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(100)]],
       type: ['VIDEO', Validators.required],
-      contenUrl: [''],
-      description: ['', Validators.required],
+      contenUrl: ['', [Validators.maxLength(255)]],
+      description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
       isFree: [false]
     });
+  }
+
+  get f() { return this.frmInserLesson.controls; }
+
+  isFieldInvalid(field: string): boolean {
+    const ctrl = this.frmInserLesson.get(field);
+    return !!(ctrl && ctrl.invalid && ctrl.touched);
   }
 
   ngOnInit(): void {
@@ -146,7 +153,7 @@ export class LessonInsert implements OnInit, OnChanges {
       contenUrl: formValue.contenUrl || '',
       description: formValue.description || '',
       isFree: formValue.isFree ? 'true' : 'false',
-      mainVideoFile: this.mainVideoFile.length > 0 ? (this.mainVideoFile as Blob[]) : undefined,
+      mainVideoFile: this.mainVideoFile.length > 0 ? this.mainVideoFile[0] : undefined,
       adjunctFiles: this.adjunctFiles.length > 0 ? (this.adjunctFiles as Blob[]) : undefined
     };
 

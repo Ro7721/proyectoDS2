@@ -95,37 +95,89 @@
             </div>
         </div>
 
-        <div class="flex gap-4">
-            <div class="w-full">
-                <label class="block mb-1.5 text-sm font-semibold text-gray-700">
-                    Contraseña
-                </label>
+        <!-- Contraseñas -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Campo Contraseña -->
+            <div>
+                <label for="password" class="block mb-1.5 text-sm font-semibold text-gray-700">Contraseña</label>
+                <div class="relative">
+                    <input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password"
+                        placeholder="Ingresa tu contraseña"
+                        class="w-full border border-gray-300 rounded-lg pl-4 pr-10 py-2.5 text-sm text-gray-700 placeholder-gray-400 outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition bg-white" />
 
-                <input type="password" formControlName="password" placeholder="Ingresa tu contraseña"
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition bg-white" />
+                    <button type="button" (click)="togglePasswordVisibility()" aria-label="Mostrar u ocultar contraseña"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none cursor-pointer">
+                        <i class="pi" [ngClass]="showPassword ? 'pi-eye-slash' : 'pi-eye'"></i>
+                    </button>
+                </div>
                 @if (password.touched && password.hasError('required')) {
-                <small class="text-red-500">Debe ingresar una contraseña</small>
-                }
-                @if (password.touched && password.hasError('minlength')) {
-                <small class="text-red-500">La contraseña debe tener al menos 8 caracteres</small>
-                }
-                @if (password.touched && password.hasError('pattern')) {
-                <small class="text-red-500">La contraseña debe tener al menos una mayúscula, una minúscula, un número y
-                    un carácter especial</small>
+                <small class="text-red-500 block mt-1">Debe ingresar una contraseña</small>
                 }
             </div>
-            <div class="w-full">
-                <label class="block mb-1.5 text-sm font-semibold text-gray-700">Confirmar Contraseña</label>
-                <input type="password" formControlName="confirmPassword" placeholder="Confirma tu contraseña"
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition bg-white" />
+
+            <!-- Campo Confirmar Contraseña -->
+            <div>
+                <label for="confirmPassword" class="block mb-1.5 text-sm font-semibold text-gray-700">Confirmar
+                    Contraseña</label>
+                <div class="relative">
+                    <input id="confirmPassword" [type]="showConfirmPassword ? 'text' : 'password'"
+                        formControlName="confirmPassword" placeholder="Confirma tu contraseña"
+                        class="w-full border border-gray-300 rounded-lg pl-4 pr-10 py-2.5 text-sm text-gray-700 placeholder-gray-400 outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition bg-white" />
+
+                    <button type="button" (click)="toggleConfirmPasswordVisibility()"
+                        aria-label="Mostrar u ocultar confirmación de contraseña"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none cursor-pointer">
+                        <i class="pi" [ngClass]="showConfirmPassword ? 'pi-eye-slash' : 'pi-eye'"></i>
+                    </button>
+                </div>
                 @if (confirmPassword.touched && confirmPassword.hasError('required')) {
-                <small class="text-red-500">Debe confirmar su contraseña</small>
+                <small class="text-red-500 block mt-1">Debe confirmar su contraseña</small>
                 }
                 @if (confirmPassword.touched && form.hasError('mismatch')) {
-                <small class="text-red-500">Las contraseñas no coinciden</small>
+                <small class="text-red-500 block mt-1">Las contraseñas no coinciden</small>
                 }
             </div>
         </div>
+        @if (password.value) {
+        <div class="text-xs space-y-1.5 p-3.5 bg-gray-50 rounded-lg border border-gray-200">
+            <p class="font-semibold text-gray-600 mb-2">Requisitos de la contraseña:</p>
+
+            <div class="flex items-center gap-2"
+                [ngClass]="passwordError?.hasMinLength === false ? 'text-red-500' : 'text-green-600'">
+                <i class="pi"
+                    [ngClass]="passwordError?.hasMinLength === false ? 'pi-times-circle' : 'pi-check-circle'"></i>
+                <span>Mínimo 8 caracteres</span>
+            </div>
+
+            <div class="flex items-center gap-2"
+                [ngClass]="passwordError?.hasUpperCase === false ? 'text-red-500' : 'text-green-600'">
+                <i class="pi"
+                    [ngClass]="passwordError?.hasUpperCase === false ? 'pi-times-circle' : 'pi-check-circle'"></i>
+                <span>Al menos una mayúscula (A-Z)</span>
+            </div>
+
+            <div class="flex items-center gap-2"
+                [ngClass]="passwordError?.hasLowerCase === false ? 'text-red-500' : 'text-green-600'">
+                <i class="pi"
+                    [ngClass]="passwordError?.hasLowerCase === false ? 'pi-times-circle' : 'pi-check-circle'"></i>
+                <span>Al menos una minúscula (a-z)</span>
+            </div>
+
+            <div class="flex items-center gap-2"
+                [ngClass]="passwordError?.hasNumber === false ? 'text-red-500' : 'text-green-600'">
+                <i class="pi"
+                    [ngClass]="passwordError?.hasNumber === false ? 'pi-times-circle' : 'pi-check-circle'"></i>
+                <span>Al menos un número (0-9)</span>
+            </div>
+
+            <div class="flex items-center gap-2"
+                [ngClass]="passwordError?.hasSpecialChar === false ? 'text-red-500' : 'text-green-600'">
+                <i class="pi"
+                    [ngClass]="passwordError?.hasSpecialChar === false ? 'pi-times-circle' : 'pi-check-circle'"></i>
+                <span>Al menos un carácter especial (!@#$%^&*)</span>
+            </div>
+        </div>
+        }
 
         <button type="submit"
             class="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-semibold transition mt-2">

@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Api } from '../../../../api/api';
 import { CourseContentResponse, LessonContentResponse, CourseProgressResponse, CertificateResponse } from '../../../../models/learning.model';
-import { apiCourseContent, apiSaveProgress, apiCertificate } from '../../../../api/functions';
+import { getCourseContent, saveProgress, getCertificate } from '../../../../api/functions';
 import { environment } from '../../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { CourseProgress } from '../course-progress/course-progress';
@@ -59,7 +59,7 @@ export class LearningCourse implements OnInit {
   private loadCourse(idCourse: string): void {
     this.loading = true;
     this.api
-      .invoke(apiCourseContent, { idCourse })
+      .invoke(getCourseContent, { idCourse })
       .then((response) => this.handleCourseLoaded(response))
       .catch((err) => console.error('Error cargando el curso', err))
       .finally(() => {
@@ -112,7 +112,7 @@ export class LearningCourse implements OnInit {
         lastPositionSeconds: event.lastPositionSeconds
       };
       this.api
-        .invoke(apiSaveProgress, { body }).then((response) => this.handleProgressSaved(response))
+        .invoke(saveProgress, { body }).then((response) => this.handleProgressSaved(response))
         .catch((err) => console.error('Error guardando progreso', err));
     }
   }
@@ -146,7 +146,7 @@ export class LearningCourse implements OnInit {
   async openCertificate(): Promise<void> {
     if (!this.course) return;
     try {
-      const res: any = await this.api.invoke(apiCertificate, { idCourse: this.course.idCourse });
+      const res: any = await this.api.invoke(getCertificate, { idCourse: this.course.idCourse });
       const apiResponse = typeof res === 'string' ? JSON.parse(res) : res;
       
       if (!apiResponse.success) {

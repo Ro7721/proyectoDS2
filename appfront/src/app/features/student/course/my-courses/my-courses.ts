@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { MyCourseResponse } from '../../../../models/enrollment.model';
 import { Api } from '../../../../api/api';
 import { MessageToast } from '../../../../message/message-toast';
-import { apiCertificate, apiMyCourses } from '../../../../api/functions';
+import { getCertificate, getMyCourses } from '../../../../api/functions';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -65,7 +65,7 @@ export class MyCourses implements OnInit {
 
   loadCourses() {
     this.loading = true;
-    this.api.invoke(apiMyCourses).then((response: any) => {
+    this.api.invoke(getMyCourses).then((response: any) => {
       const apiResponse = typeof response === 'string' ? JSON.parse(response) : response;
 
       if (Array.isArray(apiResponse)) {
@@ -159,7 +159,7 @@ export class MyCourses implements OnInit {
   async openCertificate(course: MyCourseResponse): Promise<void> {
     try {
 
-      const res: any = await this.api.invoke(apiCertificate, { idCourse: course.idCourse });
+      const res: any = await this.api.invoke(getCertificate, { idCourse: course.idCourse });
       const apiResponse = typeof res === 'string' ? JSON.parse(res) : res;
 
       if (!apiResponse.success) {

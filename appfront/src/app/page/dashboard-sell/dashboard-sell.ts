@@ -32,7 +32,6 @@ export class DashboardSell implements OnInit {
     { label: 'Panel Principal', icon: 'pi pi-th-large', route: '/dashboard/my-courses' },
     {
       label: 'Mi aprendizaje', icon: 'pi pi-book', items: [
-        { label: 'Mi progreso', icon: 'pi pi-chart-line', route: '#' },
         { label: 'Certificados', icon: 'pi pi-trophy', route: '#' },
       ]
     },
@@ -63,8 +62,25 @@ export class DashboardSell implements OnInit {
     { label: 'Ayuda', icon: 'pi pi-question-circle', route: '#' }
   ];
 
-  get menu() { return this.role === 'ROLE_TEACHER' ? this.teacherMenu : this.studentMenu; }
-  get pageTitle() { return this.role === 'ROLE_TEACHER' ? 'Panel Docente' : 'Mi Aprendizaje'; }
+  adminMenu: MenuItem[] = [
+    { label: 'Dashboard', icon: 'pi pi-chart-pie', route: '/dashboard/admin' },
+    { label: 'Usuarios', icon: 'pi pi-users', route: '/dashboard/admin/users' },
+    { label: 'Cursos', icon: 'pi pi-book', route: '/dashboard/admin/courses' },
+    { label: 'Categorías', icon: 'pi pi-tags', route: '/dashboard/admin/categories' },
+    { label: 'Inscripciones', icon: 'pi pi-id-card', route: '/dashboard/admin/enrollments' },
+    { label: 'Configuracion', icon: 'pi pi-cog', route: '#' },
+    { label: 'Ayuda', icon: 'pi pi-question-circle', route: '#' }
+  ];
+
+  get menu() {
+    if (this.role === 'ROLE_ADMIN') return this.adminMenu;
+    return this.role === 'ROLE_TEACHER' ? this.teacherMenu : this.studentMenu;
+  }
+
+  get pageTitle() {
+    if (this.role === 'ROLE_ADMIN') return 'Panel Administrador';
+    return this.role === 'ROLE_TEACHER' ? 'Panel Docente' : 'Mi Aprendizaje';
+  }
 
   async ngOnInit() {
     if (!isPlatformBrowser(this.platformId)) return;

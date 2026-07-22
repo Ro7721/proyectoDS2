@@ -18,7 +18,11 @@ import { LearningCourse } from './features/student/course/learning-course/learni
 import { GuestGuard } from './core/guards/guest.guard';
 import { TeacherEnrollments } from './features/teacher/student/teacher-enrollments/teacher-enrollments';
 import { StudentProfile } from './features/student/profile/student-profile/student-profile';
-
+import { AdminDashboardComponent } from './features/admin/dashboard/admin-dashboard/admin-dashboard';
+import { AdminUsersComponent } from './features/admin/users/admin-users/admin-users';
+import { AdminCoursesComponent } from './features/admin/courses/admin-courses/admin-courses';
+import { AdminCategoriesComponent } from './features/admin/categories/admin-categories/admin-categories';
+import { AdminEnrollmentsComponent } from './features/admin/enrollments/admin-enrollments/admin-enrollments';
 export const routes: Routes = [
     { path: '', component: Home },
     { path: 'catalog', component: Catalog },
@@ -42,7 +46,14 @@ export const routes: Routes = [
 
             { path: 'learning/course/:idCourse', component: LearningCourse, canActivate: [RoleGuard], data: { roles: ['ROLE_STUDENT'] } },
             { path: 'my-courses', component: MyCourses, canActivate: [RoleGuard], data: { roles: ['ROLE_STUDENT'] } },
-            { path: 'profile', component: StudentProfile, canActivate: [AuthGuard] }
+            { path: 'profile', component: StudentProfile, canActivate: [AuthGuard] },
+            
+            // Admin routes
+            { path: 'admin', component: AdminDashboardComponent, canActivate: [RoleGuard], data: { roles: ['ROLE_ADMIN'] } },
+            { path: 'admin/users', component: AdminUsersComponent, canActivate: [RoleGuard], data: { roles: ['ROLE_ADMIN'] } },
+            { path: 'admin/courses', component: AdminCoursesComponent, canActivate: [RoleGuard], data: { roles: ['ROLE_ADMIN'] } },
+            { path: 'admin/categories', component: AdminCategoriesComponent, canActivate: [RoleGuard], data: { roles: ['ROLE_ADMIN'] } },
+            { path: 'admin/enrollments', component: AdminEnrollmentsComponent, canActivate: [RoleGuard], data: { roles: ['ROLE_ADMIN'] } }
         ]
     }
 ];

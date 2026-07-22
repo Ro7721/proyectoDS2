@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostListener } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators, AbstractControl } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators, AbstractControl, ValidatorFn, ValidationErrors } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Api } from '../../../api/api';
 import { RoleEnum } from '../../../models/user.model';
 import { MessageToast } from '../../../message/message-toast';
-import { apicreateUser, ApicreateUser$Params } from '../../../api/functions';
+import { createUser, CreateUser$Params } from '../../../api/functions';
 
 @Component({
   selector: 'app-register-user',
@@ -19,6 +19,9 @@ export class RegisterUser {
   public RoleEnum = RoleEnum;
   public isRoleDropdownOpen = false;
 
+  public showPassword = false;
+  public showConfirmPassword = false;
+
   get firstName() { return this.form.controls['firstName']; }
   get lastName() { return this.form.controls['lastName']; }
   get email() { return this.form.controls['email']; }
@@ -31,7 +34,7 @@ export class RegisterUser {
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8), Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%?&])[A-Za-z\d@$!%?&]{8,}$/)]],
+      password: ['', [Validators.required, this.strongPasswordValidation()]],
       confirmPassword: ['', Validators.required],
       role: ['', Validators.required]
     }, { validators: this.passwordMatchValidator });
@@ -42,6 +45,13 @@ export class RegisterUser {
     const confirmPassword = control.get('confirmPassword')?.value;
     return password === confirmPassword ? null : { mismatch: true };
   }
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  toggleConfirmPasswordVisibility(): void {
+    this.showConfirmPassword = !this.showConfirmPassword;
+  }
 
   sendInsertUser() {
     if (this.form.invalid) {
@@ -50,7 +60,7 @@ export class RegisterUser {
       return;
     }
 
-    const dataUser: ApicreateUser$Params = {
+    const dataUser: CreateUser$Params = {
       body: {
         firstName: this.firstName.value,
         lastName: this.lastName.value,
@@ -60,7 +70,7 @@ export class RegisterUser {
       }
     }
 
-    this.api.invoke(apicreateUser, dataUser).then((response: any) => {
+    this.api.invoke(createUser, dataUser).then((response: any) => {
       const apiResponse = typeof response === 'string' ? JSON.parse(response) : response;
       this.toast.toastSuccess('Éxito', 'Usuario registrado correctamente');
       this.form.reset();
@@ -101,5 +111,34 @@ export class RegisterUser {
       this.isRoleDropdownOpen = false;
     }
   }
+
+  strongPasswordValidation(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const password = control.value;
+      if (!password) {
+        return null;
+      }
+      const hasMinLength = password.length >= 8;
+      const hasUpperCase = /[A-Z]/.test(password);
+      const hasLowerCase = /[a-z]/.test(password);
+      const hasNumber = /\d/.test(password);
+      const hasSpecialChar = /[^A-Za-z0-9]/.test(password);
+      const passwordValid = hasMinLength && hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar;
+
+      return !passwordValid ? {
+        strongPassword: {
+          hasMinLength,
+          hasUpperCase,
+          hasLowerCase,
+          hasNumber,
+          hasSpecialChar
+        }
+      } : null;
+    }
+  }
+  get passwordError() {
+    return this.password.errors?.['strongPassword'];
+  }
+
 
 }

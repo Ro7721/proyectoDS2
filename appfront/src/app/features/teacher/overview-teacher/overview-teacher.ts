@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { Api } from '../../../api/api';
-import { apicoursesbyteacher, apiTeacherenrollments, Apicoursesbyteacher$Params } from '../../../api/functions';
+import { findByTeacher, getTeacherEnrollments, FindByTeacher$Params } from '../../../api/functions';
 import { CourseResponse } from '../../../models/course.model';
 import { TeacherEnrollmentResponse } from '../../../models/teacher.model';
 import { MessageToast } from '../../../message/message-toast';
@@ -46,8 +46,8 @@ export class OverviewTeacher implements OnInit {
     try {
       const teacherId = this.authService.user?.idUser || '';
       const [coursesRes, enrollmentsRes] = await Promise.all([
-        this.api.invoke(apicoursesbyteacher, { teacherId } as Apicoursesbyteacher$Params),
-        this.api.invoke(apiTeacherenrollments)
+        this.api.invoke(findByTeacher, { teacherId } as FindByTeacher$Params),
+        this.api.invoke(getTeacherEnrollments)
       ]);
 
       const coursesData = (coursesRes as any).data || coursesRes;
