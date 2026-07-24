@@ -60,8 +60,12 @@ export class Login implements OnInit {
   }
 
   async login() {
-    this.form.markAllAsTouched();
-    if (this.form.invalid) { return; }
+
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      this.toast.toastWarn('Advertencia', 'Por favor, complete todos los campos correctamente');
+      return;
+    }
     this.loading = true;
 
     try {

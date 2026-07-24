@@ -24,7 +24,7 @@ export class AdminEnrollmentsComponent implements OnInit {
   showDeleteModal = false;
   enrollmentToDelete: EnrollmentResponse | null = null;
 
-  constructor(private api: Api, private toast: MessageToast, private cdr: ChangeDetectorRef) { }
+  constructor(readonly api: Api, private toast: MessageToast, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     Promise.resolve().then(() => this.loadEnrollments());

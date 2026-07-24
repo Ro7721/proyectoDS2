@@ -39,7 +39,7 @@ export class AdminUsersComponent implements OnInit {
   actionLoading = false;
 
   constructor(
-    private api: Api,
+    readonly api: Api,
     private fb: FormBuilder,
     private toast: MessageToast,
     private cdr: ChangeDetectorRef
@@ -53,9 +53,9 @@ export class AdminUsersComponent implements OnInit {
   initForm() {
     this.editForm = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(2)]],
-      surName:   ['', [Validators.required, Validators.minLength(2)]],
-      email:     ['', [Validators.required, Validators.email]],
-      password:  ['', [this.optionalStrongPassword()]]
+      surName: ['', [Validators.required, Validators.minLength(2)]],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [this.optionalStrongPassword()]]
     });
   }
 

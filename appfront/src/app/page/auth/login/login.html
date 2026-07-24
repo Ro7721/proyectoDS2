@@ -11,7 +11,7 @@
     </div>
 
     <!-- Title -->
-    <h1 class="text-4xl sm:text-5xl font-bold text-gray-800 mb-8 text-center md:text-left">
+    <h1 class="text-4xl sm:text-4xl font-bold text-gray-800 mb-8 text-center md:text-left">
         Iniciar Sesión
     </h1>
 
@@ -73,7 +73,7 @@
             }
         </div>
 
-        <button type="submit" [disabled]="loading || form.invalid"
+        <button type="submit" [disabled]="loading"
             class="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-semibold transition mt-2">
             {{ loading ? 'Ingresando...' : 'Iniciar Sesión' }}
         </button>

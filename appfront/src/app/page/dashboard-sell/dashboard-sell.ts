@@ -90,7 +90,7 @@ export class DashboardSell implements OnInit {
       return;
     }
     this.userName = `${user.firstName} ${user.surName}`;
-    this.role = user.role as Role;
+    this.role = this.authService.currentRole ?? 'ROLE_STUDENT';
 
     this.checkScreenSize();
 

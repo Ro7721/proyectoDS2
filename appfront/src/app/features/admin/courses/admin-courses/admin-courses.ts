@@ -25,7 +25,7 @@ export class AdminCoursesComponent implements OnInit {
   courseToDelete: CourseResponse | null = null;
   actionLoading = false;
 
-  constructor(private api: Api, private toast: MessageToast, private cdr: ChangeDetectorRef) { }
+  constructor(readonly api: Api, private toast: MessageToast, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     Promise.resolve().then(() => this.loadCourses());

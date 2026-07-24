@@ -30,7 +30,7 @@ export class Header {
     }
     const words = this.userName
       .trim()
-      .split('/\s+/');
+      .split(/\s+/);
 
     if (words.length === 1) {
       return words[0][0].toUpperCase();
@@ -41,6 +41,4 @@ export class Header {
       words[1][0]
     ).toUpperCase();
   }
-
-
 } 

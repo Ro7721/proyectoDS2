@@ -80,7 +80,7 @@ export class CourseDetail implements OnInit {
 
       // Redirigir a "Mis Cursos" después de mostrar el mensaje de éxito
       setTimeout(() => {
-        this.router.navigate(['/dashboard/learning']);
+        this.router.navigate([this.authService.getRoleHomeUrl()]);
       }, 1500);
     } catch (error: any) {
       console.error('Error al inscribirse:', error);

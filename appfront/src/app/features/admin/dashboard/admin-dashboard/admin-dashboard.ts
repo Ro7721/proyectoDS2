@@ -16,10 +16,9 @@ export class AdminDashboardComponent implements OnInit {
   loading = true;
   error = '';
 
-  constructor(private api: Api, private cdr: ChangeDetectorRef) { }
+  constructor(readonly api: Api, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    // Defer to next microtask to avoid NG0100 ExpressionChangedAfterItHasBeenCheckedError
     Promise.resolve().then(() => this.loadStats());
   }
 
