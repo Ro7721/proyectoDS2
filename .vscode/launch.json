@@ -2,13 +2,21 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Ds2Application",
+            "request": "launch",
+            "mainClass": "com.epiis.DS26.Ds2Application",
+            "projectName": "ds-2"
+        },
+        {
+            "type": "java",
             "name": "Spring Boot-Ds2Application<ds-2>",
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "mainClass": "com.epiis.DS_B_2P.Ds2Application",
             "projectName": "ds-2",
             "args": "",
-            "envFile": "${workspaceFolder}/.env"
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=57766 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=ds-2"
         }
     ]
 }

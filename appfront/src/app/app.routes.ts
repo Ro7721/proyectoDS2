@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { Home } from './page/home/home';
+import { About } from './page/about/about';
 import { Login } from './page/auth/login/login';
 import { AuthLayout } from './layout/auth-layout/auth-layout';
 import { RegisterUser } from './page/auth/register-user/register-user';
@@ -25,6 +26,7 @@ import { AdminCategoriesComponent } from './features/admin/categories/admin-cate
 import { AdminEnrollmentsComponent } from './features/admin/enrollments/admin-enrollments/admin-enrollments';
 export const routes: Routes = [
     { path: '', component: Home },
+    { path: 'about', component: About },
     { path: 'catalog', component: Catalog },
     { path: 'catalog/course/:id', component: CourseDetail },
     {

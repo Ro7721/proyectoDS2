@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../../../core/auth/auth.service';
@@ -24,7 +24,8 @@ export class StudentProfile implements OnInit {
   constructor(
     private authService: AuthService,
     private api: Api,
-    private frm: FormBuilder
+    private frm: FormBuilder,
+    private cdm: ChangeDetectorRef
   ) {
     this.form = this.frm.group({
       firstName: ['', Validators.required],
@@ -57,6 +58,7 @@ export class StudentProfile implements OnInit {
       this.showMessage('Error al cargar el perfil', true);
     } finally {
       this.loading = false;
+      this.cdm.detectChanges();
     }
   }
 
@@ -98,7 +100,7 @@ export class StudentProfile implements OnInit {
         if (!apiResponse.success) {
           throw new Error(apiResponse.response?.listMessage?.[0] || 'Error al actualizar');
         }
-        
+
         this.showMessage('Perfil actualizado con éxito.', false);
         this.closeEditModal();
         this.loadProfile();

@@ -5,12 +5,11 @@
     <!-- Logo + Rol -->
     <div class="py-6 border-b border-gray-100" [ngClass]="isCollapsed? 'px-2' : 'px-6'">
         <div class="flex items-center gap-3 mb-8" [ngClass]="isCollapsed? 'justify-center' : ''">
-            <div class="p-2 flex items-center justify-center shadow-sm ml-3">
-                <i class="pi pi-graduation-cap text-3xl text-[#3A9E5F]"></i>
+            <div class="w-9 h-9 rounded-full bg-green-500 flex items-center justify-center text-white shadow-sm ml-3">
+                <i class="pi pi-check text-sm font-bold"></i>
             </div>
             <div *ngIf="!isCollapsed">
-                <span
-                    class="text-xl font-bold bg-gradient-to-r from-[#3A9E5F] to-[#2d7a49] bg-clip-text text-transparent">EduLearning</span>
+                <span class="text-xl font-bold text-gray-900">Edulearning</span>
                 <div class="flex items-center gap-1 mt-1">
                     <i class="pi pi-shield text-xs"
                         [ngClass]="role === 'ROLE_TEACHER'? 'text-purple-500' : role === 'ROLE_ADMIN'? 'text-red-500' : 'text-green-500'"></i>
