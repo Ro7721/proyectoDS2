@@ -85,7 +85,17 @@ export class LessonInsert implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['lesson'] && this.lesson) {
+    // Recarga el formulario cuando:
+    // 1. La lección cambia (nueva lección a editar)
+    // 2. El diálogo se abre (showDialog pasa de false a true)
+    const dialogJustOpened =
+      changes['showDialog'] &&
+      changes['showDialog'].currentValue === true &&
+      changes['showDialog'].previousValue === false;
+
+    const lessonChanged = changes['lesson'] && this.frmInserLesson;
+
+    if (dialogJustOpened || lessonChanged) {
       this.updateFormWithLesson();
     }
   }
@@ -104,9 +114,9 @@ export class LessonInsert implements OnInit, OnChanges {
         description: this.lesson.description,
         isFree: this.lesson.isFree
       });
-      this.mainVideoFile = this.lesson.mainVideoFile ? [...this.lesson.mainVideoFile] : [];
+      // Restaurar archivos si existen
+      this.mainVideoFile = this.lesson.mainVideoFile ? [this.lesson.mainVideoFile] : [];
       this.adjunctFiles = this.lesson.adjunctFiles ? [...this.lesson.adjunctFiles] : [];
-      this.toastMessage.toastSuccess('Leccion cargada correctamente');
     } else {
       this.frmInserLesson.reset({
         type: 'VIDEO',

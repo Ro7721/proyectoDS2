@@ -179,9 +179,16 @@ export class CourseInsert implements OnInit {
   }
 
   openEditLesson(index: number): void {
+    // Cerrar primero para destruir el componente hijo (por *ngIf)
+    // y forzar recreación con datos frescos
+    this.showLessonDialog = false;
     this.editingIndex = index;
     this.currentLesson = { ...this.listLessons[index] };
-    this.showLessonDialog = true;
+    // Microtask para que Angular procese el cierre antes de reabrir
+    setTimeout(() => {
+      this.showLessonDialog = true;
+      this.cdr.detectChanges();
+    }, 0);
   }
 
   handleLessonSave(lessonData: LessonFormPayload): void {

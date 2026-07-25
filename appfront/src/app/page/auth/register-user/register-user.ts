@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators, AbstractControl, ValidatorFn, ValidationErrors } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Api } from '../../../api/api';
 import { RoleEnum } from '../../../models/user.model';
 import { MessageToast } from '../../../message/message-toast';
@@ -29,7 +29,7 @@ export class RegisterUser {
   get confirmPassword() { return this.form.controls['confirmPassword']; }
   get role() { return this.form.controls['role']; }
 
-  constructor(private formBuilder: FormBuilder, private api: Api, private toast: MessageToast) {
+  constructor(private formBuilder: FormBuilder, private api: Api, private toast: MessageToast, private router: Router) {
     this.form = this.formBuilder.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
@@ -74,6 +74,9 @@ export class RegisterUser {
       const apiResponse = typeof response === 'string' ? JSON.parse(response) : response;
       this.toast.toastSuccess('Éxito', 'Usuario registrado correctamente');
       this.form.reset();
+      setTimeout(() => {
+        this.router.navigate(['/auth/login']);
+      }, 1500);
       return apiResponse;
     }).catch((error: any) => {
       this.toast.toastError('Error', 'Error al registrar el usuario');

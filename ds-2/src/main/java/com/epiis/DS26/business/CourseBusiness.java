@@ -73,7 +73,6 @@ public class CourseBusiness {
         if (request.getIdCategory() != null) {
             EntityCategory category = new EntityCategory();
             category.setIdCategory(request.getIdCategory());
-            System.out.println("id: " + request.getIdCategory());
             entity.setCategory(category);
         }
         entity.setCreatedAt(LocalDateTime.now());
@@ -450,7 +449,6 @@ public class CourseBusiness {
 
         if (text == null)
             return "";
-
         return Normalizer
                 .normalize(text, Normalizer.Form.NFD)
                 .replaceAll("\\p{M}", "")

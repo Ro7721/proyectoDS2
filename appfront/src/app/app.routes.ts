@@ -49,7 +49,6 @@ export const routes: Routes = [
             { path: 'learning/course/:idCourse', component: LearningCourse, canActivate: [RoleGuard], data: { roles: ['ROLE_STUDENT'] } },
             { path: 'my-courses', component: MyCourses, canActivate: [RoleGuard], data: { roles: ['ROLE_STUDENT'] } },
             { path: 'profile', component: StudentProfile, canActivate: [AuthGuard] },
-            
             // Admin routes
             { path: 'admin', component: AdminDashboardComponent, canActivate: [RoleGuard], data: { roles: ['ROLE_ADMIN'] } },
             { path: 'admin/users', component: AdminUsersComponent, canActivate: [RoleGuard], data: { roles: ['ROLE_ADMIN'] } },

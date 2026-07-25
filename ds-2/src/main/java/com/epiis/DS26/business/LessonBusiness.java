@@ -165,9 +165,6 @@ public class LessonBusiness {
 
             Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
 
-            System.out.println("Archivo guardado: " + destination.toAbsolutePath());
-
-            // SOLO guardar el nombre en la BD
             return fileName;
 
         } catch (Exception e) {

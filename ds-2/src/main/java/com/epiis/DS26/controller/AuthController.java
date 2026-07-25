@@ -40,7 +40,8 @@ public class AuthController {
         this.userBusiness = userBusiness;
     }
 
-    @PostMapping(path = "login", consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
+    @PostMapping(path = "login", consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
+            MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
         try {
             Authentication authentication = authManager.authenticate(
@@ -123,7 +124,8 @@ public class AuthController {
         return ResponseEntity.ok(userInfo);
     }
 
-    @PostMapping(path = "/refresh", consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
+    @PostMapping(path = "/refresh", consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
+            MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<?> refreshToken(@RequestBody Map<String, String> request) {
         String refreshToken = request.get("refreshToken");
 

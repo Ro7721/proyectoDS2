@@ -4,6 +4,7 @@ import com.epiis.DS26.enums.ERole;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -20,9 +21,13 @@ public class UserRequest {
 
     @NotBlank(message = "La contraseña es obligatoria.")
     @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres.")
-    @Pattern(regexp = "^(?=.[a-z])(?=.[A-Z])(?=.\\d)(?=.[@$!%?&])[A-Za-z\\d@$!%?&]{8,}$", message = "La contraseña debe tener al menos una mayuscula, una minuscula y un numero")
+    @Pattern(
+        regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%?&])[A-Za-z\\d@$!%?&]{8,}$",
+        message = "La contraseña debe tener al menos una mayuscula, una minuscula, un numero y un caracter especial (@$!%?&)"
+    )
     private String password;
-    @NotBlank(message = "El rol es obligatorio.")
+
+    @NotNull(message = "El rol es obligatorio.")
     private ERole role;
 
 }
