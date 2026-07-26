@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -46,6 +47,21 @@ public class CourseController {
         if (course != null) {
             apiResponse.setData(courseBusiness.mapToResponse(course));
             return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
+        }
+        return ResponseEntity.badRequest().body(apiResponse);
+    }
+
+    @PutMapping(path = "update/{idCourse}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<ApiResponse<CourseResponse>> updateCourse(
+            @PathVariable String idCourse,
+            @ModelAttribute CourseRequest request) {
+        GenericResponse response = new GenericResponse();
+        EntityCourse course = courseBusiness.updateCourse(idCourse, request, response);
+        ApiResponse<CourseResponse> apiResponse = new ApiResponse<>();
+        apiResponse.setResponse(response);
+        if (course != null) {
+            apiResponse.setData(courseBusiness.mapToResponse(course));
+            return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
         }
         return ResponseEntity.badRequest().body(apiResponse);
     }

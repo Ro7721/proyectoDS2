@@ -27,6 +27,8 @@ export type { GetLessonsByCourseAndTeacher$Params as GetLessonsByCourseAndTeache
 export { getLessonsByCourseAndTeacher as getLessonsByCourseAndTeacher } from './fn/lesson-controller/get-lessons-by-course-and-teacher';
 export type { Delete$Params as Delete$Params } from './fn/lesson-controller/delete';
 export { delete$ as delete$ } from './fn/lesson-controller/delete';
+export type { Update$Params as Update$Params } from './fn/lesson-controller/update';
+export { updateLesson as updateLesson } from './fn/lesson-controller/update';
 export type { SaveProgress$Params as SaveProgress$Params } from './fn/learning-controller/save-progress';
 export { saveProgress as saveProgress } from './fn/learning-controller/save-progress';
 export type { GetCourseContent$Params as GetCourseContent$Params } from './fn/learning-controller/get-course-content';
@@ -49,6 +51,8 @@ export type { Delete1$Params as Delete1$Params } from './fn/enrollment-controlle
 export { delete1 as delete1 } from './fn/enrollment-controller/delete-1';
 export type { CreateCourse$Params as CreateCourse$Params } from './fn/course-controller/create-course';
 export { createCourse as createCourse } from './fn/course-controller/create-course';
+export type { UpdateCourse$Params as UpdateCourse$Params } from './fn/course-controller/update-course';
+export { updateCourse as updateCourse } from './fn/course-controller/update-course';
 export type { PublishCourse$Params as PublishCourse$Params } from './fn/course-controller/publish-course';
 export { publishCourse as publishCourse } from './fn/course-controller/publish-course';
 export type { FindByTeacher$Params as FindByTeacher$Params } from './fn/course-controller/find-by-teacher';

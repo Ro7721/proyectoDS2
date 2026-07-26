@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Api } from '../../../../api/api';
 import { FindByTeacher$Params, findByTeacher, getAll1 } from '../../../../api/functions';
@@ -19,7 +19,7 @@ import { deleteCourse } from '../../../../api/functions';
 
 @Component({
   selector: 'app-course-getall',
-  imports: [CommonModule, RouterLink, FormsModule, ButtonModule, TagModule, SkeletonModule, Toast, CourseDetails, SelectModule],
+  imports: [CommonModule, RouterLink, FormsModule, ButtonModule, TagModule, SkeletonModule, Toast, SelectModule],
   templateUrl: './course-getall.html',
   styleUrl: './course-getall.css',
 })
@@ -36,7 +36,6 @@ export class CourseGetall implements OnInit {
   // UI state
   selectedCourseId: string | null = null;
   loading = true;
-  showDetails = false;
   viewMode: 'grid' | 'list' = 'grid';
 
   // Filter state
@@ -49,8 +48,11 @@ export class CourseGetall implements OnInit {
     return [{ idCategory: '', name: 'Todas las categorías' }, ...this.categories];
   }
 
-  constructor(private toastMessage: MessageToast,
-    private Confirmation: ConfirmationService) { }
+  constructor(
+    private toastMessage: MessageToast,
+    private Confirmation: ConfirmationService,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
     this.loadCourses();
@@ -120,15 +122,7 @@ export class CourseGetall implements OnInit {
   }
 
   openCourseDetail(course: CourseResponse): void {
-    this.selectedCourseId = course.idCourse;
-    this.showDetails = true;
-  }
-
-  onDetailsVisibilityChange(visible: boolean): void {
-    this.showDetails = visible;
-    if (!visible) {
-      this.selectedCourseId = null;
-    }
+    this.router.navigate(['/dashboard/course-details', course.idCourse]);
   }
 
   getLevelSeverity(level: string): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' {

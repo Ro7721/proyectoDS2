@@ -209,6 +209,54 @@ public class LessonBusiness {
         return entity;
     }
 
+    public EntityLesson updateLesson(String idLesson, LessonRequest request, MultipartFile mainVideoFile, List<MultipartFile> adjunctFiles, GenericResponse response) {
+        if (!validateLesson(request, response)) {
+            return null;
+        }
+
+        EntityLesson lesson = lessonRepo.findById(idLesson).orElse(null);
+        if (lesson == null) {
+            response.warning();
+            response.listMessage.add("La lección no existe");
+            return null;
+        }
+
+        lesson.setTitle(request.getTitle());
+        lesson.setDescription(request.getDescription());
+        lesson.setType(EType.valueOf(request.getType() != null ? request.getType().toUpperCase() : EType.VIDEO.name()));
+        lesson.setLessonOrder(request.getLessonOrder());
+        lesson.setIsFree(request.isFree());
+
+        if (mainVideoFile != null && !mainVideoFile.isEmpty()) {
+            if ("VIDEO".equalsIgnoreCase(request.getType())) {
+                if (!isValidVideoFile(mainVideoFile)) {
+                    response.warning();
+                    response.listMessage.add("El formato de video es inválido");
+                    return null;
+                }
+                String videoFileName = saveFileToDisk(mainVideoFile, "video", response);
+                if (videoFileName != null) {
+                    Path videoPath = Paths.get(storagePath, "lessons", "video", videoFileName);
+                    Integer duration = extractVideoDuration(videoPath.toFile());
+                    lesson.setDurationMinutes(duration != null ? duration : 1);
+                    lesson.setContentUrl(videoFileName);
+                }
+            }
+        } else if (request.getContenUrl() != null && !request.getContenUrl().isEmpty()) {
+            lesson.setContentUrl(request.getContenUrl());
+        }
+
+        lesson = lessonRepo.save(lesson);
+
+        if (adjunctFiles != null && !adjunctFiles.isEmpty()) {
+            saveAdjunctFiles(lesson, adjunctFiles, response);
+        }
+
+        response.success();
+        response.listMessage.add("Lección actualizada correctamente.");
+        return lesson;
+    }
+
     private boolean validateLesson(LessonRequest request, GenericResponse gresponse) {
         if (request.getTitle() == null || request.getTitle().trim().isEmpty()) {
             gresponse.warning();

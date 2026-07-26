@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -40,6 +41,21 @@ public class LessonController {
         }
         apiResponse.setData(lessonBusiness.mapToResponse(lesson));
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
+    }
+
+    @PutMapping(path = "update/{idLesson}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<ApiResponse<LessonResponse>> update(
+            @PathVariable String idLesson, 
+            LessonRequest request) {
+        GenericResponse response = new GenericResponse();
+        EntityLesson lesson = lessonBusiness.updateLesson(idLesson, request, request.getMainVideoFile(), request.getAdjunctFiles(), response);
+        ApiResponse<LessonResponse> apiResponse = new ApiResponse<>();
+        apiResponse.setResponse(response);
+        if (lesson == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+        }
+        apiResponse.setData(lessonBusiness.mapToResponse(lesson));
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
     @GetMapping(path = "list", produces = MediaType.APPLICATION_JSON_VALUE)

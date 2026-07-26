@@ -106,6 +106,14 @@ export class AuthService {
   get currentRole(): AppRole | null {
     if (!this.isBrowser()) return null;
 
+    const token = this.accessToken;
+    if (token) {
+      const payload = this.decodeJwtPayload(token);
+      if (payload && payload.role) {
+        return this.normalizeRole(payload.role);
+      }
+    }
+
     const storedRole = localStorage.getItem('role');
     if (storedRole) return this.normalizeRole(storedRole);
 
@@ -205,7 +213,7 @@ export class AuthService {
     return new Date(payload.exp * 1000);
   }
 
-  private decodeJwtPayload(token: string): { exp?: number } | null {
+  private decodeJwtPayload(token: string): { exp?: number, role?: string } | null {
     if (!this.isBrowser()) return null;
 
     try {

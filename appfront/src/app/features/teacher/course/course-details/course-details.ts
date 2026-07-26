@@ -4,15 +4,19 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
+  OnInit,
   inject,
 } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { InputTextModule } from 'primeng/inputtext';
+import { TextareaModule } from 'primeng/textarea';
+import { SelectModule } from 'primeng/select';
+import { InputNumberModule } from 'primeng/inputnumber';
 import { Api } from '../../../../api/api';
 import { GetById1$Params, getById1, create, Create$Params } from '../../../../api/functions';
 import { LessonInsert, LessonFormPayload } from '../lesson-insert/lesson-insert';
 import { CourseResponse } from '../../../../models/course.model';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { AccordionModule } from 'primeng/accordion';
 import { ButtonModule } from 'primeng/button';
@@ -22,7 +26,8 @@ import { DividerModule } from 'primeng/divider';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TagModule } from 'primeng/tag';
 import { MessageToast } from '../../../../message/message-toast';
-import { deleteCourse } from '../../../../api/functions';
+import { deleteCourse, updateCourse, UpdateCourse$Params } from '../../../../api/functions';
+import { getAll1 } from '../../../../api/functions';
 @Component({
   selector: 'app-course-details',
   imports: [
@@ -34,44 +39,76 @@ import { deleteCourse } from '../../../../api/functions';
     ChipModule,
     DividerModule,
     AccordionModule,
-    LessonInsert
+    LessonInsert,
+    ReactiveFormsModule,
+    InputTextModule,
+    TextareaModule,
+    SelectModule,
+    InputNumberModule
   ],
   templateUrl: './course-details.html',
   styleUrl: './course-details.css',
 })
-export class CourseDetails implements OnChanges {
-  @Input() visible = false;
-  @Input() courseId: string | null = null;
-  @Output() visibleChange = new EventEmitter<boolean>();
-
-  constructor(private confirmation: ConfirmationService, private toastMessage: MessageToast) { }
-  private api = inject(Api);
-  private cdr = inject(ChangeDetectorRef);
-  private messageService = inject(MessageService);
+export class CourseDetails implements OnInit {
+  courseId: string | null = null;
 
   selectedCourse: CourseResponse | null = null;
   loading = false;
   showLessonDialog = false;
   isOpeningLesson = false;
 
+  showEditCourseDialog = false;
+  courseForm: FormGroup;
+  listCategories: any[] = [];
+  levelOptions = [
+    { label: 'Principiante', value: 'BASIC' },
+    { label: 'Intermedio', value: 'INTERMEDIATE' },
+    { label: 'Avanzado', value: 'ADVANCED' },
+  ];
+  coverImageFile: Blob | null = null;
+  coverImagePreview: string | null = null;
+  savingCourse = false;
 
-  ngOnChanges(changes: SimpleChanges): void {
-    const shouldLoad =
-      this.visible &&
-      this.courseId &&
-      (changes['courseId']?.currentValue !== changes['courseId']?.previousValue ||
-        changes['visible']?.currentValue === true);
-
-    if (shouldLoad) {
-      this.loadCourseDetail(this.courseId as string);
-    }
+  constructor(
+    private confirmation: ConfirmationService,
+    private toastMessage: MessageToast,
+    private fb: FormBuilder,
+    private api: Api,
+    private route: ActivatedRoute,
+    private router: Router,
+    private cdr: ChangeDetectorRef,
+    private messageService: MessageService,
+  ) {
+    this.courseForm = this.fb.group({
+      title: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(100)]],
+      description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
+      idCategory: [null, Validators.required],
+      level: ['', Validators.required],
+      price: [0, [Validators.required, Validators.min(0)]],
+      status: ['DRAFT', Validators.required]
+    });
   }
 
-  close(): void {
-    if (this.isOpeningLesson) return;
-    this.visible = false;
-    this.visibleChange.emit(false);
-    this.selectedCourse = null;
+
+  ngOnInit(): void {
+    this.loadCategories();
+    this.route.paramMap.subscribe(params => {
+      this.courseId = params.get('id');
+      if (this.courseId) {
+        this.loadCourseDetail(this.courseId);
+      }
+    });
+  }
+
+  private loadCategories(): void {
+    this.api.invoke(getAll1).then((response: any) => {
+      const data = typeof response === 'string' ? JSON.parse(response) : response;
+      this.listCategories = data;
+    });
+  }
+
+  goBack(): void {
+    this.router.navigate(['/dashboard/course-getall']);
   }
 
   private loadCourseDetail(idCourse: string): void {
@@ -88,7 +125,7 @@ export class CourseDetails implements OnChanges {
       .catch((error) => {
         console.error('Error al cargar detalle:', error);
         this.loading = false;
-        this.close();
+        this.goBack();
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
@@ -148,25 +185,16 @@ export class CourseDetails implements OnChanges {
     // Indicamos que estamos abriendo la lección para evitar que `close()` limpie el estado
     this.isOpeningLesson = true;
 
-    // Cerramos el modal de detalles (esto disparará onHide que llama a close())
-    this.visible = false;
+    this.isOpeningLesson = true;
 
-    // Esperamos a que termine la animación de PrimeNG antes de abrir el otro modal
-    setTimeout(() => {
-      if (!this.courseId) return;
-      this.showLessonDialog = true;
-    }, 300);
+    // Abrimos el modal de lecciones
+    this.showLessonDialog = true;
   }
 
   onLessonDialogClose(isVisible: boolean): void {
     this.showLessonDialog = isVisible;
     if (!isVisible) {
-      // Cuando se cierra el modal de lección, indicamos que ya no estamos en transición
       this.isOpeningLesson = false;
-      // Reabrimos el modal de detalles
-      setTimeout(() => {
-        this.visible = true;
-      }, 300);
     }
   }
 
@@ -238,10 +266,10 @@ export class CourseDetails implements OnChanges {
       const body = typeof response === 'string' ? JSON.parse(response) : response;
       const genericResponse = body?.response;
       const message = genericResponse?.listMessage?.[0] || 'Operación completada';
-      
+
       if (genericResponse?.type === 'success' || genericResponse?.type === 'SUCCESS') {
         this.toastMessage.toastSuccess('Curso eliminado', message);
-        this.close();
+        this.goBack();
       } else {
         this.toastMessage.toastWarn('Atención', message);
       }
@@ -253,6 +281,84 @@ export class CourseDetails implements OnChanges {
         errorMessage = error.message;
       }
       this.toastMessage.toastError('Error', errorMessage);
+    });
+  }
+
+  openEditCourse(): void {
+    if (!this.selectedCourse) return;
+
+    // Find category ID based on category name
+    const cat = this.listCategories.find(c => c.name === this.selectedCourse?.categoryName);
+
+    this.courseForm.patchValue({
+      title: this.selectedCourse.title,
+      description: this.selectedCourse.description,
+      idCategory: cat ? cat.idCategory : null,
+      level: this.selectedCourse.level,
+      price: this.selectedCourse.price,
+      status: this.selectedCourse.status
+    });
+    this.coverImagePreview = this.selectedCourse.coverImage;
+    this.coverImageFile = null;
+    this.showEditCourseDialog = true;
+  }
+
+  onCoverInputChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files?.[0]) {
+      const file = input.files[0];
+      if (file.size > 5 * 1024 * 1024) {
+        this.toastMessage.toastWarn('Imagen muy grande', 'El archivo no debe superar los 5 MB');
+        return;
+      }
+      this.coverImageFile = file;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.coverImagePreview = e.target?.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  saveEditedCourse(): void {
+    if (this.courseForm.invalid) {
+      this.courseForm.markAllAsTouched();
+      this.toastMessage.toastWarn('Campos incompletos', 'Completa los campos obligatorios');
+      return;
+    }
+
+    if (!this.courseId) return;
+
+    this.savingCourse = true;
+    const formValue = this.courseForm.value;
+
+    const params: UpdateCourse$Params = {
+      idCourse: this.courseId,
+      body: {
+        title: formValue.title,
+        description: formValue.description,
+        idCategory: formValue.idCategory,
+        level: formValue.level,
+        price: formValue.price,
+        status: formValue.status,
+        coverImage: this.coverImageFile || undefined
+      } as any
+    };
+
+    this.api.invoke(updateCourse, params).then((response: any) => {
+      const body = typeof response === 'string' ? JSON.parse(response) : response;
+      if (body?.response?.type === 'success' || body?.response?.type === 'SUCCESS') {
+        this.toastMessage.toastSuccess('Éxito', 'Curso actualizado correctamente');
+        this.showEditCourseDialog = false;
+        this.loadCourseDetail(this.courseId!);
+      } else {
+        this.toastMessage.toastWarn('Atención', body?.response?.listMessage?.[0] || 'No se pudo actualizar');
+      }
+    }).catch(e => {
+      this.toastMessage.toastError('Error', 'No se pudo actualizar el curso');
+    }).finally(() => {
+      this.savingCourse = false;
+      this.cdr.detectChanges();
     });
   }
 }

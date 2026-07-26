@@ -2,6 +2,7 @@ import { HttpErrorResponse, HttpInterceptorFn, HttpRequest } from '@angular/comm
 import { inject } from '@angular/core';
 import { catchError, from, switchMap, throwError } from 'rxjs';
 import { AuthService } from './auth.service';
+import { MessageToast } from '../../message/message-toast';
 
 let refreshRequest: Promise<string | null> | null = null;
 
@@ -9,6 +10,7 @@ const PUBLIC_AUTH_PATHS = ['/auth/login', '/auth/register', '/auth/refresh'];
 
 export const tokenInterceptor: HttpInterceptorFn = (request, next) => {
   const authService = inject(AuthService);
+  const toastMessage = inject(MessageToast);
   const isPublicAuthRequest = PUBLIC_AUTH_PATHS.some((path) => request.url.includes(path));
   const accessToken = authService.accessToken;
 
@@ -19,6 +21,18 @@ export const tokenInterceptor: HttpInterceptorFn = (request, next) => {
   return next(authRequest).pipe(
     catchError((error: unknown) => {
       if (!(error instanceof HttpErrorResponse)) {
+        return throwError(() => error);
+      }
+
+      if (error.status === 403) {
+        toastMessage.toastError('Acceso denegado', 'Su sesión expiró o no tiene permisos.');
+        authService.logout();
+        return throwError(() => error);
+      }
+
+      if (error.status === 401 && !isPublicAuthRequest && !authService.refreshToken) {
+        toastMessage.toastWarn('Sesión Expirada', 'Su sesión ha expirado, por favor ingrese nuevamente');
+        authService.logout();
         return throwError(() => error);
       }
 
@@ -37,6 +51,7 @@ export const tokenInterceptor: HttpInterceptorFn = (request, next) => {
         switchMap((newToken) => {
           if (!newToken) {
             authService.logout();
+            toastMessage.toastWarn('Sesión Expirada', 'Su sesión ha expirado, por favor ingrese nuevamente');
             return throwError(() => error);
           }
 
@@ -44,6 +59,7 @@ export const tokenInterceptor: HttpInterceptorFn = (request, next) => {
         }),
         catchError((refreshError) => {
           authService.logout();
+          toastMessage.toastWarn('Sesión Expirada', 'Su sesión ha expirado, por favor ingrese nuevamente');
           return throwError(() => refreshError);
         }),
       );

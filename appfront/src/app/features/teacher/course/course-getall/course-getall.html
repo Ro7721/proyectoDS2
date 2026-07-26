@@ -2,6 +2,24 @@
 
 <section class="space-y-5">
 
+    <!-- Breadcrumb -->
+    <nav class="flex text-sm text-gray-500 font-medium px-2" aria-label="Breadcrumb">
+        <ol class="inline-flex items-center space-x-1 md:space-x-2">
+            <li class="inline-flex items-center">
+                <a routerLink="/dashboard/overview-teacher" class="inline-flex items-center hover:text-emerald-600 transition">
+                    <i class="pi pi-home mr-1.5 text-xs"></i>
+                    Dashboard
+                </a>
+            </li>
+            <li>
+                <div class="flex items-center">
+                    <i class="pi pi-chevron-right text-xs mx-1 text-gray-400"></i>
+                    <span class="text-gray-400 ml-1">Mis Cursos</span>
+                </div>
+            </li>
+        </ol>
+    </nav>
+
     <!-- Header -->
     <header
         class="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:flex-row md:items-center md:justify-between">
@@ -222,6 +240,3 @@
     </div>
 
 </section>
-
-<app-course-details [visible]="showDetails" [courseId]="selectedCourseId"
-    (visibleChange)="onDetailsVisibilityChange($event)"></app-course-details>
