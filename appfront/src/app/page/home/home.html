@@ -13,13 +13,23 @@
 
             <nav class="hidden lg:flex items-center gap-10 absolute left-1/2 -translate-x-1/2">
                 <a routerLink="/catalog" class="text-[15px] text-gray-700 hover:text-[#3A9E5F] transition">Cursos</a>
-                <a class="text-[15px] text-gray-700 hover:text-[#3A9E5F] transition cursor-pointer">Profesores</a>
-                <a class="text-[15px] text-gray-700 hover:text-[#3A9E5F] transition cursor-pointer">Precios</a>
+                <a routerLink="/teachers"
+                    class="text-[15px] text-gray-700 hover:text-[#3A9E5F] transition cursor-pointer">Profesores</a>
+                <a routerLink="/precios"
+                    class="text-[15px] text-gray-700 hover:text-[#3A9E5F] transition cursor-pointer">Precios</a>
                 <a routerLink="/about"
                     class="text-[15px] text-gray-700 hover:text-[#3A9E5F] transition cursor-pointer">Sobre EduLearn</a>
             </nav>
 
             <div class="flex items-center gap-3">
+
+                <!-- Dark mode toggle -->
+                <button (click)="themeService.toggleTheme()"
+                    class="hidden lg:flex w-9 h-9 items-center justify-center rounded-full border border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition"
+                    [title]="themeService.isDark() ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'">
+                    <i class="pi pi-sun" [ngClass]="themeService.isDark() ? 'pi pi-sun' : 'pi pi-moon'"
+                        class="text-base"></i>
+                </button>
 
                 <ng-container *ngIf="!authService.isAuthenticated()">
                     <a routerLink="/auth/login"
@@ -80,8 +90,8 @@
         class="lg:hidden fixed inset-x-0 top-[72px] bg-white border-b border-gray-100 shadow-lg z-40 animate-slideDown">
         <nav class="px-6 py-4 space-y-4">
             <a routerLink="/catalog" (click)="toggleMenu()" class="block py-2 text-gray-700">Cursos</a>
-            <a (click)="toggleMenu()" class="block py-2 text-gray-700">Docentes</a>
-            <a (click)="toggleMenu()" class="block py-2 text-gray-700">Precios</a>
+            <a routerLink="/teachers" (click)="toggleMenu()" class="block py-2 text-gray-700">Docentes</a>
+            <a routerLink="/precios" (click)="toggleMenu()" class="block py-2 text-gray-700">Precios</a>
             <a routerLink="/about" (click)="toggleMenu()" class="block py-2 text-gray-700">Sobre EduLearn</a>
 
             <ng-container *ngIf="!authService.isAuthenticated()">

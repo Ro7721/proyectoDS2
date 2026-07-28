@@ -1,0 +1,64 @@
+<div class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-green-50 flex items-center justify-center px-6">
+  <div class="text-center max-w-lg mx-auto">
+
+    <!-- Ilustración SVG animada -->
+    <div class="relative mx-auto mb-8 w-64 h-64">
+      <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+        <!-- Fondo círculo -->
+        <circle cx="100" cy="100" r="90" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="2"/>
+        <!-- Libro cerrado -->
+        <rect x="55" y="65" width="90" height="75" rx="6" fill="#fff" stroke="#16a34a" stroke-width="2.5"/>
+        <rect x="55" y="65" width="5" height="75" rx="2" fill="#16a34a"/>
+        <!-- Líneas de texto -->
+        <line x1="70" y1="85" x2="135" y2="85" stroke="#d1fae5" stroke-width="3" stroke-linecap="round"/>
+        <line x1="70" y1="96" x2="125" y2="96" stroke="#d1fae5" stroke-width="3" stroke-linecap="round"/>
+        <line x1="70" y1="107" x2="130" y2="107" stroke="#d1fae5" stroke-width="3" stroke-linecap="round"/>
+        <line x1="70" y1="118" x2="110" y2="118" stroke="#d1fae5" stroke-width="3" stroke-linecap="round"/>
+        <!-- Signo de interrogación -->
+        <text x="100" y="152" font-size="28" font-weight="900" fill="#16a34a" text-anchor="middle" font-family="system-ui">?</text>
+        <!-- Estrellitas decorativas -->
+        <circle cx="40" cy="50" r="3" fill="#16a34a" opacity="0.4"/>
+        <circle cx="160" cy="45" r="2" fill="#16a34a" opacity="0.3"/>
+        <circle cx="170" cy="140" r="4" fill="#16a34a" opacity="0.2"/>
+        <circle cx="30" cy="150" r="2.5" fill="#16a34a" opacity="0.3"/>
+      </svg>
+    </div>
+
+    <!-- Código de error -->
+    <div class="flex items-center justify-center gap-3 mb-4">
+      <span class="text-7xl sm:text-8xl font-black text-gray-900 tracking-tighter leading-none">4</span>
+      <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#3A9E5F] flex items-center justify-center shadow-lg shadow-green-200 animate-bounce">
+        <i class="pi pi-search text-white text-2xl sm:text-3xl"></i>
+      </div>
+      <span class="text-7xl sm:text-8xl font-black text-gray-900 tracking-tighter leading-none">4</span>
+    </div>
+
+    <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-3">Página no encontrada</h1>
+    <p class="text-gray-500 text-base leading-relaxed mb-8 max-w-sm mx-auto">
+      La página que buscas no existe o fue movida. No te preocupes, puedes volver al inicio y seguir aprendiendo.
+    </p>
+
+    <!-- Botones de acción -->
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+      <a routerLink="/"
+        class="w-full sm:w-auto bg-[#3A9E5F] hover:bg-[#2e7d4a] text-white px-8 py-3 rounded-xl font-semibold transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 flex items-center justify-center gap-2">
+        <i class="pi pi-home"></i>
+        Ir al inicio
+      </a>
+      <a routerLink="/catalog"
+        class="w-full sm:w-auto border border-[#3A9E5F] text-[#3A9E5F] hover:bg-green-50 px-8 py-3 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2">
+        <i class="pi pi-book"></i>
+        Ver cursos
+      </a>
+    </div>
+
+    <!-- Divider -->
+    <div class="mt-10 pt-6 border-t border-gray-100">
+      <p class="text-sm text-gray-400">
+        ¿Crees que esto es un error?
+        <a routerLink="/" class="text-[#3A9E5F] hover:underline font-medium ml-1">Contáctanos</a>
+      </p>
+    </div>
+
+  </div>
+</div>

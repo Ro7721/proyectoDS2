@@ -142,3 +142,31 @@ CREATE TABLE lesson_progress (
     REFERENCES tlesson(idLesson)
     ON DELETE CASCADE
 ) ENGINE=InnoDB;
+-- =======================
+-- MENSAJES (Chat instructor–estudiante)
+-- =======================
+CREATE TABLE tmessage (
+    idMessage   CHAR(36)    NOT NULL PRIMARY KEY COMMENT 'UUID del mensaje',
+    senderId    CHAR(36)    NOT NULL                COMMENT 'FK → tuser.idUser (quién envía)',
+    receiverId  CHAR(36)    NOT NULL                COMMENT 'FK → tuser.idUser (quién recibe)',
+    courseId    CHAR(36)    NULL                    COMMENT 'FK → tcourse.idCourse (contexto de la conversación)',
+    content     TEXT        NOT NULL                COMMENT 'Contenido del mensaje',
+    isRead      BOOLEAN     NOT NULL DEFAULT FALSE  COMMENT 'TRUE si el receptor ya leyó el mensaje',
+    createdAt   TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fkMsgSender
+        FOREIGN KEY (senderId)
+        REFERENCES tuser(idUser)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fkMsgReceiver
+        FOREIGN KEY (receiverId)
+        REFERENCES tuser(idUser)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fkMsgCourse
+        FOREIGN KEY (courseId)
+        REFERENCES tcourse(idCourse)
+        ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+  COMMENT='Mensajes privados entre instructor y estudiante';

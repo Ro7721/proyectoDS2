@@ -1,0 +1,162 @@
+<div class="min-h-screen bg-white">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a routerLink="/" class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-full bg-[#3A9E5F] flex items-center justify-center text-white">
+          <i class="pi pi-check text-sm font-bold"></i>
+        </div>
+        <span class="text-lg font-bold text-gray-900">EduLearn</span>
+      </a>
+      <a routerLink="/catalog" class="text-sm text-gray-500 hover:text-[#3A9E5F] transition">← Explorar cursos</a>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-6 py-16">
+
+    <!-- Hero -->
+    <div class="text-center mb-14">
+      <span class="inline-block bg-green-50 text-[#3A9E5F] text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full border border-green-100 mb-4">Planes y precios</span>
+      <h1 class="text-4xl sm:text-5xl font-black text-gray-900 tracking-tight leading-tight mb-4">
+        Elige el plan que<br>
+        <span class="text-[#3A9E5F]">impulse tu carrera</span>
+      </h1>
+      <p class="text-gray-500 text-lg max-w-xl mx-auto leading-relaxed">
+        Accede a cientos de cursos de calidad. Sin compromisos, cancela cuando quieras.
+      </p>
+
+      <!-- Toggle anual/mensual -->
+      <div class="flex items-center justify-center gap-4 mt-8">
+        <span class="text-sm font-semibold" [class.text-gray-900]="!billingAnnual" [class.text-gray-400]="billingAnnual">Mensual</span>
+        <button (click)="billingAnnual = !billingAnnual"
+          class="relative w-12 h-6 rounded-full transition-colors duration-300"
+          [class.bg-green-500]="billingAnnual"
+          [class.bg-gray-200]="!billingAnnual">
+          <span class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-300"
+            [class.translate-x-6]="billingAnnual" [class.translate-x-0]="!billingAnnual"></span>
+        </button>
+        <span class="text-sm font-semibold flex items-center gap-2" [class.text-gray-900]="billingAnnual" [class.text-gray-400]="!billingAnnual">
+          Anual
+          <span class="bg-amber-100 text-amber-700 text-xs font-bold px-2 py-0.5 rounded-full">Ahorra hasta 35%</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Plans grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+      <div *ngFor="let plan of plans"
+        class="relative rounded-2xl border transition-all duration-200"
+        [class.border-[#3A9E5F]]="plan.featured"
+        [class.shadow-2xl]="plan.featured"
+        [class.shadow-green-100]="plan.featured"
+        [class.scale-105]="plan.featured"
+        [class.border-gray-200]="!plan.featured"
+        [class.shadow-sm]="!plan.featured">
+
+        <!-- Badge -->
+        <div *ngIf="plan.badge"
+          class="absolute -top-3.5 left-1/2 -translate-x-1/2 text-xs font-bold px-4 py-1 rounded-full border whitespace-nowrap"
+          [class.bg-[#3A9E5F]]="plan.color === 'green'"
+          [class.text-white]="plan.color === 'green'"
+          [class.border-[#3A9E5F]]="plan.color === 'green'"
+          [class.bg-purple-600]="plan.color === 'purple'"
+          [class.border-purple-600]="plan.color === 'purple'">
+          {{ plan.badge }}
+        </div>
+
+        <div class="p-7">
+          <!-- Plan name -->
+          <h2 class="text-xl font-bold text-gray-900 mb-1">{{ plan.name }}</h2>
+          <p class="text-sm text-gray-500 leading-relaxed mb-5">{{ plan.description }}</p>
+
+          <!-- Price -->
+          <div class="mb-6">
+            <div class="flex items-end gap-1">
+              <span class="text-4xl font-black text-gray-900">${{ getPrice(plan) }}</span>
+              <span class="text-sm text-gray-400 mb-1.5">/mes</span>
+            </div>
+            <p *ngIf="billingAnnual && plan.monthlyPrice > 0" class="text-xs text-[#3A9E5F] font-semibold mt-1">
+              Ahorras {{ getSavings(plan) }}% vs mensual
+            </p>
+            <p *ngIf="!billingAnnual && plan.monthlyPrice > 0" class="text-xs text-gray-400 mt-1">
+              o ${{ plan.annualPrice }}/mes pagado anualmente
+            </p>
+            <p *ngIf="plan.monthlyPrice === 0" class="text-xs text-[#3A9E5F] font-semibold mt-1">
+              Siempre gratis, sin tarjeta
+            </p>
+          </div>
+
+          <!-- CTA Button -->
+          <a [routerLink]="plan.ctaRoute"
+            class="block w-full text-center py-3 rounded-xl font-bold text-sm transition-all duration-200 mb-6"
+            [class.bg-[#3A9E5F]]="plan.featured"
+            [class.hover:bg-[#2e7d4a]]="plan.featured"
+            [class.text-white]="plan.featured"
+            [class.shadow-lg]="plan.featured"
+            [class.shadow-green-100]="plan.featured"
+            [class.bg-gray-900]="!plan.featured && plan.color === 'purple'"
+            [class.hover:bg-gray-700]="!plan.featured && plan.color === 'purple'"
+            [class.text-white]="!plan.featured && plan.color === 'purple'"
+            [class.border]="!plan.featured && plan.color === 'gray'"
+            [class.border-gray-300]="!plan.featured && plan.color === 'gray'"
+            [class.text-gray-700]="!plan.featured && plan.color === 'gray'"
+            [class.hover:bg-gray-50]="!plan.featured && plan.color === 'gray'">
+            {{ plan.cta }}
+          </a>
+
+          <!-- Divider -->
+          <div class="border-t border-gray-100 pt-5">
+            <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Incluye:</p>
+            <!-- Features -->
+            <ul class="space-y-2.5">
+              <li *ngFor="let f of plan.features" class="flex items-start gap-2.5 text-sm text-gray-700">
+                <i class="pi pi-check-circle text-[#3A9E5F] text-base flex-shrink-0 mt-0.5"></i>
+                <span>{{ f }}</span>
+              </li>
+              <li *ngFor="let m of plan.missing" class="flex items-start gap-2.5 text-sm text-gray-400">
+                <i class="pi pi-times-circle text-gray-300 text-base flex-shrink-0 mt-0.5"></i>
+                <span>{{ m }}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="mt-20 text-center">
+      <h2 class="text-2xl font-bold text-gray-900 mb-2">¿Tienes dudas?</h2>
+      <p class="text-gray-500 mb-6">Todos los planes incluyen garantía de devolución de 30 días.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto text-left">
+        <div class="bg-gray-50 rounded-xl p-5">
+          <p class="font-semibold text-gray-800 mb-1">¿Puedo cancelar?</p>
+          <p class="text-sm text-gray-500">Sí, puedes cancelar tu suscripción en cualquier momento desde tu perfil.</p>
+        </div>
+        <div class="bg-gray-50 rounded-xl p-5">
+          <p class="font-semibold text-gray-800 mb-1">¿Qué métodos de pago aceptan?</p>
+          <p class="text-sm text-gray-500">Aceptamos tarjetas Visa, Mastercard, PayPal y transferencias bancarias.</p>
+        </div>
+        <div class="bg-gray-50 rounded-xl p-5">
+          <p class="font-semibold text-gray-800 mb-1">¿Los certificados son válidos?</p>
+          <p class="text-sm text-gray-500">Sí, todos nuestros certificados son verificables y reconocidos por empresas del sector.</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer minimal -->
+  <footer class="bg-gray-900 text-gray-400 py-8 mt-16">
+    <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">
+      <span class="text-white font-bold">EduLearn<span class="text-[#3A9E5F]">.</span></span>
+      <p>© 2026 Todos los derechos reservados.</p>
+      <div class="flex gap-5">
+        <a class="hover:text-white transition cursor-pointer">Términos</a>
+        <a class="hover:text-white transition cursor-pointer">Privacidad</a>
+        <a routerLink="/" class="hover:text-white transition">Inicio</a>
+      </div>
+    </div>
+  </footer>
+
+</div>

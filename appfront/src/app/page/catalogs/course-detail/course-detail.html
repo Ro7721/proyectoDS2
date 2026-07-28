@@ -105,12 +105,24 @@
                                             class="font-semibold text-slate-700 group-hover:text-slate-900 transition-colors text-sm sm:text-base">
                                             {{ lesson.title }}
                                         </span>
+                                        <!-- Free badge -->
+                                        <span *ngIf="lesson.isFree"
+                                            class="hidden sm:inline-flex items-center gap-1 text-[10px] font-bold bg-green-100 text-green-700 border border-green-200 px-2 py-0.5 rounded-full uppercase tracking-wide">
+                                            <i class="pi pi-unlock text-[8px]"></i> Gratis
+                                        </span>
                                     </div>
                                 </div>
-                                <span
-                                    class="text-xs sm:text-sm font-medium text-slate-400 flex items-center gap-1.5 shrink-0 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-200">
-                                    <i class="pi pi-clock text-slate-400"></i> {{ lesson.durationMinutes }} min
-                                </span>
+                                <div class="flex items-center gap-2 shrink-0">
+                                    <!-- Preview button for free lessons -->
+                                    <button *ngIf="lesson.isFree" (click)="openFreePreview(lesson)"
+                                        class="hidden sm:flex items-center gap-1 text-xs font-bold text-green-600 border border-green-200 bg-green-50 hover:bg-green-100 px-2.5 py-1 rounded-lg transition">
+                                        <i class="pi pi-play text-[9px]"></i> Preview
+                                    </button>
+                                    <span
+                                        class="text-xs sm:text-sm font-medium text-slate-400 flex items-center gap-1.5 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-200">
+                                        <i class="pi pi-clock text-slate-400"></i> {{ lesson.durationMinutes }} min
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </section>
@@ -197,5 +209,52 @@
                 </aside>
             </div>
         </main>
+    </div>
+</div>
+
+<!-- Free Preview Modal -->
+<div *ngIf="showFreePreview && freePreviewLesson"
+    class="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+    (click)="closeFreePreview()">
+    <div class="relative bg-slate-900 rounded-2xl overflow-hidden shadow-2xl w-full max-w-4xl max-h-[90vh]"
+        (click)="$event.stopPropagation()">
+        <!-- Modal header -->
+        <div class="flex items-center justify-between px-5 py-3 bg-slate-800 border-b border-slate-700">
+            <div class="flex items-center gap-3">
+                <span class="inline-flex items-center gap-1.5 bg-green-500/20 border border-green-500/40 text-green-400 text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wide">
+                    <i class="pi pi-unlock text-[10px]"></i> Vista previa gratuita
+                </span>
+                <h3 class="text-white font-semibold text-sm truncate">{{ freePreviewLesson.title }}</h3>
+            </div>
+            <button (click)="closeFreePreview()"
+                class="text-slate-400 hover:text-white transition w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-700">
+                <i class="pi pi-times"></i>
+            </button>
+        </div>
+        <!-- Video content -->
+        <div *ngIf="freePreviewLesson.type.toUpperCase() === 'VIDEO'" class="aspect-video w-full">
+            <video [src]="freePreviewLesson.contentUrl" controls autoplay
+                class="w-full h-full object-contain bg-black">
+                Tu navegador no soporta reproducción de video.
+            </video>
+        </div>
+        <!-- PDF content -->
+        <div *ngIf="freePreviewLesson.type.toUpperCase() !== 'VIDEO'"
+            class="flex flex-col items-center justify-center py-16 text-slate-400">
+            <i class="pi pi-file-pdf text-5xl text-rose-400 mb-4"></i>
+            <p class="text-sm font-medium">Recurso PDF disponible</p>
+            <a [href]="freePreviewLesson.contentUrl" target="_blank" rel="noopener noreferrer"
+                class="mt-3 inline-flex items-center gap-2 bg-rose-500 hover:bg-rose-600 text-white px-5 py-2 rounded-xl text-sm font-semibold transition">
+                <i class="pi pi-external-link"></i> Abrir PDF
+            </a>
+        </div>
+        <!-- Footer CTA -->
+        <div class="px-5 py-3 bg-slate-800 border-t border-slate-700 flex items-center justify-between">
+            <p class="text-xs text-slate-400">¿Quieres ver todo el contenido?</p>
+            <button (click)="enrollCourse(); closeFreePreview()"
+                class="bg-green-500 hover:bg-green-600 text-white text-xs font-bold px-4 py-2 rounded-lg transition">
+                Inscribirme ahora
+            </button>
+        </div>
     </div>
 </div>

@@ -43,3 +43,85 @@
 nav a {
     animation: slideIn 0.3s ease-out;
 }
+
+/* ── Dark Mode Variables ── */
+:root {
+    --dm-bg: #ffffff;
+    --dm-surface: #f9fafb;
+    --dm-border: #e5e7eb;
+    --dm-text: #111827;
+    --dm-muted: #6b7280;
+}
+
+html.dark {
+    --dm-bg: #18181b;
+    --dm-surface: #27272a;
+    --dm-border: #3f3f46;
+    --dm-text: #e4e4e7;
+    --dm-muted: #a1a1aa;
+}
+
+/* Dark mode base overrides */
+html.dark body {
+    background-color: var(--dm-bg);
+    color: var(--dm-text);
+}
+
+/* Surfaces */
+html.dark .bg-white {
+    background-color: var(--dm-surface) !important;
+    color: var(--dm-text);
+    border-color: var(--dm-border) !important;
+}
+
+html.dark .bg-gray-50,
+html.dark .bg-slate-50 {
+    background-color: #1f1f22 !important;
+    border-color: var(--dm-border) !important;
+}
+
+html.dark .bg-gray-100,
+html.dark .bg-slate-100 {
+    background-color: #27272a !important;
+}
+
+/* Text overrides carefully avoiding hover states */
+html.dark .text-gray-900:not(:hover),
+html.dark .text-slate-900:not(:hover),
+html.dark .text-gray-800:not(:hover),
+html.dark .text-slate-800:not(:hover) {
+    color: #f4f4f5 !important;
+}
+
+html.dark .text-gray-700:not(:hover),
+html.dark .text-slate-700:not(:hover),
+html.dark .text-gray-600:not(:hover),
+html.dark .text-slate-600:not(:hover) {
+    color: #d4d4d8 !important;
+}
+
+html.dark .text-gray-500:not(:hover),
+html.dark .text-slate-500:not(:hover),
+html.dark .text-gray-400:not(:hover),
+html.dark .text-slate-400:not(:hover) {
+    color: #a1a1aa !important;
+}
+
+/* Borders */
+html.dark .border-gray-100,
+html.dark .border-gray-200,
+html.dark .border-gray-300,
+html.dark .border-slate-100,
+html.dark .border-slate-200 {
+    border-color: var(--dm-border) !important;
+}
+
+html.dark header.sticky {
+    background-color: rgba(24, 24, 27, 0.9) !important;
+    border-color: var(--dm-border) !important;
+}
+
+/* Smooth transition for dark mode */
+html, body, header, main, section, aside, footer, div:not(.animate-spin), button, a, input, nav {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}

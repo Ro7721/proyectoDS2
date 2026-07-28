@@ -208,6 +208,7 @@ public class EnrollmentBusiness {
                 .toList();
     }
 
+    @Transactional
     public CertificateResponse getCertificate(String idCourse, GenericResponse message) {
         EntityUser student = authenticationBusiness.getCurrentUser();
         EntityEnrollment enrollment = enrollmentRepo

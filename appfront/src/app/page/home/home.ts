@@ -8,6 +8,7 @@ import { CourseCardResponse } from '../../models/course.model';
 import { CourseCard } from '../../features/coursecard/course-card/course-card';
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../../core/auth/auth.service';
+import { ThemeService } from '../../core/services/theme.service';
 
 @Component({
   selector: 'app-home',
@@ -22,6 +23,7 @@ export class Home implements OnInit {
   private platformId = inject(PLATFORM_ID);
   private router = inject(Router);
   authService = inject(AuthService);
+  themeService = inject(ThemeService);
 
   isMenuOpen = false;
   profileOpen = false;

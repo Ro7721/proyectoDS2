@@ -30,6 +30,9 @@ import ws.schild.jave.MultimediaObject;
 public class LessonBusiness {
 
     private static final int MAX_ADJUNCT_FILES = 5;
+    private static final String FOLDER_LESSONS = "lessons";
+    private static final String TYPE_VIDEO = "video";
+
     private final LessonRepo lessonRepo;
     private final LessonFileRepo lessonFileRepo;
 
@@ -74,11 +77,11 @@ public class LessonBusiness {
                 return null;
             }
             // Guardar el video en la carpeta /lessons/video/
-            videoFileName = saveFileToDisk(mainVideoFile, "video", response);
+            videoFileName = saveFileToDisk(mainVideoFile, TYPE_VIDEO, response);
             if (videoFileName == null)
                 return null;
 
-            Path videoPath = Paths.get(storagePath, "lessons", "video", videoFileName);
+            Path videoPath = Paths.get(storagePath, FOLDER_LESSONS, TYPE_VIDEO, videoFileName);
             savedVideoFile = videoPath.toFile();
 
             // Extraer duración del video automáticamente usando JAVE
@@ -154,7 +157,7 @@ public class LessonBusiness {
                 fileName += "_" + originalName.replaceAll("\\s+", "_");
             }
 
-            Path uploadPath = Paths.get(storagePath, "lessons", type.toLowerCase());
+            Path uploadPath = Paths.get(storagePath, FOLDER_LESSONS, type.toLowerCase());
 
             if (Files.notExists(uploadPath)) {
                 Files.createDirectories(uploadPath);
@@ -209,7 +212,8 @@ public class LessonBusiness {
         return entity;
     }
 
-    public EntityLesson updateLesson(String idLesson, LessonRequest request, MultipartFile mainVideoFile, List<MultipartFile> adjunctFiles, GenericResponse response) {
+    public EntityLesson updateLesson(String idLesson, LessonRequest request, MultipartFile mainVideoFile,
+            List<MultipartFile> adjunctFiles, GenericResponse response) {
         if (!validateLesson(request, response)) {
             return null;
         }
@@ -221,29 +225,10 @@ public class LessonBusiness {
             return null;
         }
 
-        lesson.setTitle(request.getTitle());
-        lesson.setDescription(request.getDescription());
-        lesson.setType(EType.valueOf(request.getType() != null ? request.getType().toUpperCase() : EType.VIDEO.name()));
-        lesson.setLessonOrder(request.getLessonOrder());
-        lesson.setIsFree(request.isFree());
+        mapBasicLessonFields(lesson, request);
 
-        if (mainVideoFile != null && !mainVideoFile.isEmpty()) {
-            if ("VIDEO".equalsIgnoreCase(request.getType())) {
-                if (!isValidVideoFile(mainVideoFile)) {
-                    response.warning();
-                    response.listMessage.add("El formato de video es inválido");
-                    return null;
-                }
-                String videoFileName = saveFileToDisk(mainVideoFile, "video", response);
-                if (videoFileName != null) {
-                    Path videoPath = Paths.get(storagePath, "lessons", "video", videoFileName);
-                    Integer duration = extractVideoDuration(videoPath.toFile());
-                    lesson.setDurationMinutes(duration != null ? duration : 1);
-                    lesson.setContentUrl(videoFileName);
-                }
-            }
-        } else if (request.getContenUrl() != null && !request.getContenUrl().isEmpty()) {
-            lesson.setContentUrl(request.getContenUrl());
+        if (!processVideoUpdate(lesson, request, mainVideoFile, response)) {
+            return null;
         }
 
         lesson = lessonRepo.save(lesson);
@@ -255,6 +240,41 @@ public class LessonBusiness {
         response.success();
         response.listMessage.add("Lección actualizada correctamente.");
         return lesson;
+    }
+
+    private void mapBasicLessonFields(EntityLesson lesson, LessonRequest request) {
+        lesson.setTitle(request.getTitle());
+        lesson.setDescription(request.getDescription());
+        lesson.setType(EType.valueOf(request.getType() != null ? request.getType().toUpperCase() : EType.VIDEO.name()));
+        lesson.setLessonOrder(request.getLessonOrder());
+        lesson.setIsFree(request.isFree());
+    }
+
+    private boolean processVideoUpdate(EntityLesson lesson, LessonRequest request, MultipartFile mainVideoFile,
+            GenericResponse response) {
+        if (mainVideoFile != null && !mainVideoFile.isEmpty()) {
+            if (!"VIDEO".equalsIgnoreCase(request.getType())) {
+                return true;
+            }
+            if (!isValidVideoFile(mainVideoFile)) {
+                response.warning();
+                response.listMessage.add("El formato de video es inválido");
+                return false;
+            }
+
+            String videoFileName = saveFileToDisk(mainVideoFile, TYPE_VIDEO, response);
+            if (videoFileName != null) {
+                Path videoPath = Paths.get(storagePath, FOLDER_LESSONS, TYPE_VIDEO, videoFileName);
+                Integer duration = extractVideoDuration(videoPath.toFile());
+
+                lesson.setDurationMinutes(duration != null ? duration : 1);
+                lesson.setContentUrl(videoFileName);
+            }
+        } else if (request.getContenUrl() != null && !request.getContenUrl().isEmpty()) {
+            lesson.setContentUrl(request.getContenUrl());
+        }
+
+        return true;
     }
 
     private boolean validateLesson(LessonRequest request, GenericResponse gresponse) {

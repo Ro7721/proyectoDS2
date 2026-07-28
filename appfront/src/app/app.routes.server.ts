@@ -11,6 +11,10 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Server
   },
   {
+    path: 'dashboard/course-details/:id',
+    renderMode: RenderMode.Server
+  },
+  {
     // Todas las demás rutas: pre-renderizadas en build time
     path: '**',
     renderMode: RenderMode.Prerender

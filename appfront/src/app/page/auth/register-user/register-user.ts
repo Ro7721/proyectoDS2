@@ -31,9 +31,9 @@ export class RegisterUser {
 
   constructor(private formBuilder: FormBuilder, private api: Api, private toast: MessageToast, private router: Router) {
     this.form = this.formBuilder.group({
-      firstName: ['', Validators.required],
-      lastName: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
+      firstName: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(25)]],
+      lastName: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(25)]],
+      email: ['', [Validators.required, Validators.email, Validators.minLength(5), Validators.maxLength(25)]],
       password: ['', [Validators.required, this.strongPasswordValidation()]],
       confirmPassword: ['', Validators.required],
       role: ['', Validators.required]

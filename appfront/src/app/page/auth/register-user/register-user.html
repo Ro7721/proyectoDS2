@@ -32,6 +32,10 @@
             @if (firstName.touched && firstName.hasError('required')) {
             <small class="text-red-500">Debe ingresar un nombre</small>
             }
+            @if (firstName.touched && firstName.hasError('minlength') || firstName.touched &&
+            firstName.hasError('maxlength')) {
+            <small class="text-red-500">El nombre debe tener entre 3 y 25 caracteres</small>
+            }
         </div>
         <div>
             <label class="block mb-1.5 text-sm font-semibold text-gray-700">
@@ -42,6 +46,10 @@
                 class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition bg-white" />
             @if (lastName.touched && lastName.hasError('required')) {
             <small class="text-red-500">Debe ingresar un apellido</small>
+            }
+            @if (lastName.touched && lastName.hasError('minlength') || lastName.touched &&
+            lastName.hasError('maxlength')) {
+            <small class="text-red-500">El apellido debe tener entre 3 y 25 caracteres</small>
             }
         </div>
 
@@ -57,6 +65,9 @@
             }
             @if (email.touched && email.hasError('email')) {
             <small class="text-red-500">El correo electrónico no es válido</small>
+            }
+            @if (email.touched && email.hasError('minlength') || email.touched && email.hasError('maxlength')) {
+            <small class="text-red-500">El correo electrónico debe tener entre 5 y 25 caracteres</small>
             }
         </div>
         <div class="flex gap-4">

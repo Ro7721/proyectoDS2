@@ -149,7 +149,7 @@ export class LearningCourse implements OnInit {
       const res: any = await this.api.invoke(getCertificate, { idCourse: this.course.idCourse });
       const apiResponse = typeof res === 'string' ? JSON.parse(res) : res;
       
-      if (!apiResponse.success) {
+      if (apiResponse.response?.type !== 'success') {
         throw new Error(apiResponse.response?.listMessage?.[0] || 'Error al obtener certificado');
       }
       

@@ -9,6 +9,7 @@ import { MenuItem } from 'primeng/api';
 import { AuthService } from '../../core/auth/auth.service';
 import { ToastModule } from "primeng/toast";
 import { MessageToast } from '../../message/message-toast';
+import { ThemeService } from '../../core/services/theme.service';
 type Role = 'ROLE_STUDENT' | 'ROLE_TEACHER' | 'ROLE_ADMIN';
 @Component({
   selector: 'app-dashboard-sell',
@@ -18,6 +19,7 @@ type Role = 'ROLE_STUDENT' | 'ROLE_TEACHER' | 'ROLE_ADMIN';
 })
 export class DashboardSell implements OnInit {
   private platformId = inject(PLATFORM_ID);
+  public themeService = inject(ThemeService);
 
   role: Role = 'ROLE_STUDENT';
   userName = '';
@@ -56,6 +58,7 @@ export class DashboardSell implements OnInit {
         { label: 'Reportes', icon: 'pi pi-file-excel', route: '#' },
       ]
     },
+    { label: 'Mi Perfil', icon: 'pi pi-user', route: '/dashboard/profile-teacher' },
     { label: 'Comentarios', icon: 'pi pi-comment', route: '#' },
     { label: 'Certificados', icon: 'pi pi-trophy', route: '#' },
     { label: 'Configuracion', icon: 'pi pi-cog', route: '#' },

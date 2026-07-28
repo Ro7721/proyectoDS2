@@ -19,6 +19,7 @@ export class CertificateModal implements OnChanges {
 
   @Input() certId = '';
   completionDate = '';
+  isGeneratingPDF = false;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['completedAt'] || changes['studentName'] || changes['courseName'] || changes['certId']) {
@@ -67,6 +68,41 @@ export class CertificateModal implements OnChanges {
   }
 
   downloadPDF(): void {
+    this.isGeneratingPDF = true;
+    const element = document.querySelector('.certificate-printable-area') as HTMLElement;
+    if (!element) {
+      this.isGeneratingPDF = false;
+      return;
+    }
+
+    import('html2canvas').then(({ default: html2canvas }) => {
+      return html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+      });
+    }).then((canvas) => {
+      return import('jspdf').then(({ jsPDF }) => {
+        const imgData = canvas.toDataURL('image/png');
+        // A4 landscape: 297mm x 210mm
+        const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        const safeName = this.courseName.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+        pdf.save(`certificado-${safeName}.pdf`);
+      });
+    }).catch((err) => {
+      console.error('Error generando PDF:', err);
+      // Fallback al método de impresión
+      this.printFallback();
+    }).finally(() => {
+      this.isGeneratingPDF = false;
+    });
+  }
+
+  private printFallback(): void {
     const style = document.createElement('style');
     style.id = 'print-cert-style';
     style.textContent = `
@@ -76,14 +112,13 @@ export class CertificateModal implements OnChanges {
         .certificate-printable-area {
           position: fixed !important;
           top: 0; left: 0;
-          width: 297mm !important; /* A4 width */
-          height: 210mm !important; /* A4 height */
+          width: 297mm !important;
+          height: 210mm !important;
           max-width: none !important;
           margin: 0 !important;
           box-shadow: none !important;
           display: flex !important;
           flex-direction: row !important;
-          transform: scale(1) !important;
           background: white !important;
         }
         .no-print { display: none !important; }
@@ -94,6 +129,7 @@ export class CertificateModal implements OnChanges {
     window.print();
     setTimeout(() => document.getElementById('print-cert-style')?.remove(), 1500);
   }
+
 
   private generateCertId(): string {
     const input = `${this.studentName}-${this.courseName}-${Date.now()}`;

@@ -1,0 +1,133 @@
+<div class="min-h-screen bg-gray-50">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a routerLink="/" class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-full bg-[#3A9E5F] flex items-center justify-center text-white">
+          <i class="pi pi-check text-sm font-bold"></i>
+        </div>
+        <span class="text-lg font-bold text-gray-900">EduLearn</span>
+      </a>
+      <div class="flex items-center gap-4">
+        <a routerLink="/catalog" class="text-sm text-gray-500 hover:text-[#3A9E5F] transition">Cursos</a>
+        <a routerLink="/auth/login"
+          class="bg-[#3A9E5F] text-white text-sm px-5 py-2 rounded-full font-medium hover:bg-[#2e7d4a] transition">
+          Iniciar sesión
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-6 py-12">
+
+    <!-- Hero Section -->
+    <div class="text-center mb-12">
+      <span class="inline-block bg-green-50 text-[#3A9E5F] text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full border border-green-100 mb-4">
+        Nuestro equipo
+      </span>
+      <h1 class="text-4xl sm:text-5xl font-black text-gray-900 tracking-tight mb-4">
+        Aprende de los<br>
+        <span class="text-[#3A9E5F]">mejores docentes</span>
+      </h1>
+      <p class="text-gray-500 text-lg max-w-xl mx-auto leading-relaxed">
+        Profesionales con experiencia real dispuestos a compartir su conocimiento contigo.
+      </p>
+    </div>
+
+    <!-- Search -->
+    <div class="relative max-w-md mx-auto mb-10">
+      <i class="pi pi-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+      <input type="text" [value]="searchQuery" (input)="onSearch($event)"
+        placeholder="Buscar docente por nombre..."
+        class="w-full pl-11 pr-4 py-3 bg-white border border-gray-200 rounded-2xl text-sm shadow-sm focus:outline-none focus:border-[#3A9E5F] focus:ring-1 focus:ring-[#3A9E5F] transition">
+    </div>
+
+    <!-- Skeletons -->
+    <div *ngIf="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+      <div *ngFor="let i of [1,2,3,4,5,6,7,8]"
+        class="bg-white rounded-2xl p-6 border border-gray-100 animate-pulse space-y-3">
+        <div class="w-16 h-16 rounded-full bg-gray-200 mx-auto"></div>
+        <div class="h-4 bg-gray-200 rounded w-3/4 mx-auto"></div>
+        <div class="h-3 bg-gray-100 rounded w-1/2 mx-auto"></div>
+        <div class="h-8 bg-gray-100 rounded-xl mt-2"></div>
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <div *ngIf="!loading && filteredTeachers.length === 0"
+      class="text-center py-20">
+      <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <i class="pi pi-users text-3xl text-gray-400"></i>
+      </div>
+      <h3 class="text-lg font-bold text-gray-700 mb-2">No se encontraron docentes</h3>
+      <p class="text-sm text-gray-400">Intenta con otro término de búsqueda.</p>
+    </div>
+
+    <!-- Teachers Grid -->
+    <div *ngIf="!loading && filteredTeachers.length > 0"
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+      <article *ngFor="let teacher of filteredTeachers"
+        class="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden">
+
+        <!-- Card top gradient -->
+        <div class="h-2 bg-gradient-to-r from-[#3A9E5F] to-emerald-400"></div>
+
+        <div class="p-6 text-center">
+          <!-- Avatar -->
+          <div class="relative mx-auto mb-4 w-fit">
+            <div
+              class="w-20 h-20 rounded-full flex items-center justify-center text-white text-2xl font-black shadow-lg mx-auto"
+              [class]="teacher.color">
+              {{ teacher.initials }}
+            </div>
+            <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-[#3A9E5F] rounded-full flex items-center justify-center border-2 border-white">
+              <i class="pi pi-check text-white text-[9px] font-bold"></i>
+            </div>
+          </div>
+
+          <!-- Info -->
+          <h2 class="text-base font-bold text-gray-900 group-hover:text-[#3A9E5F] transition leading-tight">
+            {{ teacher.firstName }} {{ teacher.surName }}
+          </h2>
+          <p class="text-xs text-gray-400 mt-0.5 truncate">{{ teacher.email }}</p>
+
+          <!-- Course count badge -->
+          <div class="flex items-center justify-center gap-1.5 mt-3">
+            <span class="inline-flex items-center gap-1.5 bg-green-50 border border-green-100 text-[#3A9E5F] text-xs font-semibold px-3 py-1 rounded-full">
+              <i class="pi pi-book text-[10px]"></i>
+              {{ teacher.courseCount }} {{ teacher.courseCount === 1 ? 'curso' : 'cursos' }}
+            </span>
+          </div>
+
+          <!-- CTA -->
+          <a routerLink="/catalog"
+            class="mt-4 block w-full text-center text-sm font-semibold py-2.5 rounded-xl border border-gray-200 text-gray-600 hover:border-[#3A9E5F] hover:text-[#3A9E5F] hover:bg-green-50 transition-all duration-200">
+            Ver cursos
+          </a>
+        </div>
+      </article>
+    </div>
+
+    <!-- Stats banner -->
+    <div *ngIf="!loading && teachers.length > 0"
+      class="mt-16 bg-gradient-to-r from-[#3A9E5F] to-emerald-500 rounded-2xl p-8 text-white text-center">
+      <h2 class="text-2xl font-bold mb-2">¿Eres experto en tu área?</h2>
+      <p class="text-white/80 mb-6">Únete a nuestros {{ teachers.length }} docentes y comparte tu conocimiento con miles de estudiantes.</p>
+      <a routerLink="/auth/register"
+        class="inline-block bg-white text-[#3A9E5F] font-bold px-8 py-3 rounded-xl hover:bg-gray-50 transition">
+        Convertirme en docente
+      </a>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-gray-400 py-8 mt-16">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">
+      <span class="text-white font-bold">EduLearn<span class="text-[#3A9E5F]">.</span></span>
+      <p>© 2026 Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+</div>

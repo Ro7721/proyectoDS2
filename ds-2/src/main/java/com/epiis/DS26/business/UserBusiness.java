@@ -1,6 +1,7 @@
 package com.epiis.DS26.business;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -123,7 +124,7 @@ public class UserBusiness {
         if (entity == null) {
             response.warning();
             response.getListMessage()
-                    .add("Usuario no encontrado");
+                    .add("Usuario no encontrado para eliminar");
 
             return false;
         }
@@ -171,7 +172,7 @@ public class UserBusiness {
 
             response.warning();
             response.getListMessage()
-                    .add("Usuario no encontrado");
+                    .add("Usuario no encontrado para actualizar");
 
             return;
         }
@@ -228,7 +229,7 @@ public class UserBusiness {
         EntityUser entity = userRepo.findById(idUser).orElse(null);
         if (entity == null) {
             response.warning();
-            response.getListMessage().add("Usuario no encontrado con Id " + idUser);
+            response.getListMessage().add("Usuario no encontrado para activar");
             return false;
         } else if (Boolean.TRUE.equals(entity.getIsActive())) {
             response.warning();
@@ -246,7 +247,7 @@ public class UserBusiness {
         EntityUser entity = userRepo.findById(idUser).orElse(null);
         if (entity == null) {
             response.warning();
-            response.getListMessage().add("Usuario no encontrado con Id " + idUser);
+            response.getListMessage().add("Usuario no encontrado para desactivar");
             return false;
         } else if (Boolean.FALSE.equals(entity.getIsActive())) {
             response.warning();
@@ -333,7 +334,7 @@ public class UserBusiness {
             return false;
         }
         entity.setRole(newRole);
-        entity.setUpdatedAt(LocalDateTime.now());
+        entity.setUpdatedAt(LocalDateTime.now(ZoneId.of("America/Lima")));
         userRepo.save(entity);
         response.success();
         response.getListMessage().add("Rol actualizado exitosamente a " + newRole.name());

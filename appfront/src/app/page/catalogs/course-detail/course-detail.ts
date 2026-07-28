@@ -26,6 +26,10 @@ export class CourseDetail implements OnInit {
   enrollError = '';
   course?: CourseResponse;
 
+  // Free preview
+  showFreePreview = false;
+  freePreviewLesson?: { title: string; type: string; contentUrl: string; };
+
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
@@ -138,6 +142,17 @@ export class CourseDetail implements OnInit {
       currency: 'PEN'
     }).format(finalPrice);
   }
+  openFreePreview(lesson: any): void {
+    if (!lesson.isFree) return;
+    this.freePreviewLesson = lesson;
+    this.showFreePreview = true;
+  }
+
+  closeFreePreview(): void {
+    this.showFreePreview = false;
+    this.freePreviewLesson = undefined;
+  }
+
   regresar() {
     this.router.navigate(['/catalog']);
   }
