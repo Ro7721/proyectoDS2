@@ -21,17 +21,8 @@ export class ThemeService {
       // Preferencia guardada por el usuario
       this.applyTheme(stored === 'dark');
     } else {
-      // Seguir la preferencia del sistema operativo
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      this.applyTheme(prefersDark);
-
-      // Escuchar cambios del OS en tiempo real
-      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-        // Solo si el usuario no ha elegido manualmente
-        if (!localStorage.getItem('theme')) {
-          this.applyTheme(e.matches);
-        }
-      });
+      // Por defecto iniciar en modo claro
+      this.applyTheme(false);
     }
   }
 
