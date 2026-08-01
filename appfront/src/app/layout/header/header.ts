@@ -3,6 +3,7 @@ import { Component, EventEmitter, inject, Input, Output, signal } from '@angular
 import { ButtonModule } from 'primeng/button';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputTextModule } from 'primeng/inputtext';
+import { ThemeService } from '../../core/services/theme.service';
 @Component({
   selector: 'app-header',
   imports: [CommonModule, ButtonModule, InputTextModule, IconFieldModule],
@@ -10,6 +11,7 @@ import { InputTextModule } from 'primeng/inputtext';
   styleUrl: './header.css',
 })
 export class Header {
+  readonly themeService = inject(ThemeService);
   sidebarVisible = signal<boolean>(false);
 
   @Input() title = 'Dashboard';
@@ -21,6 +23,10 @@ export class Header {
   toggleSidebar() {
     this.sidebarVisible.update((value) => !value);
     this.menuToggle.emit();
+  }
+
+  toggleTheme() {
+    this.themeService.toggleTheme();
   }
 
   get initials(): string {

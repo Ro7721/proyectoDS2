@@ -16,8 +16,12 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 })
 export class LessonPlayer implements OnChanges, AfterViewInit, OnDestroy {
   @Input() lesson?: LessonContentResponse;
+  @Input() hasNext = false;
+  @Input() hasPrevious = false;
   @Output() lessonProgress = new EventEmitter<LessonProgressEvent>();
   @Output() lessonCompleted = new EventEmitter<void>();
+  @Output() goNext = new EventEmitter<void>();
+  @Output() goPrevious = new EventEmitter<void>();
   @ViewChild('videoPlayer') videoPlayer?: ElementRef<HTMLVideoElement>;
   @ViewChild('progressBar') progressBarRef?: ElementRef<HTMLDivElement>;
 

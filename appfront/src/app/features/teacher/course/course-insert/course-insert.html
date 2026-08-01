@@ -13,13 +13,18 @@
 <div class="flex min-h-screen w-full flex-col bg-gray-50">
 
   <!-- Header -->
-  <div class="border-b border-gray-200 bg-white px-8 py-5">
-    <h1 class="text-xl font-bold text-gray-900">Crear curso</h1>
-    <p class="mt-0.5 text-sm text-gray-500">Completa los datos y agrega las lecciones</p>
+  <div class="border-b border-gray-200 bg-white px-4 py-4 sm:px-8 sm:py-5 flex items-center justify-between">
+    <div>
+      <h1 class="text-xl font-bold text-gray-900">Crear curso</h1>
+      <p class="mt-0.5 text-sm text-gray-500">Completa los datos y agrega las lecciones</p>
+    </div>
+    <button type="button" (click)="goBack()" class="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg">
+      <i class="pi pi-arrow-left"></i> Atrás
+    </button>
   </div>
 
-  <!-- Contenido principal: 2 columnas que ocupan todo el espacio -->
-  <div class="flex flex-1 divide-x divide-gray-200">
+  <!-- Contenido principal: apilado en móvil, 2 columnas en escritorio -->
+  <div class="flex flex-col lg:flex-row flex-1 lg:divide-x lg:divide-y-0 divide-y divide-gray-200">
 
     <!-- ===== COLUMNA IZQUIERDA: DATOS DEL CURSO ===== -->
     <div class="flex w-full flex-col lg:w-[480px] lg:flex-none xl:w-[520px]">
@@ -28,7 +33,7 @@
       <form [formGroup]="courseForm" class="flex flex-col flex-1">
 
         <!-- Sección: Portada -->
-        <div class="border-b border-gray-500 bg-white px-8 py-6">
+        <div class="border-b border-gray-500 bg-white px-4 py-5 sm:px-8 sm:py-6">
           <p class="mb-3 text-xs font-semibold uppercase tracking-widest text-green-600">Portada</p>
 
           <div *ngIf="!coverImagePreview"
@@ -59,7 +64,7 @@
         </div>
 
         <!-- Sección: Información básica -->
-        <div class="border-b border-gray-100 bg-white px-8 py-6">
+        <div class="border-b border-gray-100 bg-white px-4 py-5 sm:px-8 sm:py-6">
           <p class="mb-4 text-xs font-semibold uppercase tracking-widest text-green-600">Información básica</p>
 
           <div class="flex flex-col gap-5">
@@ -77,6 +82,8 @@
                 <p *ngIf="f['courseTitle'].errors?.['required']" class="text-xs text-red-500">El título es requerido.</p>
                 <p *ngIf="f['courseTitle'].errors?.['minlength']" class="text-xs text-red-500">Mínimo 5 caracteres.</p>
                 <p *ngIf="f['courseTitle'].errors?.['maxlength']" class="text-xs text-red-500">Máximo 100 caracteres.</p>
+                <p *ngIf="f['courseTitle'].errors?.['noNumbers']" class="text-xs text-red-500">El título no puede ser solo números.</p>
+                <p *ngIf="f['courseTitle'].errors?.['whitespaceOnly']" class="text-xs text-red-500">El título no puede ser solo espacios.</p>
               </div>
               <p class="text-xs text-gray-400 text-right mt-0.5">{{ f['courseTitle'].value?.length || 0 }}/100</p>
             </div>
@@ -95,6 +102,8 @@
                 <p *ngIf="f['courseDescription'].errors?.['required']" class="text-xs text-red-500">La descripción es requerida.</p>
                 <p *ngIf="f['courseDescription'].errors?.['minlength']" class="text-xs text-red-500">Mínimo 10 caracteres.</p>
                 <p *ngIf="f['courseDescription'].errors?.['maxlength']" class="text-xs text-red-500">Máximo 500 caracteres.</p>
+                <p *ngIf="f['courseDescription'].errors?.['noNumbers']" class="text-xs text-red-500">La descripción no puede ser solo números.</p>
+                <p *ngIf="f['courseDescription'].errors?.['whitespaceOnly']" class="text-xs text-red-500">La descripción no puede ser solo espacios.</p>
               </div>
               <p class="text-xs text-gray-400 text-right mt-0.5">{{ f['courseDescription'].value?.length || 0 }}/500</p>
             </div>
@@ -103,13 +112,13 @@
         </div>
 
         <!-- Sección: Categoría / Nivel / Precio -->
-        <div class="border-b border-gray-100 bg-white px-8 py-6">
+        <div class="border-b border-gray-100 bg-white px-4 py-5 sm:px-8 sm:py-6">
           <p class="mb-4 text-xs font-semibold uppercase tracking-widest text-green-600">Configuración</p>
 
           <div class="flex flex-col gap-5">
 
             <!-- Categoría y Nivel -->
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div class="flex flex-col gap-1.5">
                 <label class="text-sm font-medium text-gray-700"
                   [ngClass]="{'text-red-500': isFieldInvalid('selectedCategoryId')}">
@@ -156,8 +165,8 @@
         </div>
 
         <!-- Acciones -->
-        <div class="mt-auto border-t border-gray-200 bg-white px-8 py-5">
-          <div class="flex gap-3">
+        <div class="mt-auto border-t border-gray-200 bg-white px-4 py-4 sm:px-8 sm:py-5">
+          <div class="flex flex-col sm:flex-row gap-3">
             <button type="button" (click)="saveCourse('DRAFT')" [disabled]="loading"
               class="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-700 transition-all hover:border-gray-400 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50">
               <i class="pi pi-save text-sm"></i> Guardar borrador
@@ -176,7 +185,7 @@
     <div class="flex flex-1 flex-col bg-gray-50">
 
       <!-- Header lecciones -->
-      <div class="flex items-center justify-between border-b border-gray-200 bg-white px-8 py-5">
+      <div class="flex items-center justify-between border-b border-gray-200 bg-white px-4 py-4 sm:px-8 sm:py-5">
         <div>
           <h2 class="flex items-center gap-2 text-base font-bold text-gray-800">
             <i class="pi pi-play-circle text-green-500"></i> Lecciones
@@ -184,13 +193,13 @@
           <p class="mt-0.5 text-xs text-gray-400">{{ listLessons.length }} lección(es) agregada(s)</p>
         </div>
         <button (click)="openAddLesson()"
-          class="flex cursor-pointer items-center gap-2 rounded-xl border border-green-500 bg-white px-4 py-2.5 text-sm font-semibold text-green-600 transition-all hover:bg-green-500 hover:text-white">
-          <i class="pi pi-plus text-xs"></i> Agregar lección
+          class="flex cursor-pointer items-center gap-2 rounded-xl border border-green-500 bg-white px-3 py-2 sm:px-4 sm:py-2.5 text-sm font-semibold text-green-600 transition-all hover:bg-green-500 hover:text-white">
+          <i class="pi pi-plus text-xs"></i> <span class="hidden sm:inline">Agregar lección</span><span class="sm:hidden">Agregar</span>
         </button>
       </div>
 
       <!-- Cuerpo lecciones -->
-      <div class="flex-1 overflow-y-auto px-8 py-6">
+      <div class="flex-1 overflow-y-auto px-4 py-4 sm:px-8 sm:py-6">
 
         <!-- Estado vacío -->
         <div *ngIf="listLessons.length === 0"

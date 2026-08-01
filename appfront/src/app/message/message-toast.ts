@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { MessageService } from 'primeng/api';
+import { getApiMessage } from '../core/utils/api-response';
 @Injectable({
   providedIn: 'root',
 })
@@ -40,6 +41,14 @@ export class MessageToast {
       detail: detail ?? '',
       life: 4000,
     });
+  }
+
+  toastApiError(error: unknown, summary = 'No se pudo completar la operación'): void {
+    const detail = error instanceof Error
+      ? error.message
+      : getApiMessage(error, 'Intenta nuevamente en unos segundos.');
+
+    this.toastError(summary, detail);
   }
 
 }

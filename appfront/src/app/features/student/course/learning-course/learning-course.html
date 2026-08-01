@@ -25,6 +25,10 @@
             <div class="flex flex-col gap-4">
                 <app-lesson-player
                     [lesson]="selectedLesson"
+                    [hasNext]="hasNextLesson"
+                    [hasPrevious]="hasPrevLesson"
+                    (goNext)="goNextLesson()"
+                    (goPrevious)="goPrevLesson()"
                     (lessonProgress)="onLessonProgress($event)"
                     (lessonCompleted)="onLessonCompleted()" />
 

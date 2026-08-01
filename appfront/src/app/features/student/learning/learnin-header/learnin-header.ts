@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { CourseContentResponse } from '../../../../models/learning.model';
 import { DatePipe } from '@angular/common';
 
@@ -10,6 +11,7 @@ import { DatePipe } from '@angular/common';
 })
 export class LearninHeader {
   @Input({ required: true }) course!: CourseContentResponse;
+  private router = inject(Router);
 
   /** Paleta acotada para el filete lateral; se elige según la categoría */
   private static readonly SPINE_PALETTE = [
@@ -38,5 +40,9 @@ export class LearninHeader {
     );
     const palette = LearninHeader.SPINE_PALETTE;
     return palette[hash % palette.length];
+  }
+
+  goBack(): void {
+    this.router.navigate(['/dashboard/my-courses']);
   }
 }

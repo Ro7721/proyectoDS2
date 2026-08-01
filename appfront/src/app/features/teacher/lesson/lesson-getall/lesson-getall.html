@@ -11,6 +11,10 @@
       <p class="mt-1 text-xs text-slate-500">Administra todas las lecciones de tus cursos de manera intuitiva.</p>
     </div>
     <div class="flex items-center gap-2">
+      <button type="button" (click)="goBack()"
+        class="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition cursor-pointer">
+        <i class="pi pi-arrow-left"></i> Atrás
+      </button>
       <button type="button" (click)="refresh()"
         class="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition cursor-pointer">
         <i class="pi pi-refresh"></i> Actualizar

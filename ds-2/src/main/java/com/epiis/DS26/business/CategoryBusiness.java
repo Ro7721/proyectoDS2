@@ -45,9 +45,39 @@ public class CategoryBusiness {
             genericResponse.listMessage.add("El nombre de la categoría es requerido");
             return false;
         }
+        if (name.trim().matches("^\\d+$")) {
+            genericResponse.warning();
+            genericResponse.listMessage.add("El nombre no puede ser solo números");
+            return false;
+        }
+        if (name.trim().length() < 3) {
+            genericResponse.warning();
+            genericResponse.listMessage.add("El nombre debe tener al menos 3 caracteres");
+            return false;
+        }
+        if (name.trim().length() > 50) {
+            genericResponse.warning();
+            genericResponse.listMessage.add("El nombre no puede exceder los 50 caracteres");
+            return false;
+        }
+        if (categoryRepo.existsByNameIgnoreCase(name.trim())) {
+            genericResponse.warning();
+            genericResponse.listMessage.add("Ya existe una categoría con ese nombre");
+            return false;
+        }
         if (description == null || description.trim().isEmpty()) {
             genericResponse.warning();
             genericResponse.listMessage.add("La descripción de la categoría es requerida");
+            return false;
+        }
+        if (description.trim().length() < 5) {
+            genericResponse.warning();
+            genericResponse.listMessage.add("La descripción debe tener al menos 5 caracteres");
+            return false;
+        }
+        if (description.trim().length() > 200) {
+            genericResponse.warning();
+            genericResponse.listMessage.add("La descripción no puede exceder los 200 caracteres");
             return false;
         }
         return true;

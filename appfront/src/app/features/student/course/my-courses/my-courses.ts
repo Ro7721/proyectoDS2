@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { CertificateModal } from '../../learning/certificate-modal/certificate-modal';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { CertificateResponse } from '../../../../models/learning.model';
+import { getApiMessage, isApiEnvelope, parseApiPayload, unwrapApiResponse } from '../../../../core/utils/api-response';
 
 @Component({
   selector: 'app-my-courses',
@@ -65,15 +66,15 @@ export class MyCourses implements OnInit {
 
   loadCourses() {
     this.loading = true;
-    this.api.invoke(getMyCourses).then((response: any) => {
-      const apiResponse = typeof response === 'string' ? JSON.parse(response) : response;
+    this.api.invoke(getMyCourses).then((response: unknown) => {
+      const apiResponse = parseApiPayload<MyCourseResponse[]>(response);
 
       if (Array.isArray(apiResponse)) {
         this.courses = apiResponse;
-      } else if (apiResponse.success) {
-        this.courses = apiResponse.data ?? apiResponse;
+      } else if (isApiEnvelope<MyCourseResponse[]>(apiResponse)) {
+        this.courses = apiResponse.data ?? [];
       } else {
-        this.toast.toastError('Error al cargar los cursos: ' + (apiResponse.error?.message || 'Error desconocido'));
+        this.toast.toastError(getApiMessage(apiResponse, 'Error al cargar los cursos'));
       }
 
       this.applyFilters();
@@ -159,21 +160,21 @@ export class MyCourses implements OnInit {
   async openCertificate(course: MyCourseResponse): Promise<void> {
     try {
 
-      const res: any = await this.api.invoke(getCertificate, { idCourse: course.idCourse });
-      const apiResponse = typeof res === 'string' ? JSON.parse(res) : res;
+      const res: unknown = await this.api.invoke(getCertificate, { idCourse: course.idCourse });
+      const apiResponse = parseApiPayload<CertificateResponse>(res);
 
-      if (apiResponse.response?.type !== 'success') {
-        throw new Error(apiResponse.response?.listMessage?.[0] || 'Error al obtener certificado');
+      if (isApiEnvelope(apiResponse) && apiResponse.response?.type !== 'success') {
+        throw new Error(getApiMessage(apiResponse, 'Error al obtener certificado'));
       }
 
-      this.certificateData = apiResponse.data;
+      this.certificateData = unwrapApiResponse<CertificateResponse>(apiResponse);
       this.selectedCourseName = course.title;
       this.selectedTeacherName = course.teacherFullName;
       this.selectedTotalLessons = course.totalLessons;
       this.showCertificateModal = true;
       this.changeDetector.detectChanges();
     } catch (err: any) {
-      this.toast.toastError('No se pudo cargar el certificado. ' + err.message);
+      this.toast.toastError('No se pudo cargar el certificado', err.message || 'Intenta nuevamente.');
     }
   }
 }

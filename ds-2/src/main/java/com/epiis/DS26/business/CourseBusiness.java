@@ -117,9 +117,39 @@ public class CourseBusiness {
             response.listMessage.add("El título del curso es requerido");
             return false;
         }
+        if (request.getTitle().trim().matches("^\\d+$")) {
+            response.warning();
+            response.listMessage.add("El título no puede ser solo números");
+            return false;
+        }
+        if (request.getTitle().trim().length() < 5) {
+            response.warning();
+            response.listMessage.add("El título debe tener al menos 5 caracteres");
+            return false;
+        }
+        if (request.getTitle().trim().length() > 100) {
+            response.warning();
+            response.listMessage.add("El título no puede exceder los 100 caracteres");
+            return false;
+        }
         if (request.getDescription() == null || request.getDescription().trim().isEmpty()) {
             response.warning();
             response.listMessage.add("La descripción del curso es requerida");
+            return false;
+        }
+        if (request.getDescription().trim().matches("^\\d+$")) {
+            response.warning();
+            response.listMessage.add("La descripción no puede ser solo números");
+            return false;
+        }
+        if (request.getDescription().trim().length() < 10) {
+            response.warning();
+            response.listMessage.add("La descripción debe tener al menos 10 caracteres");
+            return false;
+        }
+        if (request.getDescription().trim().length() > 500) {
+            response.warning();
+            response.listMessage.add("La descripción no puede exceder los 500 caracteres");
             return false;
         }
         if (request.getCoverImage() == null || request.getCoverImage().isEmpty()) {
@@ -127,9 +157,22 @@ public class CourseBusiness {
             response.listMessage.add("La imagen de portada es requerida");
             return false;
         }
+        String coverName = request.getCoverImage().getOriginalFilename();
+        if (coverName != null && !coverName.toLowerCase().matches(".*\\.(png|jpg|jpeg|webp)$")) {
+            response.warning();
+            response.listMessage.add("La imagen debe ser PNG, JPG, JPEG o WEBP");
+            return false;
+        }
         if (request.getLevel() == null || request.getLevel().trim().isEmpty()) {
             response.warning();
             response.listMessage.add("El nivel del curso es requerido");
+            return false;
+        }
+        try {
+            ELevel.valueOf(request.getLevel().trim());
+        } catch (IllegalArgumentException e) {
+            response.warning();
+            response.listMessage.add("El nivel del curso no es válido (BASIC, INTERMEDIATE, ADVANCED)");
             return false;
         }
         if (request.getPrice() < 0) {
@@ -137,9 +180,21 @@ public class CourseBusiness {
             response.listMessage.add("El precio debe ser mayor o igual a 0");
             return false;
         }
+        if (request.getPrice() > 10000) {
+            response.warning();
+            response.listMessage.add("El precio no puede exceder los $10,000");
+            return false;
+        }
         if (request.getStatus() == null || request.getStatus().trim().isEmpty()) {
             response.warning();
             response.listMessage.add("El estado del curso es requerido");
+            return false;
+        }
+        try {
+            EStatus.valueOf(request.getStatus().trim());
+        } catch (IllegalArgumentException e) {
+            response.warning();
+            response.listMessage.add("El estado del curso no es válido");
             return false;
         }
         if (request.getIdTeacher() == null || request.getIdTeacher().trim().isEmpty()) {

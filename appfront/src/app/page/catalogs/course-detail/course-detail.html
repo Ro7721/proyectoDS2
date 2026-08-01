@@ -168,12 +168,19 @@
                             </button>
 
                             <div *ngIf="enrolled"
-                                class="w-full bg-emerald-50 border border-emerald-300 text-emerald-700 py-3 rounded-lg font-semibold text-center space-y-1">
-                                <div class="flex items-center justify-center gap-2">
-                                    <i class="pi pi-check-circle"></i>
-                                    ¡Inscripción exitosa!
+                                class="w-full space-y-3">
+                                <div
+                                    class="bg-emerald-50 border border-emerald-300 text-emerald-700 py-3 rounded-lg font-semibold text-center">
+                                    <div class="flex items-center justify-center gap-2">
+                                        <i class="pi pi-check-circle"></i>
+                                        ¡Inscripción exitosa!
+                                    </div>
+                                    <p class="text-xs font-normal text-emerald-600 mt-1">Ya puedes acceder al contenido del curso</p>
                                 </div>
-                                <p class="text-xs font-normal text-emerald-600">Redirigiendo a Mis Cursos...</p>
+                                <a routerLink="/dashboard/my-courses"
+                                    class="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold transition-all duration-200 cursor-pointer">
+                                    <i class="pi pi-book"></i> Ir a Mis Cursos
+                                </a>
                             </div>
 
                             <p *ngIf="enrollError" class="mt-2 text-sm text-red-600 font-medium text-center">

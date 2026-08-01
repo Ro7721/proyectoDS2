@@ -278,9 +278,29 @@ public class LessonBusiness {
     }
 
     private boolean validateLesson(LessonRequest request, GenericResponse gresponse) {
+        if (request.getCourseId() == null || request.getCourseId().trim().isEmpty()) {
+            gresponse.warning();
+            gresponse.listMessage.add("El ID del curso es requerido");
+            return false;
+        }
         if (request.getTitle() == null || request.getTitle().trim().isEmpty()) {
             gresponse.warning();
             gresponse.listMessage.add("El título de la lección es requerido");
+            return false;
+        }
+        if (request.getTitle().trim().matches("^\\d+$")) {
+            gresponse.warning();
+            gresponse.listMessage.add("El título no puede ser solo números");
+            return false;
+        }
+        if (request.getTitle().trim().length() < 5) {
+            gresponse.warning();
+            gresponse.listMessage.add("El título debe tener al menos 5 caracteres");
+            return false;
+        }
+        if (request.getTitle().trim().length() > 100) {
+            gresponse.warning();
+            gresponse.listMessage.add("El título no puede exceder los 100 caracteres");
             return false;
         }
         if (request.getDescription() == null || request.getDescription().trim().isEmpty()) {
@@ -288,9 +308,31 @@ public class LessonBusiness {
             gresponse.listMessage.add("La descripción de la lección es requerida");
             return false;
         }
+        if (request.getDescription().trim().matches("^\\d+$")) {
+            gresponse.warning();
+            gresponse.listMessage.add("La descripción no puede ser solo números");
+            return false;
+        }
+        if (request.getDescription().trim().length() < 10) {
+            gresponse.warning();
+            gresponse.listMessage.add("La descripción debe tener al menos 10 caracteres");
+            return false;
+        }
+        if (request.getDescription().trim().length() > 500) {
+            gresponse.warning();
+            gresponse.listMessage.add("La descripción no puede exceder los 500 caracteres");
+            return false;
+        }
         if (request.getType() == null || request.getType().trim().isEmpty()) {
             gresponse.warning();
             gresponse.listMessage.add("El tipo de lección es requerido");
+            return false;
+        }
+        try {
+            EType.valueOf(request.getType().trim().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            gresponse.warning();
+            gresponse.listMessage.add("El tipo de lección no es válido (VIDEO, PDF)");
             return false;
         }
         boolean hasFiles = request.getMainVideoFile() != null && !request.getMainVideoFile().isEmpty();

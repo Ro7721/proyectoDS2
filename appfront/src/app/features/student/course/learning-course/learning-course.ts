@@ -12,6 +12,8 @@ import { LessonPlayer } from '../../learning/lesson-player/lesson-player';
 import { LessonResource } from '../../learning/lesson-resource/lesson-resource';
 import { CertificateModal } from '../../learning/certificate-modal/certificate-modal';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { getApiMessage, isApiEnvelope, parseApiPayload, unwrapApiResponse } from '../../../../core/utils/api-response';
+import { MessageToast } from '../../../../message/message-toast';
 
 export interface LessonProgressEvent {
   idLesson: string;
@@ -31,6 +33,7 @@ export class LearningCourse implements OnInit {
   private readonly api = inject(Api);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly authService = inject(AuthService);
+  private readonly toast = inject(MessageToast);
 
   loading = true;
   course?: CourseContentResponse;
@@ -146,19 +149,19 @@ export class LearningCourse implements OnInit {
   async openCertificate(): Promise<void> {
     if (!this.course) return;
     try {
-      const res: any = await this.api.invoke(getCertificate, { idCourse: this.course.idCourse });
-      const apiResponse = typeof res === 'string' ? JSON.parse(res) : res;
+      const res: unknown = await this.api.invoke(getCertificate, { idCourse: this.course.idCourse });
+      const apiResponse = parseApiPayload<CertificateResponse>(res);
       
-      if (apiResponse.response?.type !== 'success') {
-        throw new Error(apiResponse.response?.listMessage?.[0] || 'Error al obtener certificado');
+      if (isApiEnvelope(apiResponse) && apiResponse.response?.type !== 'success') {
+        throw new Error(getApiMessage(apiResponse, 'Error al obtener certificado'));
       }
       
-      this.certificateData = apiResponse.data;
+      this.certificateData = unwrapApiResponse<CertificateResponse>(apiResponse);
       this.showCertificateModal = true;
       this.cdr.markForCheck();
     } catch (err: any) {
       console.error(err);
-      alert('No se pudo cargar el certificado. ' + (err.message || err));
+      this.toast.toastError('No se pudo cargar el certificado', err.message || 'Intenta nuevamente.');
     }
   }
 
@@ -168,8 +171,33 @@ export class LearningCourse implements OnInit {
 
   /** Normaliza la respuesta de la API, ya venga como texto o ya envuelta en { data } */
   private unwrap<T>(response: unknown): T | undefined {
-    const parsed =
-      typeof response === 'string' ? JSON.parse(response) : response;
-    return (parsed as { data?: T })?.data ?? (parsed as T);
+    return unwrapApiResponse<T>(response);
+  }
+
+  get currentIndex(): number {
+    if (!this.course || !this.selectedLesson) return -1;
+    return this.course.lessons.findIndex(l => l.idLesson === this.selectedLesson?.idLesson);
+  }
+
+  get hasNextLesson(): boolean {
+    if (!this.course) return false;
+    return this.currentIndex >= 0 && this.currentIndex < this.course.lessons.length - 1;
+  }
+
+  get hasPrevLesson(): boolean {
+    if (!this.course) return false;
+    return this.currentIndex > 0;
+  }
+
+  goNextLesson(): void {
+    if (this.hasNextLesson && this.course) {
+      this.onLessonSelected(this.course.lessons[this.currentIndex + 1]);
+    }
+  }
+
+  goPrevLesson(): void {
+    if (this.hasPrevLesson && this.course) {
+      this.onLessonSelected(this.course.lessons[this.currentIndex - 1]);
+    }
   }
 }

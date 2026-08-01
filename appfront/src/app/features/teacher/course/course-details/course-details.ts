@@ -30,6 +30,7 @@ import { deleteCourse, updateCourse, UpdateCourse$Params } from '../../../../api
 import { getAll1 } from '../../../../api/functions';
 @Component({
   selector: 'app-course-details',
+  standalone: true,
   imports: [
     CommonModule,
     DialogModule,

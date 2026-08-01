@@ -7,6 +7,7 @@ import { updateCategory } from '../../../../api/fn/category-controller/update-ca
 import { deleteCategory } from '../../../../api/fn/category-controller/delete-category';
 import { CategoryResponse } from '../../../../api/models/category-response';
 import { MessageToast } from '../../../../message/message-toast';
+import { unwrapApiResponse } from '../../../../core/utils/api-response';
 
 @Component({
   selector: 'app-admin-categories',
@@ -45,7 +46,7 @@ export class AdminCategoriesComponent implements OnInit {
 
   initForm() {
     this.categoryForm = this.fb.group({
-      name:        ['', [Validators.required, Validators.minLength(2), Validators.maxLength(60)]],
+      name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(60)]],
       description: ['', [Validators.maxLength(200)]]
     });
   }
@@ -60,15 +61,9 @@ export class AdminCategoriesComponent implements OnInit {
   loadCategories() {
     this.loading = true;
     this.cdr.detectChanges();
-    this.api.invoke(getAllCategories).then((response: any) => {
-      const parsed = typeof response === 'string' ? JSON.parse(response) : response;
-      if (Array.isArray(parsed)) {
-        this.categories = parsed;
-      } else if (parsed.data) {
-        this.categories = parsed.data;
-      } else {
-        this.categories = [];
-      }
+    this.api.invoke(getAllCategories).then((response: unknown) => {
+      const categories = unwrapApiResponse<CategoryResponse[]>(response);
+      this.categories = Array.isArray(categories) ? categories : [];
       this.applySearch();
     }).catch(err => {
       this.toast.toastError('Error', 'No se pudo cargar las categorías');
@@ -133,9 +128,8 @@ export class AdminCategoriesComponent implements OnInit {
       this.api.invoke(updateCategory, {
         idCategory: this.editingCategory.idCategory,
         body: { name, description }
-      }).then((resp: any) => {
-        const parsed = typeof resp === 'string' ? JSON.parse(resp) : resp;
-        const updated = parsed.data || parsed;
+      }).then((resp: unknown) => {
+        const updated = unwrapApiResponse<CategoryResponse>(resp);
         const idx = this.categories.findIndex(c => c.idCategory === this.editingCategory!.idCategory);
         if (idx !== -1) this.categories[idx] = { ...this.categories[idx], ...updated };
         this.applySearch();
@@ -148,9 +142,8 @@ export class AdminCategoriesComponent implements OnInit {
     } else {
       this.api.invoke(insertCategory, {
         body: { name, description }
-      }).then((resp: any) => {
-        const parsed = typeof resp === 'string' ? JSON.parse(resp) : resp;
-        const created = parsed.data || parsed;
+      }).then((resp: unknown) => {
+        const created = unwrapApiResponse<CategoryResponse>(resp);
         if (created) this.categories.unshift(created);
         this.applySearch();
         this.closeFormModal();
@@ -166,10 +159,12 @@ export class AdminCategoriesComponent implements OnInit {
     this.categoryToDelete = category;
     this.showDeleteModal = true;
   }
+
   closeDeleteModal() {
     this.showDeleteModal = false;
     this.categoryToDelete = null;
   }
+
   confirmDelete() {
     if (!this.categoryToDelete?.idCategory) return;
     this.actionLoading = true;

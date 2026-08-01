@@ -1,16 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, PLATFORM_ID, inject, HostListener } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { Router, RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { Sidebar } from '../../layout/sidebar/sidebar';
 import { Header } from '../../layout/header/header';
 import { Footer } from '../../layout/footer/footer';
 import { MenuItem } from 'primeng/api';
 import { AuthService } from '../../core/auth/auth.service';
-import { ToastModule } from "primeng/toast";
+import { ToastModule } from 'primeng/toast';
 import { MessageToast } from '../../message/message-toast';
 import { ThemeService } from '../../core/services/theme.service';
+
 type Role = 'ROLE_STUDENT' | 'ROLE_TEACHER' | 'ROLE_ADMIN';
+
 @Component({
   selector: 'app-dashboard-sell',
   imports: [CommonModule, RouterOutlet, Sidebar, Header, Footer, ToastModule],
@@ -27,8 +29,7 @@ export class DashboardSell implements OnInit {
   isMobile = false;
   private sidebarManuallyToggled = false;
 
-  constructor(private toast: MessageToast, private authService: AuthService) {
-  }
+  constructor(private toast: MessageToast, private authService: AuthService) { }
 
   studentMenu: MenuItem[] = [
     { label: 'Panel Principal', icon: 'pi pi-th-large', route: '/dashboard/my-courses' },
@@ -37,9 +38,8 @@ export class DashboardSell implements OnInit {
         { label: 'Certificados', icon: 'pi pi-trophy', route: '#' },
       ]
     },
-    { label: 'Mi perfil', icon: 'pi pi-user', route: '/dashboard/profile' },
-    { label: 'Configuracion', icon: 'pi pi-cog', route: '#' },
-    { label: 'Ayuda', icon: 'pi pi-question-circle', route: '#' }
+    { label: 'Mi perfil', icon: 'pi pi-user', route: '/dashboard/profile' }
+
   ];
 
   teacherMenu: MenuItem[] = [
@@ -59,10 +59,7 @@ export class DashboardSell implements OnInit {
       ]
     },
     { label: 'Mi Perfil', icon: 'pi pi-user', route: '/dashboard/profile-teacher' },
-    { label: 'Comentarios', icon: 'pi pi-comment', route: '#' },
-    { label: 'Certificados', icon: 'pi pi-trophy', route: '#' },
-    { label: 'Configuracion', icon: 'pi pi-cog', route: '#' },
-    { label: 'Ayuda', icon: 'pi pi-question-circle', route: '#' }
+    { label: 'Certificados', icon: 'pi pi-trophy', route: '#' }
   ];
 
   adminMenu: MenuItem[] = [
@@ -70,9 +67,7 @@ export class DashboardSell implements OnInit {
     { label: 'Usuarios', icon: 'pi pi-users', route: '/dashboard/admin/users' },
     { label: 'Cursos', icon: 'pi pi-book', route: '/dashboard/admin/courses' },
     { label: 'Categorías', icon: 'pi pi-tags', route: '/dashboard/admin/categories' },
-    { label: 'Inscripciones', icon: 'pi pi-id-card', route: '/dashboard/admin/enrollments' },
-    { label: 'Configuracion', icon: 'pi pi-cog', route: '#' },
-    { label: 'Ayuda', icon: 'pi pi-question-circle', route: '#' }
+    { label: 'Inscripciones', icon: 'pi pi-id-card', route: '/dashboard/admin/enrollments' }
   ];
 
   get menu() {
@@ -97,7 +92,6 @@ export class DashboardSell implements OnInit {
 
     this.checkScreenSize();
 
-    // Mostrar toast de bienvenida después de que el componente esté renderizado
     const welcome = sessionStorage.getItem('welcomeShown');
     if (!welcome) {
       setTimeout(() => {
@@ -108,7 +102,6 @@ export class DashboardSell implements OnInit {
       }, 300);
       sessionStorage.setItem('welcomeShown', 'true');
     }
-
   }
 
   @HostListener('window:resize')

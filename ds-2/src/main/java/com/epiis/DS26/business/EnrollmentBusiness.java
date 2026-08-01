@@ -92,6 +92,11 @@ public class EnrollmentBusiness {
 
     @Transactional
     public EntityEnrollment enrollInCourse(EnrollmentRequest request, GenericResponse message) {
+        if (request.getCourseId() == null || request.getCourseId().trim().isEmpty()) {
+            message.warning();
+            message.listMessage.add("El ID del curso es requerido para la inscripción");
+            return null;
+        }
         EntityUser student = authenticationBusiness.getCurrentUser();
         EntityCourse course = courseRepo.findById(request.getCourseId())
                 .orElse(null);

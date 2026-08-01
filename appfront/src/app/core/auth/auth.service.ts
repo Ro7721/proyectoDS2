@@ -4,6 +4,7 @@ import { Api } from '../../api/api';
 import { isPlatformBrowser } from '@angular/common';
 import { CurrentUser, LoginResponse, RefreshTokenResponse } from '../../models/auth.model';
 import { login, getCurrentUser1, refreshToken } from '../../api/functions';
+import { unwrapApiResponse } from '../utils/api-response';
 
 export type AppRole = 'ROLE_ADMIN' | 'ROLE_TEACHER' | 'ROLE_STUDENT';
 
@@ -17,22 +18,21 @@ export class AuthService {
   constructor(private api: Api) { }
 
   async login(email: string, password: string): Promise<LoginResponse> {
-    const rawResponse: any = await this.api.invoke(login, {
+    const rawResponse: unknown = await this.api.invoke(login, {
       body: {
         email,
         password
       }
     });
-    const response: LoginResponse = rawResponse.data ?? rawResponse;
+    const response = unwrapApiResponse<LoginResponse>(rawResponse);
     this.saveSession(response);
     return response;
   }
 
   // Traer el usuario actual para mostrar información en el header
   async getCurrentUser(): Promise<CurrentUser> {
-    const rawResponse: any = await this.api.invoke(getCurrentUser1, {});
-    const response: CurrentUser = rawResponse.data ?? rawResponse;
-    return response;
+    const rawResponse: unknown = await this.api.invoke(getCurrentUser1, {});
+    return unwrapApiResponse<CurrentUser>(rawResponse);
   }
   //Verifica si el usuario esta autenticado
   async ensureAuthenticated(): Promise<boolean> {
@@ -52,10 +52,10 @@ export class AuthService {
     const storedRefreshToken = this.refreshToken;
     if (!storedRefreshToken) return null;
 
-    const rawResponse: any = await this.api.invoke(refreshToken, {
+    const rawResponse: unknown = await this.api.invoke(refreshToken, {
       body: { refreshToken: storedRefreshToken },
     });
-    const response: RefreshTokenResponse = rawResponse.data ?? rawResponse;
+    const response = unwrapApiResponse<RefreshTokenResponse>(rawResponse);
 
     if (this.isBrowser()) {
       localStorage.setItem('accessToken', response.accessToken);

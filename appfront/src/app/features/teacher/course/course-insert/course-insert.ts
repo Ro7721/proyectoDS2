@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 
 // PrimeNG imports
 import { InputTextModule } from 'primeng/inputtext';
@@ -21,7 +22,6 @@ import {
 } from '../../../../api/functions';
 import { LessonInsert, LessonFormPayload } from '../lesson-insert/lesson-insert';
 import { MessageToast } from '../../../../message/message-toast';
-// ─── Interfaces ────────────────────────────────────────────────────────────────
 
 interface Category {
   idCategory: string;
@@ -34,8 +34,22 @@ interface LessonDisplay extends LessonFormPayload {
   saved: boolean;
 }
 
-// ─── Component ─────────────────────────────────────────────────────────────────
+export function noNumbers(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value: string = (control.value ?? '').trim();
+    return value.length > 0 && /^\d+$/.test(value) ? { noNumbers: true } : null;
+  };
+}
 
+export function noWhitespaceOnly(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value: string = control.value ?? '';
+    if (value.length > 0 && value.trim().length === 0) {
+      return { whitespaceOnly: true };
+    }
+    return null;
+  };
+}
 @Component({
   selector: 'app-course-insert',
   standalone: true,
@@ -61,6 +75,7 @@ export class CourseInsert implements OnInit {
 
   private cdr = inject(ChangeDetectorRef);
   private authService = inject(AuthService);
+  private router = inject(Router);
 
   // ── Curso ──────────────────────────────────────────────────────────────────
   courseForm: FormGroup;
@@ -95,8 +110,8 @@ export class CourseInsert implements OnInit {
     private messageToast: MessageToast,
   ) {
     this.courseForm = this.fb.group({
-      courseTitle: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(100)]],
-      courseDescription: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
+      courseTitle: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(100), noNumbers(), noWhitespaceOnly()]],
+      courseDescription: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500), noNumbers(), noWhitespaceOnly()]],
       selectedCategoryId: [null, Validators.required],
       courseLevel: ['', Validators.required],
       coursePrice: [0, [Validators.required, Validators.min(0), Validators.max(10000)]],
@@ -258,9 +273,9 @@ export class CourseInsert implements OnInit {
         `"${formValue.courseTitle}" fue ${label} exitosamente`,
       );
 
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
-      this.messageToast.toastError('Error al guardar', 'Ocurrió un problema al procesar el curso. Intenta de nuevo.');
+      this.messageToast.toastApiError(e?.error, 'Error al guardar el curso');
     } finally {
       this.loading = false;
       this.cdr.detectChanges();
@@ -331,6 +346,16 @@ export class CourseInsert implements OnInit {
       case 'VIDEO': return 'Video';
       case 'PDF': return 'Documento';
       default: return 'Recurso';
+    }
+  }
+
+  goBack(): void {
+    if (this.courseForm.dirty || this.listLessons.length > 0) {
+      if (confirm('Tienes cambios sin guardar. ¿Estás seguro de que quieres salir?')) {
+        this.router.navigate(['/dashboard/overview-teacher']);
+      }
+    } else {
+      this.router.navigate(['/dashboard/overview-teacher']);
     }
   }
 

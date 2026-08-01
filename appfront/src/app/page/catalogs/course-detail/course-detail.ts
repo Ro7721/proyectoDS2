@@ -5,10 +5,12 @@ import { CourseResponse } from '../../../models/course.model';
 import { getById1, enrollInCourse, EnrollInCourse$Params, checkEnrollment } from '../../../api/functions';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../core/auth/auth.service';
+import { RouterModule } from '@angular/router';
+import { getApiMessage } from '../../../core/utils/api-response';
 
 @Component({
   selector: 'app-course-detail',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './course-detail.html',
   styleUrl: './course-detail.css',
 })
@@ -81,16 +83,9 @@ export class CourseDetail implements OnInit {
       this.enrolled = true;
       this.enrolling = false;
       this.changeDetectorRef.detectChanges();
-
-      // Redirigir a "Mis Cursos" después de mostrar el mensaje de éxito
-      setTimeout(() => {
-        this.router.navigate([this.authService.getRoleHomeUrl()]);
-      }, 1500);
     } catch (error: any) {
       console.error('Error al inscribirse:', error);
-      const err = error?.error;
-      const messages = err?.response?.listMessage;
-      this.enrollError = messages?.length ? messages[0] : (err?.message || 'Error al inscribirse. Intenta de nuevo.');
+      this.enrollError = getApiMessage(error?.error, 'Error al inscribirse. Intenta de nuevo.');
       this.enrolling = false;
       this.changeDetectorRef.detectChanges();
     }

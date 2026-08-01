@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, firstValueFrom } from 'rxjs';
 import { Api } from '../../../../api/api';
@@ -65,6 +66,7 @@ export class LessonGetall implements OnInit {
   private fb = inject(FormBuilder);
   private confirmationService = inject(ConfirmationService);
   private messageToast = inject(MessageToast);
+  private router = inject(Router);
 
   teacherId = this.authService.user?.idUser || '';
   loading = true;
@@ -327,5 +329,9 @@ export class LessonGetall implements OnInit {
   // Opcional: también para archivos
   trackByFileId(index: number, file: FileRow): string {
     return file.idFile || index.toString();
+  }
+
+  goBack(): void {
+    this.router.navigate(['/dashboard/overview-teacher']);
   }
 }

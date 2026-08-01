@@ -15,4 +15,6 @@ public interface CategoryRepo extends JpaRepository<EntityCategory, String> {
             WHERE (:name IS NULL OR LOWER(c.name) LIKE LOWER(CONCAT('%', :name, '%')))
             """)
     List<EntityCategory> searchByName(@Param("name") String name);
+
+    boolean existsByNameIgnoreCase(String name);
 }

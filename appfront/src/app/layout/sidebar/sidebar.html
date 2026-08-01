@@ -1,15 +1,17 @@
-<aside
+<aside aria-label="Navegación principal"
     class="bg-white/80 backdrop-blur-xl border-r border-gray-200 h-full flex flex-col transition-all duration-300 ease-in-out shadow-sm overflow-y-auto overflow-x-hidden"
-    [ngClass]="isCollapsed? 'w-20' : 'w-72'">
+    [ngClass]="isCollapsed? 'w-20' : 'w-[min(18rem,85vw)] lg:w-72'">
 
     <!-- Logo + Rol -->
     <div class="py-6 border-b border-gray-100" [ngClass]="isCollapsed? 'px-2' : 'px-6'">
-        <div class="flex items-center gap-3 mb-8" [ngClass]="isCollapsed? 'justify-center' : ''">
-            <div class="w-9 h-9 rounded-full bg-green-500 flex items-center justify-center text-white shadow-sm ml-3">
+        <div class="flex items-center gap-3 mb-8 cursor-pointer rounded-lg hover:bg-gray-100"
+            [ngClass]="isCollapsed? 'justify-center' : ''" (click)="returnHome()">
+            <div class="w-9 h-9 rounded-full bg-green-500 flex items-center justify-center text-white shadow-sm"
+                [ngClass]="isCollapsed ? '' : 'ml-3'">
                 <i class="pi pi-check text-sm font-bold"></i>
             </div>
-            <div *ngIf="!isCollapsed">
-                <span class="text-xl font-bold text-gray-900">Edulearning</span>
+            <div *ngIf="!isCollapsed" class="min-w-0">
+                <span class="text-xl font-bold text-gray-900 truncate block">Edulearning</span>
                 <div class="flex items-center gap-1 mt-1">
                     <i class="pi pi-shield text-xs"
                         [ngClass]="role === 'ROLE_TEACHER'? 'text-purple-500' : role === 'ROLE_ADMIN'? 'text-red-500' : 'text-green-500'"></i>
@@ -25,7 +27,6 @@
         <nav class="space-y-1">
             <div *ngFor="let item of menu">
 
-                <!-- ITEM SIMPLE -->
                 <a *ngIf="!item.items?.length" [routerLink]="item['route']" routerLinkActive="active-link"
                     (click)="onItemClick($event)"
                     class="flex items-center gap-3 py-3 rounded-xl text-gray-600 hover:bg-gray-100 hover:text-[#3A9E5F] transition-all duration-200 font-medium group"
@@ -35,7 +36,6 @@
                     <span *ngIf="!isCollapsed" class="truncate">{{ item.label }}</span>
                 </a>
 
-                <!-- ITEM CON SUBMENU -->
                 <div *ngIf="item.items?.length">
                     <div class="flex items-center py-3 rounded-xl cursor-pointer hover:bg-gray-100 transition-all"
                         [ngClass]="{
@@ -44,12 +44,12 @@
                             'justify-between px-4':!isCollapsed
                         }" (click)="toggleSubmenu(item.label!, $event)">
 
-                        <div class="flex items-center gap-3">
-                            <i [class]="item.icon || ''" class="text-lg"></i>
-                            <span *ngIf="!isCollapsed">{{ item.label }}</span>
+                        <div class="flex items-center gap-3 min-w-0">
+                            <i [class]="item.icon || ''" class="text-lg shrink-0"></i>
+                            <span *ngIf="!isCollapsed" class="truncate">{{ item.label }}</span>
                         </div>
 
-                        <i *ngIf="!isCollapsed" class="pi pi-chevron-right transition-transform duration-200"
+                        <i *ngIf="!isCollapsed" class="pi pi-chevron-right transition-transform duration-200 shrink-0"
                             [ngClass]="isOpen(item.label!) ? 'rotate-90' : 'rotate-0'">
                         </i>
                     </div>
@@ -60,8 +60,8 @@
                             <a *ngFor="let child of item.items" [routerLink]="child['route']"
                                 routerLinkActive="active-link"
                                 class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100 hover:text-[#3A9E5F] transition">
-                                <i [class]="child.icon || ''" class="text-base"></i>
-                                <span>{{ child.label }}</span>
+                                <i [class]="child.icon || ''" class="text-base shrink-0"></i>
+                                <span class="truncate">{{ child.label }}</span>
                             </a>
                         </div>
                     </div>

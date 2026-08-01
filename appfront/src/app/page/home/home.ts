@@ -56,15 +56,29 @@ export class Home implements OnInit {
     }
   }
 
-  goToMyCourses() {
+  goToDashboard() {
     this.profileOpen = false;
     if (!this.authService.isAuthenticated()) {
       this.router.navigate(['/auth/login'], {
-        queryParams: { returnUrl: '/dashboard/my-courses' }
+        queryParams: { returnUrl: '/' }
       });
       return;
     }
-    this.router.navigate(['/dashboard/my-courses']);
+    this.router.navigate(this.authService.getRoleHomeUrl());
+  }
+
+  get dashboardLabel(): string {
+    const role = this.authService.currentRole;
+    if (role === 'ROLE_ADMIN') return 'Gestión';
+    if (role === 'ROLE_TEACHER') return 'Panel Docente';
+    return 'Mis Cursos';
+  }
+
+  get dashboardIcon(): string {
+    const role = this.authService.currentRole;
+    if (role === 'ROLE_ADMIN') return 'admin_panel_settings';
+    if (role === 'ROLE_TEACHER') return 'dashboard';
+    return 'school';
   }
 
   logout() {

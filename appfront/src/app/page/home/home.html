@@ -63,10 +63,10 @@
                             </p>
                             <p class="text-xs text-gray-500 truncate">{{ authService.user?.email }}</p>
                         </div>
-                        <button (click)="goToMyCourses()"
+                        <button (click)="goToDashboard()"
                             class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition">
-                            <mat-icon class="text-[#3A9E5F] text-[20px]">school</mat-icon>
-                            Mis Cursos
+                            <mat-icon class="text-[#3A9E5F] text-[20px]">{{ dashboardIcon }}</mat-icon>
+                            {{ dashboardLabel }}
                         </button>
                         <div class="border-t border-gray-100 mt-1 pt-1">
                             <button (click)="logout()"
@@ -103,8 +103,7 @@
 
             <ng-container *ngIf="authService.isAuthenticated()">
                 <div class="h-[1px] bg-gray-100 my-2"></div>
-                <button (click)="goToMyCourses(); toggleMenu()" class="block w-full text-left py-2 text-gray-700">Mis
-                    Cursos</button>
+                <button (click)="goToDashboard(); toggleMenu()" class="block w-full text-left py-2 text-gray-700">{{ dashboardLabel }}</button>
                 <button (click)="logout(); toggleMenu()" class="block w-full text-left py-2 text-red-600">Cerrar
                     Sesión</button>
             </ng-container>

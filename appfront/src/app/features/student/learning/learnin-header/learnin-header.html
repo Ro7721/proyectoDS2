@@ -1,4 +1,11 @@
-<header class="course-header">
+<header class="course-header" style="position: relative;">
+    <!-- Botón Volver -->
+    <div style="position: absolute; top: 16px; left: 16px; z-index: 10;">
+        <button type="button" (click)="goBack()" class="flex items-center gap-2 bg-black/30 hover:bg-black/50 text-white px-4 py-2 rounded-lg backdrop-blur-sm transition border-none cursor-pointer">
+            <span class="material-icons" style="font-size: 18px;">arrow_back</span> Volver a mis cursos
+        </button>
+    </div>
+
     <div class="course-cover">
         <img [src]="course.coverImage" [alt]="course.title">
         <div class="overlay"></div>
