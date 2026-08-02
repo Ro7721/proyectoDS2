@@ -7,11 +7,11 @@
         <div class="flex flex-col gap-5 w-full md:w-[420px] flex-shrink-0">
 
             <div class="flex flex-col gap-1.5">
-                <label class="text-sm font-medium text-gray-700"
+                <label for="lessonTitle" class="text-sm font-medium text-gray-700"
                     [ngClass]="{'text-red-500': isFieldInvalid('title')}">
                     Título <span class="text-red-400">*</span>
                 </label>
-                <input pInputText formControlName="title" placeholder="Ej: Introducción al curso" class="w-full"
+                <input id="lessonTitle" pInputText formControlName="title" placeholder="Ej: Introducción al curso" class="w-full"
                     [ngClass]="{'border-red-400': isFieldInvalid('title')}" />
                 <div *ngIf="isFieldInvalid('title')" class="mt-1 space-y-0.5">
                     <p *ngIf="f['title'].errors?.['required']" class="text-xs text-red-500">El título es requerido.</p>
@@ -24,17 +24,17 @@
             </div>
 
             <div class="flex flex-col gap-1.5">
-                <label class="text-sm font-medium text-gray-700">Tipo <span class="text-red-400">*</span></label>
-                <p-select formControlName="type" [options]="lessonTypeOptions" optionLabel="label" optionValue="value"
+                <label for="lessonType" class="text-sm font-medium text-gray-700">Tipo <span class="text-red-400">*</span></label>
+                <p-select inputId="lessonType" formControlName="type" [options]="lessonTypeOptions" optionLabel="label" optionValue="value"
                     class="w-full" />
             </div>
 
             <div class="flex flex-col gap-1.5">
-                <label class="text-sm font-medium text-gray-700"
+                <label for="lessonContenUrl" class="text-sm font-medium text-gray-700"
                     [ngClass]="{'text-red-500': isFieldInvalid('contenUrl')}">
                     Link del contenido <span class="text-gray-400 font-normal">(opcional)</span>
                 </label>
-                <input pInputText formControlName="contenUrl" placeholder="https://youtube.com, Drive, recurso externo..."
+                <input id="lessonContenUrl" pInputText formControlName="contenUrl" placeholder="https://youtube.com, Drive, recurso externo..."
                     class="w-full" [ngClass]="{'border-red-400': isFieldInvalid('contenUrl')}" />
                 <p class="text-xs text-gray-400">Puedes dejarlo vacío si cargarás el material después.</p>
                 <div *ngIf="isFieldInvalid('contenUrl')" class="mt-1 space-y-0.5">
@@ -74,11 +74,11 @@
             </div>
 
             <div class="flex flex-col gap-1.5">
-                <label class="text-sm font-medium text-gray-700"
+                <label for="lessonDescription" class="text-sm font-medium text-gray-700"
                     [ngClass]="{'text-red-500': isFieldInvalid('description')}">
                     Descripción <span class="text-red-400">*</span>
                 </label>
-                <textarea pTextarea formControlName="description" rows="3"
+                <textarea id="lessonDescription" pTextarea formControlName="description" rows="3"
                     placeholder="Breve descripción de la lección..." class="w-full resize-none"
                     [ngClass]="{'border-red-400': isFieldInvalid('description')}">
                 </textarea>

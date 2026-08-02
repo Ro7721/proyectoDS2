@@ -94,16 +94,16 @@
         <!-- Personal Info Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div class="space-y-2">
-            <label class="block text-sm font-semibold text-gray-700">Nombres <span class="text-red-500">*</span></label>
-            <input type="text" formControlName="firstName"
+            <label for="profileFirstName" class="block text-sm font-semibold text-gray-700">Nombres <span class="text-red-500">*</span></label>
+            <input id="profileFirstName" type="text" formControlName="firstName"
               class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none"
               placeholder="Tus nombres">
           </div>
 
           <div class="space-y-2">
-            <label class="block text-sm font-semibold text-gray-700">Apellidos <span
+            <label for="profileSurName" class="block text-sm font-semibold text-gray-700">Apellidos <span
                 class="text-red-500">*</span></label>
-            <input type="text" formControlName="surName"
+            <input id="profileSurName" type="text" formControlName="surName"
               class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none"
               placeholder="Tus apellidos">
           </div>
@@ -111,11 +111,11 @@
 
         <!-- Account Info -->
         <div class="space-y-2">
-          <label class="block text-sm font-semibold text-gray-700">Correo Electrónico <span
+          <label for="profileEmail" class="block text-sm font-semibold text-gray-700">Correo Electrónico <span
               class="text-red-500">*</span></label>
           <div class="relative">
             <span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">email</span>
-            <input type="email" formControlName="email"
+            <input id="profileEmail" type="email" formControlName="email"
               class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none"
               placeholder="tu@correo.com">
           </div>
@@ -127,10 +127,10 @@
           <p class="text-xs text-gray-500 mb-4">Deja este campo en blanco si no deseas cambiar tu contraseña actual.</p>
 
           <div class="space-y-2">
-            <label class="block text-sm font-semibold text-gray-700">Nueva Contraseña</label>
+            <label for="profilePassword" class="block text-sm font-semibold text-gray-700">Nueva Contraseña</label>
             <div class="relative">
               <span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">lock_reset</span>
-              <input type="password" formControlName="password"
+              <input id="profilePassword" type="password" formControlName="password"
                 class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none"
                 placeholder="Min. 8 caracteres (Opcional)">
             </div>

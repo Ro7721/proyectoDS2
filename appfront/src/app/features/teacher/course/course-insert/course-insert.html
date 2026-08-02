@@ -38,7 +38,7 @@
 
           <div *ngIf="!coverImagePreview"
             class="group flex h-52 w-full cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 transition-all hover:border-green-400 hover:bg-green-50"
-            (click)="coverInput.click()" (dragover)="$event.preventDefault()" (drop)="onCoverDrop($event)">
+            (click)="coverInput.click()" (keydown.enter)="coverInput.click()" tabindex="0" (dragover)="$event.preventDefault()" (drop)="onCoverDrop($event)">
             <div
               class="flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-gray-200 group-hover:ring-green-300">
               <i class="pi pi-cloud-upload text-xl text-gray-400 group-hover:text-green-500"></i>
@@ -51,7 +51,7 @@
 
           <div *ngIf="coverImagePreview"
             class="group relative h-52 w-full cursor-pointer overflow-hidden rounded-xl border border-gray-200"
-            (click)="coverInput.click()">
+            (click)="coverInput.click()" (keydown.enter)="coverInput.click()" tabindex="0">
             <img [src]="coverImagePreview" alt="Portada" class="h-full w-full object-cover" />
             <div
               class="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
@@ -71,11 +71,11 @@
 
             <!-- Título -->
             <div class="flex flex-col gap-1.5">
-              <label class="text-sm font-medium text-gray-700"
+              <label for="courseTitle" class="text-sm font-medium text-gray-700"
                 [ngClass]="{'text-red-500': isFieldInvalid('courseTitle')}">
                 Título del curso <span class="text-red-400">*</span>
               </label>
-              <input pInputText formControlName="courseTitle" placeholder="Ej: Diseño Web con Tailwind CSS"
+              <input id="courseTitle" pInputText formControlName="courseTitle" placeholder="Ej: Diseño Web con Tailwind CSS"
                 class="w-full"
                 [ngClass]="{'border-red-400': isFieldInvalid('courseTitle')}" />
               <div *ngIf="isFieldInvalid('courseTitle')" class="mt-1 space-y-0.5">
@@ -90,11 +90,11 @@
 
             <!-- Descripción -->
             <div class="flex flex-col gap-1.5">
-              <label class="text-sm font-medium text-gray-700"
+              <label for="courseDescription" class="text-sm font-medium text-gray-700"
                 [ngClass]="{'text-red-500': isFieldInvalid('courseDescription')}">
                 Descripción <span class="text-red-400">*</span>
               </label>
-              <textarea pTextarea formControlName="courseDescription" rows="4"
+              <textarea id="courseDescription" pTextarea formControlName="courseDescription" rows="4"
                 placeholder="Describe el contenido y objetivos del curso..." class="w-full resize-none"
                 [ngClass]="{'border-red-400': isFieldInvalid('courseDescription')}">
               </textarea>
@@ -120,11 +120,11 @@
             <!-- Categoría y Nivel -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div class="flex flex-col gap-1.5">
-                <label class="text-sm font-medium text-gray-700"
+                <label for="selectedCategoryId" class="text-sm font-medium text-gray-700"
                   [ngClass]="{'text-red-500': isFieldInvalid('selectedCategoryId')}">
                   Categoría <span class="text-red-400">*</span>
                 </label>
-                <p-select formControlName="selectedCategoryId" [options]="listCategories" optionLabel="name"
+                <p-select inputId="selectedCategoryId" formControlName="selectedCategoryId" [options]="listCategories" optionLabel="name"
                   optionValue="idCategory" placeholder="Seleccionar" class="w-full"
                   [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('selectedCategoryId')}" />
                 <p *ngIf="isFieldInvalid('selectedCategoryId')" class="mt-1 text-xs text-red-500">
@@ -132,11 +132,11 @@
                 </p>
               </div>
               <div class="flex flex-col gap-1.5">
-                <label class="text-sm font-medium text-gray-700"
+                <label for="courseLevel" class="text-sm font-medium text-gray-700"
                   [ngClass]="{'text-red-500': isFieldInvalid('courseLevel')}">
                   Nivel <span class="text-red-400">*</span>
                 </label>
-                <p-select formControlName="courseLevel" [options]="levelOptions" optionLabel="label" optionValue="value"
+                <p-select inputId="courseLevel" formControlName="courseLevel" [options]="levelOptions" optionLabel="label" optionValue="value"
                   placeholder="Seleccionar" class="w-full"
                   [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('courseLevel')}" />
                 <p *ngIf="isFieldInvalid('courseLevel')" class="mt-1 text-xs text-red-500">
@@ -147,11 +147,11 @@
 
             <!-- Precio -->
             <div class="flex flex-col gap-1.5">
-              <label class="text-sm font-medium text-gray-700"
+              <label for="coursePrice" class="text-sm font-medium text-gray-700"
                 [ngClass]="{'text-red-500': isFieldInvalid('coursePrice')}">
                 Precio (USD) <span class="text-red-400">*</span>
               </label>
-              <p-inputNumber formControlName="coursePrice" mode="currency" currency="USD" locale="en-US" [min]="0"
+              <p-inputNumber inputId="coursePrice" formControlName="coursePrice" mode="currency" currency="USD" locale="en-US" [min]="0"
                 placeholder="0.00" class="w-full" [inputStyle]="{'width':'100%'}"
                 [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('coursePrice')}" />
               <div *ngIf="isFieldInvalid('coursePrice')" class="mt-1 space-y-0.5">

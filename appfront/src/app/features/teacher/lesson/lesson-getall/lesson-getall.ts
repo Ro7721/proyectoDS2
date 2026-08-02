@@ -1,9 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, firstValueFrom } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { Api } from '../../../../api/api';
 import { findByTeacher, getLessonsByTeacher, delete$ } from '../../../../api/functions';
 import { AuthService } from '../../../../core/auth/auth.service';
@@ -21,7 +20,7 @@ import { SplitButtonModule } from 'primeng/splitbutton';
 import { TagModule } from 'primeng/tag';
 import { ToolbarModule } from 'primeng/toolbar';
 import { TooltipModule } from 'primeng/tooltip';
-import { ConfirmationService, MenuItem } from 'primeng/api';
+import { ConfirmationService } from 'primeng/api';
 import { ToastModule } from "primeng/toast";
 
 interface LessonRow extends LessonResponse {
@@ -60,13 +59,13 @@ interface FileRow extends FileResponse {
   styleUrl: './lesson-getall.css',
 })
 export class LessonGetall implements OnInit {
-  private api = inject(Api);
-  private authService = inject(AuthService);
-  private cdr = inject(ChangeDetectorRef);
-  private fb = inject(FormBuilder);
-  private confirmationService = inject(ConfirmationService);
-  private messageToast = inject(MessageToast);
-  private router = inject(Router);
+  private readonly api = inject(Api);
+  private readonly authService = inject(AuthService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly fb = inject(FormBuilder);
+  private readonly confirmationService = inject(ConfirmationService);
+  private readonly messageToast = inject(MessageToast);
+  private readonly router = inject(Router);
 
   teacherId = this.authService.user?.idUser || '';
   loading = true;
@@ -153,11 +152,14 @@ export class LessonGetall implements OnInit {
   }
 
   private normalizeLessons(payload: any): LessonRow[] {
-    const rawItems =
-      Array.isArray(payload?.data) ? payload.data :
-        Array.isArray(payload) ? payload :
-          Array.isArray(payload?.lessons) ? payload.lessons :
-            [];
+    let rawItems: any[] = [];
+    if (Array.isArray(payload?.data)) {
+      rawItems = payload.data;
+    } else if (Array.isArray(payload)) {
+      rawItems = payload;
+    } else if (Array.isArray(payload?.lessons)) {
+      rawItems = payload.lessons;
+    }
 
     return rawItems.map((item: any) => {
       const courseId = String(item.courseId ?? item.idCourse ?? '');
@@ -278,7 +280,7 @@ export class LessonGetall implements OnInit {
       const responseData = await this.api.invoke<any, any>(delete$, {
         idLesson: lesson.idLesson,
       });
-      if (responseData && responseData.response && responseData.response.type === "success") {
+      if (responseData?.response?.type === "success") {
         this.lessons = this.lessons.filter((item) => item.idLesson !== lesson.idLesson);
         this.applyFilters();
         this.messageToast.toastSuccess('Lección eliminada', `"${lesson.title}" fue eliminada correctamente.`);

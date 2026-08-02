@@ -12,10 +12,10 @@ export type AppRole = 'ROLE_ADMIN' | 'ROLE_TEACHER' | 'ROLE_STUDENT';
   providedIn: 'root',
 })
 export class AuthService {
-  private router = inject(Router);
-  private plataformId = inject(PLATFORM_ID);
+  private readonly router = inject(Router);
+  private readonly plataformId = inject(PLATFORM_ID);
   private isBrowser = () => isPlatformBrowser(this.plataformId);
-  constructor(private api: Api) { }
+  constructor(private readonly api: Api) { }
 
   async login(email: string, password: string): Promise<LoginResponse> {
     const rawResponse: unknown = await this.api.invoke(login, {
@@ -218,11 +218,14 @@ export class AuthService {
 
     try {
       const payload = token.split('.')[1];
-      const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+      const base64 = payload.replaceAll('-', '+').replaceAll('_', '/');
       const json = decodeURIComponent(
         atob(base64)
           .split('')
-          .map((char) => `%${`00${char.charCodeAt(0).toString(16)}`.slice(-2)}`)
+          .map((char) => {
+            const hex = char.codePointAt(0)?.toString(16) || '00';
+            return '%' + ('00' + hex).slice(-2);
+          })
           .join(''),
       );
 

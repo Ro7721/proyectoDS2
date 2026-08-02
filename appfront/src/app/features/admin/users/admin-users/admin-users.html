@@ -15,17 +15,20 @@
   <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
     <div class="relative flex-1 min-w-0 sm:min-w-[200px] sm:max-w-xs">
       <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-      <input type="text" [value]="searchQuery" (input)="onSearch($event)" placeholder="Buscar por nombre o correo..."
+      <label for="searchInput" class="sr-only">Buscar usuarios</label>
+      <input id="searchInput" type="text" [value]="searchQuery" (input)="onSearch($event)" placeholder="Buscar por nombre o correo..."
         class="w-full pl-9 pr-4 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
     </div>
-    <select (change)="onFilterRole($event)"
+    <label for="roleFilter" class="sr-only">Filtrar por rol</label>
+    <select id="roleFilter" (change)="onFilterRole($event)"
       class="py-2 pl-3 pr-8 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 text-gray-700 w-full sm:w-auto">
       <option value="">Todos los roles</option>
       <option value="ROLE_ADMIN">Administrador</option>
       <option value="ROLE_TEACHER">Docente</option>
       <option value="ROLE_STUDENT">Estudiante</option>
     </select>
-    <select (change)="onFilterStatus($event)"
+    <label for="statusFilter" class="sr-only">Filtrar por estado</label>
+    <select id="statusFilter" (change)="onFilterStatus($event)"
       class="py-2 pl-3 pr-8 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 text-gray-700 w-full sm:w-auto">
       <option value="">Todos los estados</option>
       <option value="true">Activos</option>
@@ -57,7 +60,7 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100">
-            <tr *ngFor="let user of filteredUsers" class="hover:bg-gray-50/40 transition-colors group">
+            <tr *ngFor="let user of paginatedUsers" class="hover:bg-gray-50/40 transition-colors group">
               <td class="px-5 py-3.5">
                 <div class="flex items-center gap-3">
                   <div class="h-9 w-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold"
@@ -135,7 +138,7 @@
 
     <!-- Mobile Cards -->
     <div class="md:hidden space-y-3">
-      <div *ngFor="let user of filteredUsers" class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
+      <div *ngFor="let user of paginatedUsers" class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
         <div class="flex items-start justify-between gap-3">
           <div class="flex items-center gap-3 min-w-0">
             <div class="h-10 w-10 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold"
@@ -186,13 +189,43 @@
       </div>
     </div>
 
-    <p class="text-xs text-gray-400 text-right">{{ filteredUsers.length }} de {{ users.length }} usuarios</p>
+    <!-- Pagination -->
+    <div *ngIf="totalPages > 1" class="flex items-center justify-between gap-3 flex-wrap">
+      <p class="text-xs text-gray-400">
+        Página {{ currentPage }} de {{ totalPages }} &mdash; {{ filteredUsers.length }} usuarios
+      </p>
+      <div class="flex items-center gap-1">
+        <!-- Prev -->
+        <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1"
+          class="w-8 h-8 flex items-center justify-center rounded-lg border text-sm transition-colors"
+          [ngClass]="currentPage === 1 ? 'border-gray-100 text-gray-300 cursor-not-allowed' : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
+          <i class="pi pi-chevron-left text-xs"></i>
+        </button>
+        <!-- Pages -->
+        <ng-container *ngFor="let p of pageNumbers">
+          <button (click)="goToPage(p)"
+            class="w-8 h-8 flex items-center justify-center rounded-lg border text-xs font-medium transition-colors"
+            [ngClass]="p === currentPage
+              ? 'bg-blue-600 border-blue-600 text-white shadow-sm'
+              : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
+            {{ p }}
+          </button>
+        </ng-container>
+        <!-- Next -->
+        <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages"
+          class="w-8 h-8 flex items-center justify-center rounded-lg border text-sm transition-colors"
+          [ngClass]="currentPage === totalPages ? 'border-gray-100 text-gray-300 cursor-not-allowed' : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
+          <i class="pi pi-chevron-right text-xs"></i>
+        </button>
+      </div>
+    </div>
+    <p class="text-xs text-gray-400 text-right" *ngIf="totalPages <= 1">{{ filteredUsers.length }} de {{ users.length }} usuarios</p>
   </ng-container>
 </div>
 
 <!-- ============ MODAL: EDITAR USUARIO ============ -->
-<div *ngIf="showEditModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 backdrop-blur-sm" (click)="closeEditModal()">
-  <div class="bg-white w-full sm:w-full sm:max-w-lg rounded-t-3xl sm:rounded-2xl shadow-2xl overflow-hidden" (click)="$event.stopPropagation()">
+<div *ngIf="showEditModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 backdrop-blur-sm" (click)="closeEditModal()" (keydown.enter)="closeEditModal()" tabindex="-1">
+  <div class="bg-white w-full sm:w-full sm:max-w-lg rounded-t-3xl sm:rounded-2xl shadow-2xl overflow-hidden" (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()">
     <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
       <h3 class="text-base font-bold text-gray-900">Editar Usuario</h3>
       <button (click)="closeEditModal()" class="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
@@ -204,10 +237,10 @@
       <!-- Nombre + Apellido -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1.5">
+          <label for="editFirstName" class="block text-xs font-semibold text-gray-600 mb-1.5">
             Nombre <span class="text-red-500">*</span>
           </label>
-          <input type="text" formControlName="firstName" placeholder="Nombre"
+          <input id="editFirstName" type="text" formControlName="firstName" placeholder="Nombre"
             class="w-full px-3 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-1 transition-all"
             [ngClass]="isFieldInvalid('firstName')
               ? 'border-red-400 focus:border-red-400 focus:ring-red-200'
@@ -218,10 +251,10 @@
           </div>
         </div>
         <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1.5">
+          <label for="editSurName" class="block text-xs font-semibold text-gray-600 mb-1.5">
             Apellido <span class="text-red-500">*</span>
           </label>
-          <input type="text" formControlName="surName" placeholder="Apellido"
+          <input id="editSurName" type="text" formControlName="surName" placeholder="Apellido"
             class="w-full px-3 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-1 transition-all"
             [ngClass]="isFieldInvalid('surName')
               ? 'border-red-400 focus:border-red-400 focus:ring-red-200'
@@ -235,10 +268,10 @@
 
       <!-- Email -->
       <div>
-        <label class="block text-xs font-semibold text-gray-600 mb-1.5">
+        <label for="editEmail" class="block text-xs font-semibold text-gray-600 mb-1.5">
           Correo electrónico <span class="text-red-500">*</span>
         </label>
-        <input type="email" formControlName="email" placeholder="correo@ejemplo.com"
+        <input id="editEmail" type="email" formControlName="email" placeholder="correo@ejemplo.com"
           class="w-full px-3 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-1 transition-all"
           [ngClass]="isFieldInvalid('email')
             ? 'border-red-400 focus:border-red-400 focus:ring-red-200'
@@ -251,11 +284,11 @@
 
       <!-- Password (opcional) -->
       <div>
-        <label class="block text-xs font-semibold text-gray-600 mb-1.5">
+        <label for="editPassword" class="block text-xs font-semibold text-gray-600 mb-1.5">
           Nueva contraseña
           <span class="font-normal text-gray-400">(dejar vacío para no cambiar)</span>
         </label>
-        <input type="password" formControlName="password" placeholder="Nueva contraseña"
+        <input id="editPassword" type="password" formControlName="password" placeholder="Nueva contraseña"
           class="w-full px-3 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-1 transition-all"
           [ngClass]="isFieldInvalid('password')
             ? 'border-red-400 focus:border-red-400 focus:ring-red-200'
@@ -305,8 +338,8 @@
 </div>
 
 <!-- ============ MODAL: ELIMINAR USUARIO ============ -->
-<div *ngIf="showDeleteModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 backdrop-blur-sm" (click)="closeDeleteModal()">
-  <div class="bg-white w-full sm:w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl shadow-2xl" (click)="$event.stopPropagation()">
+<div *ngIf="showDeleteModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 backdrop-blur-sm" (click)="closeDeleteModal()" (keydown.enter)="closeDeleteModal()" tabindex="-1">
+  <div class="bg-white w-full sm:w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl shadow-2xl" (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()">
     <div class="p-6 text-center">
       <div class="w-14 h-14 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
         <i class="pi pi-trash text-2xl text-red-500"></i>
@@ -333,8 +366,8 @@
 </div>
 
 <!-- ============ MODAL: CAMBIAR ROL ============ -->
-<div *ngIf="showRoleModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 backdrop-blur-sm" (click)="closeRoleModal()">
-  <div class="bg-white w-full sm:w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl shadow-2xl" (click)="$event.stopPropagation()">
+<div *ngIf="showRoleModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 backdrop-blur-sm" (click)="closeRoleModal()" (keydown.enter)="closeRoleModal()" tabindex="-1">
+  <div class="bg-white w-full sm:w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl shadow-2xl" (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()">
     <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
       <h3 class="text-base font-bold text-gray-900">Cambiar Rol</h3>
       <button (click)="closeRoleModal()" class="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
@@ -345,9 +378,9 @@
       <p class="text-sm text-gray-500 mb-1">
         Cambiando rol de <strong class="text-gray-800">{{ userToChangeRole?.firstName }} {{ userToChangeRole?.surName }}</strong>
       </p>
-      <label class="flex items-center gap-3 p-3 border-2 rounded-xl cursor-pointer transition-all"
+      <label class="flex items-center gap-3 p-3 border-2 rounded-xl cursor-pointer transition-all" tabindex="0"
         [ngClass]="newRole === 'ROLE_STUDENT' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'"
-        (click)="newRole = 'ROLE_STUDENT'">
+        (click)="newRole = 'ROLE_STUDENT'" (keydown.enter)="newRole = 'ROLE_STUDENT'">
         <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 flex-shrink-0">
           <i class="pi pi-user text-sm"></i>
         </div>
@@ -360,9 +393,9 @@
           <span *ngIf="newRole === 'ROLE_STUDENT'" class="w-1.5 h-1.5 rounded-full bg-white block"></span>
         </div>
       </label>
-      <label class="flex items-center gap-3 p-3 border-2 rounded-xl cursor-pointer transition-all"
+      <label class="flex items-center gap-3 p-3 border-2 rounded-xl cursor-pointer transition-all" tabindex="0"
         [ngClass]="newRole === 'ROLE_TEACHER' ? 'border-orange-500 bg-orange-50' : 'border-gray-200 hover:border-gray-300'"
-        (click)="newRole = 'ROLE_TEACHER'">
+        (click)="newRole = 'ROLE_TEACHER'" (keydown.enter)="newRole = 'ROLE_TEACHER'">
         <div class="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-700 flex-shrink-0">
           <i class="pi pi-graduation-cap text-sm"></i>
         </div>
@@ -375,9 +408,9 @@
           <span *ngIf="newRole === 'ROLE_TEACHER'" class="w-1.5 h-1.5 rounded-full bg-white block"></span>
         </div>
       </label>
-      <label class="flex items-center gap-3 p-3 border-2 rounded-xl cursor-pointer transition-all"
+      <label class="flex items-center gap-3 p-3 border-2 rounded-xl cursor-pointer transition-all" tabindex="0"
         [ngClass]="newRole === 'ROLE_ADMIN' ? 'border-purple-500 bg-purple-50' : 'border-gray-200 hover:border-gray-300'"
-        (click)="newRole = 'ROLE_ADMIN'">
+        (click)="newRole = 'ROLE_ADMIN'" (keydown.enter)="newRole = 'ROLE_ADMIN'">
         <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 flex-shrink-0">
           <i class="pi pi-shield text-sm"></i>
         </div>

@@ -24,10 +24,10 @@
     <!-- Form -->
     <form class="space-y-5" [formGroup]="form" (ngSubmit)="sendInsertUser()">
         <div>
-            <label class="block mb-1.5 text-sm font-semibold text-gray-700">
+            <label for="firstName" class="block mb-1.5 text-sm font-semibold text-gray-700">
                 Nombre
             </label>
-            <input type="text" formControlName="firstName" placeholder="ejm. Pepito"
+            <input id="firstName" type="text" formControlName="firstName" placeholder="ejm. Pepito"
                 class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition bg-white" />
             @if (firstName.touched && firstName.hasError('required')) {
             <small class="text-red-500">Debe ingresar un nombre</small>
@@ -38,11 +38,11 @@
             }
         </div>
         <div>
-            <label class="block mb-1.5 text-sm font-semibold text-gray-700">
+            <label for="lastName" class="block mb-1.5 text-sm font-semibold text-gray-700">
                 Apellido
             </label>
 
-            <input type="text" formControlName="lastName" placeholder="ejm. Salas"
+            <input id="lastName" type="text" formControlName="lastName" placeholder="ejm. Salas"
                 class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition bg-white" />
             @if (lastName.touched && lastName.hasError('required')) {
             <small class="text-red-500">Debe ingresar un apellido</small>
@@ -54,11 +54,11 @@
         </div>
 
         <div>
-            <label class="block mb-1.5 text-sm font-semibold text-gray-700">
+            <label for="email" class="block mb-1.5 text-sm font-semibold text-gray-700">
                 Correo Electrónico
             </label>
 
-            <input type="email" formControlName="email" placeholder="ejm. pepe@gmail..."
+            <input id="email" type="email" formControlName="email" placeholder="ejm. pepe@gmail..."
                 class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition bg-white" />
             @if (email.touched && email.hasError('required')) {
             <small class="text-red-500">Debe ingresar un correo electrónico</small>
@@ -75,7 +75,7 @@
                 <label class="block mb-1.5 text-sm font-semibold text-gray-700">Rol</label>
 
                 <!-- Dropdown Header -->
-                <div (click)="toggleRoleDropdown()"
+                <div (click)="toggleRoleDropdown()" (keydown.enter)="toggleRoleDropdown()" tabindex="0"
                     class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm cursor-pointer flex justify-between items-center transition bg-white"
                     [ngClass]="{'border-green-500 ring-1 ring-green-500': isRoleDropdownOpen, 'text-gray-700': role.value, 'text-gray-400': !role.value}">
                     <span>{{ selectedRoleText }}</span>

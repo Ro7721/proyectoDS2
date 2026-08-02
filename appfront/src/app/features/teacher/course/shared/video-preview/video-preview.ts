@@ -17,7 +17,7 @@ export class VideoPreviewComponent implements OnChanges, OnDestroy {
   safeUrl: SafeResourceUrl | null = null;
   localVideoUrl: string | null = null;
 
-  constructor(private sanitizer: DomSanitizer) {}
+  constructor(private readonly sanitizer: DomSanitizer) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['videoSrc'] || changes['files']) {
@@ -26,60 +26,75 @@ export class VideoPreviewComponent implements OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.localVideoUrl && this.localVideoUrl.startsWith('blob:')) {
+    if (this.localVideoUrl?.startsWith('blob:')) {
       URL.revokeObjectURL(this.localVideoUrl);
     }
   }
 
   private processVideoSource(): void {
-    // 1. Prioritize local files if there are any that look like videos
-    if (this.files && this.files.length > 0) {
-      const videoFile = this.files.find(f => f.type.startsWith('video/'));
-      if (videoFile) {
-        if (this.localVideoUrl && this.localVideoUrl.startsWith('blob:')) {
-          URL.revokeObjectURL(this.localVideoUrl);
-        }
-        this.localVideoUrl = URL.createObjectURL(videoFile);
-        this.videoType = 'local';
-        this.safeUrl = null;
-        return;
-      }
-    }
+    if (this.tryProcessLocalFiles()) return;
 
-    // 2. Fallback to URL parsing
-    if (!this.videoSrc || this.videoSrc.trim() === '') {
-      this.videoType = 'none';
-      this.safeUrl = null;
-      if (this.localVideoUrl && this.localVideoUrl.startsWith('blob:')) {
-        URL.revokeObjectURL(this.localVideoUrl);
-      }
-      this.localVideoUrl = null;
+    if (!this.videoSrc?.trim()) {
+      this.clearVideo();
       return;
     }
 
     const url = this.videoSrc.trim();
-
-    // YouTube Matcher
-    const ytMatch = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i);
-    if (ytMatch && ytMatch[1]) {
-      this.videoType = 'youtube';
-      const embedUrl = `https://www.youtube.com/embed/${ytMatch[1]}`;
-      this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl);
-      return;
-    }
-
-    // Vimeo Matcher
-    const vimeoMatch = url.match(/(?:vimeo\.com\/|player\.vimeo\.com\/video\/)([0-9]+)/i);
-    if (vimeoMatch && vimeoMatch[1]) {
-      this.videoType = 'vimeo';
-      const embedUrl = `https://player.vimeo.com/video/${vimeoMatch[1]}`;
-      this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl);
-      return;
-    }
+    if (this.tryProcessYouTube(url)) return;
+    if (this.tryProcessVimeo(url)) return;
 
     // Assume standard video file link
     this.videoType = 'local';
     this.localVideoUrl = url;
     this.safeUrl = null;
+  }
+
+  private tryProcessLocalFiles(): boolean {
+    if (!this.files?.length) return false;
+    
+    const videoFile = this.files.find(f => f.type.startsWith('video/'));
+    if (videoFile) {
+      if (this.localVideoUrl?.startsWith('blob:')) {
+        URL.revokeObjectURL(this.localVideoUrl);
+      }
+      this.localVideoUrl = URL.createObjectURL(videoFile);
+      this.videoType = 'local';
+      this.safeUrl = null;
+      return true;
+    }
+    return false;
+  }
+
+  private clearVideo(): void {
+    this.videoType = 'none';
+    this.safeUrl = null;
+    if (this.localVideoUrl?.startsWith('blob:')) {
+      URL.revokeObjectURL(this.localVideoUrl);
+    }
+    this.localVideoUrl = null;
+  }
+
+  private tryProcessYouTube(url: string): boolean {
+    const ytRegex = /(?:youtube\.com\/(?:.*[?&]v=|embed\/)|youtu\.be\/)([^"&?/\s]{11})/i;
+    const match = ytRegex.exec(url);
+    if (match?.[1]) {
+      this.videoType = 'youtube';
+      const embedUrl = `https://www.youtube.com/embed/${match[1]}`;
+      this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl); // NOSONAR
+      return true;
+    }
+    return false;
+  }
+
+  private tryProcessVimeo(url: string): boolean {
+    const vimeoRegex = /(?:vimeo\.com\/|player\.vimeo\.com\/video\/)(\d+)/i;
+    const match = vimeoRegex.exec(url);
+    if (match?.[1]) {
+      this.videoType = 'vimeo';
+      const embedUrl = `https://player.vimeo.com/video/${match[1]}`;
+      this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl); // NOSONAR
+      return true;
+    }
+    return false;
   }
 }
