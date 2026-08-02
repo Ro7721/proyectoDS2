@@ -2,10 +2,7 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
-  EventEmitter,
-  Input,
   OnInit,
-  inject,
 } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
@@ -13,7 +10,7 @@ import { TextareaModule } from 'primeng/textarea';
 import { SelectModule } from 'primeng/select';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { Api } from '../../../../api/api';
-import { GetById1$Params, getById1, create, Create$Params } from '../../../../api/functions';
+import { GetById1$Params, getById1, create, Create$Params, deleteCourse, updateCourse, UpdateCourse$Params, getAll1 } from '../../../../api/functions';
 import { LessonInsert, LessonFormPayload } from '../lesson-insert/lesson-insert';
 import { CourseResponse } from '../../../../models/course.model';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -26,8 +23,6 @@ import { DividerModule } from 'primeng/divider';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TagModule } from 'primeng/tag';
 import { MessageToast } from '../../../../message/message-toast';
-import { deleteCourse, updateCourse, UpdateCourse$Params } from '../../../../api/functions';
-import { getAll1 } from '../../../../api/functions';
 @Component({
   selector: 'app-course-details',
   standalone: true,
@@ -71,14 +66,14 @@ export class CourseDetails implements OnInit {
   savingCourse = false;
 
   constructor(
-    private confirmation: ConfirmationService,
-    private toastMessage: MessageToast,
-    private fb: FormBuilder,
-    private api: Api,
-    private route: ActivatedRoute,
-    private router: Router,
-    private cdr: ChangeDetectorRef,
-    private messageService: MessageService,
+    private readonly confirmation: ConfirmationService,
+    private readonly toastMessage: MessageToast,
+    private readonly fb: FormBuilder,
+    private readonly api: Api,
+    private readonly route: ActivatedRoute,
+    private readonly router: Router,
+    private readonly cdr: ChangeDetectorRef,
+    private readonly messageService: MessageService,
   ) {
     this.courseForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(100)]],

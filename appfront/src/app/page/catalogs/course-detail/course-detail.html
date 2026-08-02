@@ -146,10 +146,15 @@
                             </div>
                         </div>
                         <div class="mt-6">
-                            <div *ngIf="alreadyEnrolled"
-                                class="w-full bg-emerald-50 border border-emerald-300 text-emerald-700 py-3 rounded-lg font-semibold text-center flex items-center justify-center gap-2">
-                                <i class="pi pi-check-circle"></i>
-                                Ya inscrito
+                            <div *ngIf="alreadyEnrolled" class="w-full space-y-3">
+                                <div class="bg-emerald-50 border border-emerald-300 text-emerald-700 py-3 rounded-lg font-semibold text-center flex items-center justify-center gap-2">
+                                    <i class="pi pi-check-circle"></i>
+                                    Ya inscrito
+                                </div>
+                                <a routerLink="/dashboard/my-courses"
+                                    class="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold transition-all duration-200 cursor-pointer">
+                                    <i class="pi pi-book"></i> Ir a Mis Cursos
+                                </a>
                             </div>
 
                             <button *ngIf="!enrolled && !alreadyEnrolled"
@@ -219,6 +224,33 @@
     </div>
 </div>
 
+<!-- ========== STICKY BOTTOM BANNER: solo si logueado + inscrito ========== -->
+<div *ngIf="authService.isAuthenticated() && (alreadyEnrolled || enrolled)"
+    class="fixed bottom-0 inset-x-0 z-50 flex items-center justify-between gap-4 px-4 sm:px-8 py-3
+           bg-slate-900/95 backdrop-blur-md border-t border-slate-700 shadow-2xl
+           animate-[slideUp_0.35s_ease-out]">
+    <!-- Info left -->
+    <div class="flex items-center gap-3 min-w-0">
+        <div class="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-500/30
+                    flex items-center justify-center shrink-0">
+            <i class="pi pi-book text-emerald-400"></i>
+        </div>
+        <div class="min-w-0">
+            <p class="text-xs text-slate-400 leading-none mb-0.5">Ya estás inscrito en</p>
+            <p class="text-sm font-bold text-white truncate">{{ course?.title }}</p>
+        </div>
+    </div>
+    <!-- Action right -->
+    <a routerLink="/dashboard/my-courses"
+        class="shrink-0 inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400
+               text-white text-sm font-bold px-5 py-2.5 rounded-xl transition-all duration-200
+               shadow-lg shadow-emerald-500/25 hover:shadow-emerald-400/30 hover:scale-105">
+        <i class="pi pi-play-circle"></i>
+        <span class="hidden sm:inline">Ir a Mis Cursos</span>
+        <span class="sm:hidden">Mis Cursos</span>
+    </a>
+</div>
+
 <!-- Free Preview Modal -->
 <div *ngIf="showFreePreview && freePreviewLesson"
     class="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
@@ -256,12 +288,25 @@
             </a>
         </div>
         <!-- Footer CTA -->
-        <div class="px-5 py-3 bg-slate-800 border-t border-slate-700 flex items-center justify-between">
-            <p class="text-xs text-slate-400">¿Quieres ver todo el contenido?</p>
-            <button (click)="enrollCourse(); closeFreePreview()"
-                class="bg-green-500 hover:bg-green-600 text-white text-xs font-bold px-4 py-2 rounded-lg transition">
-                Inscribirme ahora
-            </button>
+        <div class="px-5 py-3 bg-slate-800 border-t border-slate-700 flex items-center justify-between gap-3">
+            <!-- Si YA está inscrito: mostrar ir a mis cursos -->
+            <ng-container *ngIf="authService.isAuthenticated() && (alreadyEnrolled || enrolled); else enrollCta">
+                <p class="text-xs text-emerald-400 flex items-center gap-1.5">
+                    <i class="pi pi-check-circle"></i> Ya estás inscrito en este curso
+                </p>
+                <a routerLink="/dashboard/my-courses" (click)="closeFreePreview()"
+                    class="bg-emerald-500 hover:bg-emerald-400 text-white text-xs font-bold px-4 py-2 rounded-lg transition flex items-center gap-1.5">
+                    <i class="pi pi-play-circle"></i> Ir a Mis Cursos
+                </a>
+            </ng-container>
+            <!-- Si NO está inscrito: CTA de inscripción -->
+            <ng-template #enrollCta>
+                <p class="text-xs text-slate-400">¿Quieres ver todo el contenido?</p>
+                <button (click)="enrollCourse(); closeFreePreview()"
+                    class="bg-green-500 hover:bg-green-600 text-white text-xs font-bold px-4 py-2 rounded-lg transition">
+                    Inscribirme ahora
+                </button>
+            </ng-template>
         </div>
     </div>
 </div>

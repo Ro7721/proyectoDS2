@@ -20,10 +20,16 @@ import { MessageToast } from '../../../../message/message-toast';
 export class AdminUsersComponent implements OnInit {
   users: UserResponse[] = [];
   filteredUsers: UserResponse[] = [];
+  paginatedUsers: UserResponse[] = [];
   loading = true;
   searchQuery = '';
   filterRole = '';
   filterStatus = '';
+
+  // Pagination
+  currentPage = 1;
+  pageSize = 10;
+  totalPages = 1;
 
   // Modals
   showEditModal = false;
@@ -118,6 +124,30 @@ export class AdminUsersComponent implements OnInit {
       result = result.filter(u => u.active === isActive);
     }
     this.filteredUsers = result;
+    this.currentPage = 1;
+    this.updatePagination();
+  }
+
+  updatePagination() {
+    this.totalPages = Math.max(1, Math.ceil(this.filteredUsers.length / this.pageSize));
+    if (this.currentPage > this.totalPages) this.currentPage = this.totalPages;
+    const start = (this.currentPage - 1) * this.pageSize;
+    this.paginatedUsers = this.filteredUsers.slice(start, start + this.pageSize);
+  }
+
+  goToPage(page: number) {
+    if (page < 1 || page > this.totalPages) return;
+    this.currentPage = page;
+    this.updatePagination();
+  }
+
+  get pageNumbers(): number[] {
+    const pages: number[] = [];
+    const delta = 2;
+    const left = Math.max(1, this.currentPage - delta);
+    const right = Math.min(this.totalPages, this.currentPage + delta);
+    for (let i = left; i <= right; i++) pages.push(i);
+    return pages;
   }
 
   onSearch(event: Event) {

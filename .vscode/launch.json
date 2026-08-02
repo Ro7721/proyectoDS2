@@ -4,8 +4,16 @@
             "type": "java",
             "name": "Ds2Application",
             "request": "launch",
-            "mainClass": "com.epiis.DS26.Ds2Application",
+            "mainClass": "com.epiis.ds26.Ds2Application",
             "projectName": "ds-2"
+        },
+        {
+            "type": "java",
+            "name": "Ds2Application",
+            "request": "launch",
+            "mainClass": "com.epiis.DS26.Ds2Application",
+            "projectName": "ds-2",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=58902 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=ds-2"
         },
         {
             "type": "java",

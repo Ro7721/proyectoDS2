@@ -47,7 +47,7 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100">
-            <tr *ngFor="let course of filteredCourses" class="hover:bg-gray-50/40 transition-colors group">
+            <tr *ngFor="let course of paginatedCourses" class="hover:bg-gray-50/40 transition-colors group">
               <td class="px-5 py-3.5">
                 <div class="flex items-center gap-3">
                   <div class="h-9 w-9 rounded-xl flex-shrink-0 bg-gradient-to-br from-orange-100 to-orange-50 flex items-center justify-center text-[#E8592B]">
@@ -123,7 +123,7 @@
 
     <!-- Mobile / Tablet Cards -->
     <div class="lg:hidden space-y-3">
-      <div *ngFor="let course of filteredCourses" class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
+      <div *ngFor="let course of paginatedCourses" class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
         <div class="flex items-start gap-3">
           <div class="h-10 w-10 rounded-xl flex-shrink-0 bg-orange-50 flex items-center justify-center text-[#E8592B]">
             <i class="pi pi-book"></i>
@@ -167,7 +167,34 @@
       </div>
     </div>
 
-    <p class="text-xs text-gray-400 text-right">{{ filteredCourses.length }} de {{ courses.length }} cursos</p>
+    <!-- Pagination -->
+    <div *ngIf="totalPages > 1" class="flex items-center justify-between gap-3 flex-wrap">
+      <p class="text-xs text-gray-400">
+        Página {{ currentPage }} de {{ totalPages }} &mdash; {{ filteredCourses.length }} cursos
+      </p>
+      <div class="flex items-center gap-1">
+        <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1"
+          class="w-8 h-8 flex items-center justify-center rounded-lg border text-sm transition-colors"
+          [ngClass]="currentPage === 1 ? 'border-gray-100 text-gray-300 cursor-not-allowed' : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
+          <i class="pi pi-chevron-left text-xs"></i>
+        </button>
+        <ng-container *ngFor="let p of pageNumbers">
+          <button (click)="goToPage(p)"
+            class="w-8 h-8 flex items-center justify-center rounded-lg border text-xs font-medium transition-colors"
+            [ngClass]="p === currentPage
+              ? 'bg-[#E8592B] border-[#E8592B] text-white shadow-sm'
+              : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
+            {{ p }}
+          </button>
+        </ng-container>
+        <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages"
+          class="w-8 h-8 flex items-center justify-center rounded-lg border text-sm transition-colors"
+          [ngClass]="currentPage === totalPages ? 'border-gray-100 text-gray-300 cursor-not-allowed' : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
+          <i class="pi pi-chevron-right text-xs"></i>
+        </button>
+      </div>
+    </div>
+    <p class="text-xs text-gray-400 text-right" *ngIf="totalPages <= 1">{{ filteredCourses.length }} de {{ courses.length }} cursos</p>
   </ng-container>
 </div>
 
