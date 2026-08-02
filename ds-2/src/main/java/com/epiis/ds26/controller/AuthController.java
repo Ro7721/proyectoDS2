@@ -105,10 +105,10 @@ public class AuthController {
             error.put("message", "No tienes autorizaciÃ³n para acceder a este recurso");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
         }
-        if (auth.getPrincipal() == null || !(auth.getPrincipal() instanceof CustomUserDetails userDetails)) {
+        if (!(auth.getPrincipal() instanceof CustomUserDetails userDetails)) {
             Map<String, String> errorAuth = new HashMap<>();
             errorAuth.put("error", "UNAUTHORIZED");
-            errorAuth.put("message", "SesiÃ³n invÃ¡lida o expirada");
+            errorAuth.put("message", "Sesión inválida o expirada");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorAuth);
         }
         EntityUser user = userDetails.getUser();
