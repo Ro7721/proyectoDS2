@@ -23,6 +23,7 @@ import { DividerModule } from 'primeng/divider';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TagModule } from 'primeng/tag';
 import { MessageToast } from '../../../../message/message-toast';
+import { AuthService } from '../../../../core/auth/auth.service';
 @Component({
   selector: 'app-course-details',
   standalone: true,
@@ -74,6 +75,7 @@ export class CourseDetails implements OnInit {
     private readonly router: Router,
     private readonly cdr: ChangeDetectorRef,
     private readonly messageService: MessageService,
+    private readonly authService: AuthService,
   ) {
     this.courseForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(100)]],
@@ -344,6 +346,7 @@ export class CourseDetails implements OnInit {
         level: formValue.level,
         price: formValue.price,
         status: formValue.status,
+        idTeacher: this.authService.user?.idUser || undefined,
         coverImage: this.coverImageFile || undefined
       } as any
     };

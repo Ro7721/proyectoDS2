@@ -129,9 +129,6 @@
               <button (click)="viewLesson(lesson)" type="button" class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-emerald-600 transition cursor-pointer" title="Ver">
                 <i class="pi pi-eye text-xs"></i>
               </button>
-              <button (click)="editLesson(lesson)" type="button" class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-blue-600 transition cursor-pointer" title="Editar">
-                <i class="pi pi-pencil text-xs"></i>
-              </button>
               <button (click)="confirmDelete(lesson)" type="button" class="flex h-8 w-8 items-center justify-center rounded-lg border border-transparent bg-rose-50 text-rose-600 hover:bg-rose-100 transition cursor-pointer" title="Eliminar">
                 <i class="pi pi-trash text-xs"></i>
               </button>
@@ -230,21 +227,21 @@
 
     <!-- Info Grid -->
     <div class="grid grid-cols-2 gap-4">
-      <div class="rounded-xl border border-slate-100 bg-slate-50/50 p-4">
+      <div class="rounded-xl border border-slate-100 bg-slate-50 p-4">
         <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Tipo</p>
         <div class="flex items-center gap-2">
           <i [ngClass]="getLessonIcon(viewingLesson.type)" class="text-sm text-emerald-600"></i>
           <span class="text-sm font-bold text-slate-800">{{ viewingLesson.type }}</span>
         </div>
       </div>
-      <div class="rounded-xl border border-slate-100 bg-slate-50/50 p-4">
+      <div class="rounded-xl border border-slate-100 bg-slate-50 p-4">
         <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Duración</p>
         <div class="flex items-center gap-2">
           <i class="pi pi-clock text-sm text-sky-500"></i>
           <span class="text-sm font-bold text-slate-800">{{ viewingLesson.durationMinutes || 0 }} min</span>
         </div>
       </div>
-      <div class="rounded-xl border border-slate-100 bg-slate-50/50 p-4">
+      <div class="rounded-xl border border-slate-100 bg-slate-50 p-4">
         <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Acceso</p>
         <span *ngIf="viewingLesson.isFree" class="inline-flex items-center gap-1 text-sm font-bold text-emerald-600">
           <i class="pi pi-unlock text-xs"></i> Gratuita
@@ -253,20 +250,20 @@
           <i class="pi pi-lock text-xs"></i> De pago
         </span>
       </div>
-      <div class="rounded-xl border border-slate-100 bg-slate-50/50 p-4">
+      <div class="rounded-xl border border-slate-100 bg-slate-50 p-4">
         <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Orden</p>
         <span class="text-sm font-bold text-slate-800"># {{ viewingLesson.lessonOrder || '—' }}</span>
       </div>
     </div>
 
     <!-- Descripción -->
-    <div class="rounded-xl border border-slate-100 bg-slate-50/50 p-4">
+    <div class="rounded-xl border border-slate-100 bg-slate-50 p-4">
       <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Descripción</p>
       <p class="text-sm text-slate-700 leading-relaxed">{{ viewingLesson.description || 'Sin descripción' }}</p>
     </div>
 
     <!-- URL de contenido -->
-    <div *ngIf="viewingLesson.contentUrl" class="rounded-xl border border-slate-100 bg-slate-50/50 p-4">
+    <div *ngIf="viewingLesson.contentUrl" class="rounded-xl border border-slate-100 bg-slate-50 p-4">
       <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">URL del contenido</p>
       <a [href]="viewingLesson.contentUrl" target="_blank" rel="noopener noreferrer"
         class="inline-flex items-center gap-2 text-sm font-medium text-emerald-600 hover:text-emerald-700 transition break-all">
@@ -275,7 +272,7 @@
     </div>
 
     <!-- Archivos adjuntos -->
-    <div *ngIf="viewingLesson.files && viewingLesson.files.length > 0" class="rounded-xl border border-slate-100 bg-slate-50/50 p-4">
+    <div *ngIf="viewingLesson.files && viewingLesson.files.length > 0" class="rounded-xl border border-slate-100 bg-slate-50 p-4">
       <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Archivos adjuntos ({{ viewingLesson.files.length }})</p>
       <div class="flex flex-col gap-2">
         <div *ngFor="let file of viewingLesson.files"
