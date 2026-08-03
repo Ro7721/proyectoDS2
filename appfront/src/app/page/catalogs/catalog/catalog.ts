@@ -1,6 +1,5 @@
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { HeaderCatalog } from "../../../layout/componet-principal/header-catalog/header-catalog";
-import { CourseModal } from "../../../layout/componet-principal/course-modal/course-modal";
 import { CourseResponse } from '../../../models/course.model';
 import { Api } from '../../../api/api';
 import { getAll1, getAllCourses } from '../../../api/functions';
@@ -14,11 +13,11 @@ import { Router } from '@angular/router';
   templateUrl: './catalog.html',
   styleUrl: './catalog.css',
 })
-export class Catalog {
-  private changeDetectorRef = inject(ChangeDetectorRef);
+export class Catalog implements OnInit {
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
   constructor(
-    private api: Api,
-    private router: Router
+    private readonly api: Api,
+    private readonly router: Router
   ) { }
 
   loading = false;

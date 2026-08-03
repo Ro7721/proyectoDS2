@@ -23,7 +23,7 @@ export interface CourseResponse {
     title: string;
     description: string;
     coverImage: string;
-    level: ' Principiante' | 'Intermedio' | 'Avanzado';
+    level: 'Principiante' | 'Básico' | 'Intermedio' | 'Avanzado' | string;
     price: number;
     status: string;
     teacherFullName?: string;

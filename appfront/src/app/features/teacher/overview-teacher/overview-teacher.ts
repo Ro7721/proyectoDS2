@@ -16,7 +16,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 })
 export class OverviewTeacher implements OnInit {
 
-  private cdk = inject(ChangeDetectorRef);
+  private readonly cdk = inject(ChangeDetectorRef);
   mobileOpen = false;
   loading = true;
 
@@ -33,9 +33,9 @@ export class OverviewTeacher implements OnInit {
   completionRate = 0;
   totalCompleted = 0;
 
-  private colors = ['#5035B2', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899', '#06B6D4', '#F97316'];
+  private readonly colors = ['#5035B2', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899', '#06B6D4', '#F97316'];
 
-  constructor(private api: Api, private toast: MessageToast, private authService: AuthService) { }
+  constructor(private readonly api: Api, private readonly toast: MessageToast, private readonly authService: AuthService) { }
 
   ngOnInit(): void {
     this.loadDashboardData();
@@ -65,6 +65,7 @@ export class OverviewTeacher implements OnInit {
       this.mapCoursesForUI();
 
     } catch (error: any) {
+      console.error(error);
       this.toast.toastError('Error al cargar datos del dashboard');
     } finally {
       this.loading = false;

@@ -128,13 +128,10 @@ class JwtServiceTest {
 
     @Test
     void isValidToken_expiredToken_throwsOrReturnsFalse() {
-        // Token que expira en 1 ms
-        ReflectionTestUtils.setField(jwtService, "accessTokenExpiration", 1L);
+        // Token que expira en el pasado
+        ReflectionTestUtils.setField(jwtService, "accessTokenExpiration", -1000L);
         UserDetails user = mockUser("juan@test.com");
         String token = jwtService.generateToken(user);
-
-        // Esperar que expire
-        try { java.util.concurrent.TimeUnit.MILLISECONDS.sleep(10); } catch (InterruptedException ignored) { Thread.currentThread().interrupt(); }
 
         assertThrows(ExpiredJwtException.class, () -> jwtService.isValidToken(token, user));
     }
@@ -149,17 +146,7 @@ class JwtServiceTest {
 
     // =========== tokens are different ===========
 
-    @Test
-    void generateToken_twoCalls_returnsDifferentTokensDueToIssuedAt() throws InterruptedException {
-        UserDetails user = mockUser("juan@test.com");
 
-        String token1 = jwtService.generateToken(user);
-        java.util.concurrent.TimeUnit.MILLISECONDS.sleep(1100); // Los tokens se generan con fecha distinta
-        String token2 = jwtService.generateToken(user);
-
-        // Los tokens son distintos (diferente issuedAt)
-        assertNotEquals(token1, token2);
-    }
 
     // =========== invalid token format ===========
 

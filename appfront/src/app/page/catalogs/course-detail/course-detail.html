@@ -132,7 +132,7 @@
                 <aside
                     class="sticky top-28 bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden z-10">
                     <div class="aspect-video relative w-full border-b border-slate-200 lg:hidden block">
-                        <img [src]="course.coverImage" class="w-full h-full object-cover">
+                        <img [src]="course.coverImage" [alt]="course.title" class="w-full h-full object-cover">
                     </div>
 
                     <div class="p-6 sm:p-8 space-y-6">
@@ -147,13 +147,14 @@
                         </div>
                         <div class="mt-6">
                             <div *ngIf="alreadyEnrolled" class="w-full space-y-3">
-                                <div class="bg-emerald-50 border border-emerald-300 text-emerald-700 py-3 rounded-lg font-semibold text-center flex items-center justify-center gap-2">
+                                <div
+                                    class="bg-emerald-50 border border-emerald-300 text-emerald-700 py-3 rounded-lg font-semibold text-center flex items-center justify-center gap-2">
                                     <i class="pi pi-check-circle"></i>
                                     Ya inscrito
                                 </div>
-                                <a routerLink="/dashboard/my-courses"
+                                <a [routerLink]="['/dashboard/learning/course', course.idCourse]"
                                     class="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold transition-all duration-200 cursor-pointer">
-                                    <i class="pi pi-book"></i> Ir a Mis Cursos
+                                    <i class="pi pi-play-circle"></i> Continuar curso
                                 </a>
                             </div>
 
@@ -172,19 +173,19 @@
                                     inscribirme</span>
                             </button>
 
-                            <div *ngIf="enrolled"
-                                class="w-full space-y-3">
+                            <div *ngIf="enrolled" class="w-full space-y-3">
                                 <div
                                     class="bg-emerald-50 border border-emerald-300 text-emerald-700 py-3 rounded-lg font-semibold text-center">
                                     <div class="flex items-center justify-center gap-2">
                                         <i class="pi pi-check-circle"></i>
                                         ¡Inscripción exitosa!
                                     </div>
-                                    <p class="text-xs font-normal text-emerald-600 mt-1">Ya puedes acceder al contenido del curso</p>
+                                    <p class="text-xs font-normal text-emerald-600 mt-1">Ya puedes acceder al contenido
+                                        del curso</p>
                                 </div>
-                                <a routerLink="/dashboard/my-courses"
+                                <a [routerLink]="['/dashboard/learning/course', course.idCourse]"
                                     class="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold transition-all duration-200 cursor-pointer">
-                                    <i class="pi pi-book"></i> Ir a Mis Cursos
+                                    <i class="pi pi-play-circle"></i> Ir al curso
                                 </a>
                             </div>
 
@@ -225,8 +226,7 @@
 </div>
 
 <!-- ========== STICKY BOTTOM BANNER: solo si logueado + inscrito ========== -->
-<div *ngIf="authService.isAuthenticated() && (alreadyEnrolled || enrolled)"
-    class="fixed bottom-0 inset-x-0 z-50 flex items-center justify-between gap-4 px-4 sm:px-8 py-3
+<div *ngIf="authService.isAuthenticated() && (alreadyEnrolled || enrolled)" class="fixed bottom-0 inset-x-0 z-50 flex items-center justify-between gap-4 px-4 sm:px-8 py-3
            bg-slate-900/95 backdrop-blur-md border-t border-slate-700 shadow-2xl
            animate-[slideUp_0.35s_ease-out]">
     <!-- Info left -->
@@ -241,26 +241,27 @@
         </div>
     </div>
     <!-- Action right -->
-    <a routerLink="/dashboard/my-courses"
-        class="shrink-0 inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400
+    <a [routerLink]="['/dashboard/learning/course', course?.idCourse]" class="shrink-0 inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400
                text-white text-sm font-bold px-5 py-2.5 rounded-xl transition-all duration-200
                shadow-lg shadow-emerald-500/25 hover:shadow-emerald-400/30 hover:scale-105">
         <i class="pi pi-play-circle"></i>
-        <span class="hidden sm:inline">Ir a Mis Cursos</span>
-        <span class="sm:hidden">Mis Cursos</span>
+        <span class="hidden sm:inline">Continuar curso</span>
+        <span class="sm:hidden">Continuar</span>
     </a>
 </div>
 
 <!-- Free Preview Modal -->
 <div *ngIf="showFreePreview && freePreviewLesson"
     class="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
-    (click)="closeFreePreview()">
+    (click)="closeFreePreview()" (keydown.enter)="closeFreePreview()" tabindex="0" role="button"
+    aria-label="Cerrar modal">
     <div class="relative bg-slate-900 rounded-2xl overflow-hidden shadow-2xl w-full max-w-4xl max-h-[90vh]"
         (click)="$event.stopPropagation()">
         <!-- Modal header -->
         <div class="flex items-center justify-between px-5 py-3 bg-slate-800 border-b border-slate-700">
             <div class="flex items-center gap-3">
-                <span class="inline-flex items-center gap-1.5 bg-green-500/20 border border-green-500/40 text-green-400 text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wide">
+                <span
+                    class="inline-flex items-center gap-1.5 bg-green-500/20 border border-green-500/40 text-green-400 text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wide">
                     <i class="pi pi-unlock text-[10px]"></i> Vista previa gratuita
                 </span>
                 <h3 class="text-white font-semibold text-sm truncate">{{ freePreviewLesson.title }}</h3>
@@ -272,8 +273,8 @@
         </div>
         <!-- Video content -->
         <div *ngIf="freePreviewLesson.type.toUpperCase() === 'VIDEO'" class="aspect-video w-full">
-            <video [src]="freePreviewLesson.contentUrl" controls autoplay
-                class="w-full h-full object-contain bg-black">
+            <video [src]="freePreviewLesson.contentUrl" controls autoplay class="w-full h-full object-contain bg-black">
+                <track kind="captions" src="" srclang="es" label="Español" default>
                 Tu navegador no soporta reproducción de video.
             </video>
         </div>
@@ -294,9 +295,9 @@
                 <p class="text-xs text-emerald-400 flex items-center gap-1.5">
                     <i class="pi pi-check-circle"></i> Ya estás inscrito en este curso
                 </p>
-                <a routerLink="/dashboard/my-courses" (click)="closeFreePreview()"
+                <a [routerLink]="['/dashboard/learning/course', course?.idCourse]" (click)="closeFreePreview()"
                     class="bg-emerald-500 hover:bg-emerald-400 text-white text-xs font-bold px-4 py-2 rounded-lg transition flex items-center gap-1.5">
-                    <i class="pi pi-play-circle"></i> Ir a Mis Cursos
+                    <i class="pi pi-play-circle"></i> Continuar curso
                 </a>
             </ng-container>
             <!-- Si NO está inscrito: CTA de inscripción -->

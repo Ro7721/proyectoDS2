@@ -18,13 +18,13 @@ import { MessageToast } from '../../../message/message-toast';
 export class Login implements OnInit {
   fb = inject(FormBuilder);
   messageService = inject(MessageService);
-  private authService = inject(AuthService);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
-  private plataformId = inject(PLATFORM_ID);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly plataformId = inject(PLATFORM_ID);
   loading = false;
 
-  constructor(private toast: MessageToast) {
+  constructor(private readonly toast: MessageToast) {
 
   }
   form = this.fb.nonNullable.group({
@@ -85,28 +85,28 @@ export class Login implements OnInit {
       await this.router.navigate(this.authService.getRoleHomeUrl());
 
     } catch (error) {
-
-      const err = error as HttpErrorResponse;
-
-      if (err.error && err.error.error) {
-        const errorType = err.error.error;
-        const errorMessage = err.error.message;
-        if (errorType === 'EMAIL_NOT_FOUND') {
-          this.toast.toastError('Correo no encontrado', errorMessage);
-        } else if (errorType === 'PASSWORD_INVALID') {
-          this.toast.toastError('Contraseña incorrecta', errorMessage);
-        } else {
-          this.toast.toastError('Error de autenticación', errorMessage);
-        }
-      } else {
-        if (err.status === 401) {
-          this.toast.toastError('Credenciales inválidas', 'El usuario o la contraseña no coinciden');
-        } else {
-          this.toast.toastError('Error', 'No fue posible iniciar sesión');
-        }
-      }
+      this.handleLoginError(error as HttpErrorResponse);
     } finally {
       this.loading = false;
+    }
+  }
+
+  private handleLoginError(err: HttpErrorResponse): void {
+    if (err.error?.error) {
+      const errorType = err.error.error;
+      const errorMessage = err.error.message;
+      
+      if (errorType === 'EMAIL_NOT_FOUND') {
+        this.toast.toastError('Correo no encontrado', errorMessage);
+      } else if (errorType === 'PASSWORD_INVALID') {
+        this.toast.toastError('Contraseña incorrecta', errorMessage);
+      } else {
+        this.toast.toastError('Error de autenticación', errorMessage);
+      }
+    } else if (err.status === 401) {
+      this.toast.toastError('Credenciales inválidas', 'El usuario o la contraseña no coinciden');
+    } else {
+      this.toast.toastError('Error', 'No fue posible iniciar sesión');
     }
   }
 }

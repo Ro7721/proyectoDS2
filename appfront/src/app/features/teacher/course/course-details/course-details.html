@@ -1,11 +1,10 @@
 <div class="w-full space-y-5 pb-10">
-    <!-- Header/Back button -->
-    <!-- Breadcrumb & Actions -->
     <div class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <nav class="flex text-sm text-gray-500 font-medium px-2" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1 md:space-x-2">
                 <li class="inline-flex items-center">
-                    <a routerLink="/dashboard/overview-teacher" class="inline-flex items-center hover:text-emerald-600 transition cursor-pointer">
+                    <a routerLink="/dashboard/overview-teacher"
+                        class="inline-flex items-center hover:text-emerald-600 transition cursor-pointer">
                         <i class="pi pi-home mr-1.5 text-xs"></i>
                         Dashboard
                     </a>
@@ -13,7 +12,8 @@
                 <li>
                     <div class="flex items-center">
                         <i class="pi pi-chevron-right text-xs mx-1 text-gray-400"></i>
-                        <a (click)="goBack()" class="text-gray-500 hover:text-emerald-600 transition cursor-pointer ml-1">Mis Cursos</a>
+                        <a (click)="goBack()"
+                            class="text-gray-500 hover:text-emerald-600 transition cursor-pointer ml-1">Mis Cursos</a>
                     </div>
                 </li>
                 <li>
@@ -29,8 +29,8 @@
                 class="p-button-outlined p-button-sm bg-white" (click)="openEditCourse()"></button>
             <button pButton type="button" icon="pi pi-plus" label="Nueva lección" class="p-button-sm shadow-sm"
                 style="background:#16a34a; border-color:#16a34a;" (click)="openNewLessonDialog()"></button>
-            <button pButton type="button" icon="pi pi-trash" label="Eliminar" class="p-button-danger p-button-sm shadow-sm"
-                (click)="confirmDeleteCourse($event)"></button>
+            <button pButton type="button" icon="pi pi-trash" label="Eliminar"
+                class="p-button-danger p-button-sm shadow-sm" (click)="confirmDeleteCourse($event)"></button>
         </div>
     </div>
 
@@ -58,7 +58,8 @@
     </div>
 
     <div *ngIf="!loading && selectedCourse" class="space-y-6">
-        <section class="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm flex flex-col md:flex-row">
+        <section
+            class="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm flex flex-col md:flex-row">
             <div class="relative w-full md:w-2/5 lg:w-1/3 bg-emerald-50 min-h-[250px] md:min-h-[300px] flex-shrink-0">
                 <img *ngIf="selectedCourse.coverImage" [src]="selectedCourse.coverImage" [alt]="selectedCourse.title"
                     class="absolute inset-0 h-full w-full object-cover" />
@@ -71,13 +72,15 @@
                     class="absolute inset-x-0 bottom-0 flex flex-wrap gap-2 bg-gradient-to-t from-black/60 to-transparent p-5">
                     <p-tag [value]="selectedCourse.status ? 'Publicado' : 'Privado' "
                         [severity]="getStatusSeverity(selectedCourse.status)" styleClass="text-sm px-3 py-1" />
-                    <p-tag [value]="selectedCourse.level " [severity]="getLevelSeverity(selectedCourse.level)" styleClass="text-sm px-3 py-1" />
+                    <p-tag [value]="selectedCourse.level " [severity]="getLevelSeverity(selectedCourse.level)"
+                        styleClass="text-sm px-3 py-1" />
                 </div>
             </div>
 
             <div class="p-6 md:p-8 flex flex-col justify-center flex-1">
                 <div class="mb-4 flex flex-wrap items-center gap-3">
-                    <p-chip [label]="selectedCourse.categoryName" styleClass="text-sm font-semibold bg-emerald-50 text-emerald-700 px-4 py-1.5" />
+                    <p-chip [label]="selectedCourse.categoryName"
+                        styleClass="text-sm font-semibold bg-emerald-50 text-emerald-700 px-4 py-1.5" />
                     <span *ngIf="selectedCourse.teacherFullName" class="text-sm font-medium text-gray-500">
                         Docente: {{ selectedCourse.teacherFullName }}
                     </span>
@@ -87,24 +90,29 @@
         </section>
 
         <section class="grid grid-cols-2 gap-4 sm:grid-cols-4">
-            <div class="flex flex-col items-center justify-center rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+            <div
+                class="flex flex-col items-center justify-center rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
                 <i class="pi pi-play-circle text-2xl text-emerald-500 mb-2"></i>
                 <strong class="text-xl font-bold text-gray-900">{{ selectedCourse.totalLessons }}</strong>
                 <span class="text-xs font-medium uppercase tracking-wide text-gray-500 mt-1">Lecciones</span>
             </div>
-            <div class="flex flex-col items-center justify-center rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+            <div
+                class="flex flex-col items-center justify-center rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
                 <i class="pi pi-clock text-2xl text-sky-500 mb-2"></i>
                 <strong class="text-xl font-bold text-gray-900">{{ totalDuration }}</strong>
                 <span class="text-xs font-medium uppercase tracking-wide text-gray-500 mt-1">Minutos</span>
             </div>
-            <div class="flex flex-col items-center justify-center rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+            <div
+                class="flex flex-col items-center justify-center rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
                 <i class="pi pi-lock-open text-2xl text-teal-500 mb-2"></i>
                 <strong class="text-xl font-bold text-gray-900">{{ totalFreeLessons }}</strong>
                 <span class="text-xs font-medium uppercase tracking-wide text-gray-500 mt-1">Gratis</span>
             </div>
-            <div class="flex flex-col items-center justify-center rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+            <div
+                class="flex flex-col items-center justify-center rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
                 <i class="pi pi-tag text-2xl text-amber-500 mb-2"></i>
-                <strong class="text-xl font-bold" [ngClass]="selectedCourse.price === 0 ? 'text-emerald-600' : 'text-gray-900'">
+                <strong class="text-xl font-bold"
+                    [ngClass]="selectedCourse.price === 0 ? 'text-emerald-600' : 'text-gray-900'">
                     {{ formatPrice(selectedCourse.price) }}
                 </strong>
                 <span class="text-xs font-medium uppercase tracking-wide text-gray-500 mt-1">Precio</span>
@@ -114,7 +122,8 @@
         <section class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm mt-6">
             <div class="mb-6 flex items-center justify-between gap-3">
                 <h3 class="text-xl font-bold text-gray-900">Contenido del curso</h3>
-                <span class="rounded-full bg-gray-100 px-3 py-1 text-sm font-semibold text-gray-600">{{ selectedCourse.lessons.length }} lecciones</span>
+                <span class="rounded-full bg-gray-100 px-3 py-1 text-sm font-semibold text-gray-600">{{
+                    selectedCourse.lessons.length }} lecciones</span>
             </div>
 
             <p-accordion *ngIf="selectedCourse.lessons.length" [multiple]="true" styleClass="w-full">
@@ -133,7 +142,8 @@
                                 class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold uppercase tracking-wide text-emerald-600">
                                 Gratis
                             </span>
-                            <span class="shrink-0 text-sm font-medium text-gray-500">{{ lesson.durationMinutes || 0 }} min</span>
+                            <span class="shrink-0 text-sm font-medium text-gray-500">{{ lesson.durationMinutes || 0 }}
+                                min</span>
                         </div>
                     </p-accordion-header>
 
@@ -158,67 +168,80 @@
                     <i class="pi pi-inbox text-3xl text-gray-400"></i>
                 </div>
                 <h4 class="text-lg font-bold text-gray-900 mb-1">Sin lecciones</h4>
-                <p class="text-sm text-gray-500 max-w-sm mx-auto">Este curso no tiene lecciones aún. Empieza agregando contenido para tus estudiantes.</p>
-                <button pButton type="button" icon="pi pi-plus" label="Agregar primera lección" class="p-button-sm mt-5 cursor-pointer"
-                style="background:#16a34a; border-color:#16a34a;" (click)="openNewLessonDialog()"></button>
+                <p class="text-sm text-gray-500 max-w-sm mx-auto">Este curso no tiene lecciones aún. Empieza agregando
+                    contenido para tus estudiantes.</p>
+                <button pButton type="button" icon="pi pi-plus" label="Agregar primera lección"
+                    class="p-button-sm mt-5 cursor-pointer" style="background:#16a34a; border-color:#16a34a;"
+                    (click)="openNewLessonDialog()"></button>
             </div>
         </section>
     </div>
 </div>
 
 <app-lesson-insert [showDialog]="showLessonDialog" (showDialogChange)="onLessonDialogClose($event)"
-    (onSaveLesson)="onSaveLesson($event)">
+    (lessonSave)="onSaveLesson($event)">
 </app-lesson-insert>
 
 <!-- Course Edit Dialog -->
-<p-dialog header="Editar Curso" [(visible)]="showEditCourseDialog" [modal]="true" [style]="{width: '50vw'}" [draggable]="false" [resizable]="false">
+<p-dialog header="Editar Curso" [(visible)]="showEditCourseDialog" [modal]="true" [style]="{width: '50vw'}"
+    [draggable]="false" [resizable]="false">
     <form [formGroup]="courseForm" (ngSubmit)="saveEditedCourse()" class="flex flex-col gap-4 mt-2">
         <div class="flex flex-col gap-2">
-            <label class="font-semibold text-gray-700">Título</label>
-            <input pInputText formControlName="title" placeholder="Ej. Curso de Angular Avanzado" class="w-full p-inputtext-sm" />
+            <label for="title" class="font-semibold text-gray-700">Título</label>
+            <input id="title" pInputText formControlName="title" placeholder="Ej. Curso de Angular Avanzado"
+                class="w-full p-inputtext-sm" />
         </div>
-        
+
         <div class="flex flex-col gap-2">
-            <label class="font-semibold text-gray-700">Descripción</label>
-            <textarea pTextarea formControlName="description" rows="4" class="w-full p-inputtext-sm resize-none"></textarea>
+            <label for="description" class="font-semibold text-gray-700">Descripción</label>
+            <textarea id="description" pTextarea formControlName="description" rows="4"
+                class="w-full p-inputtext-sm resize-none"></textarea>
         </div>
 
         <div class="grid grid-cols-2 gap-4">
             <div class="flex flex-col gap-2">
-                <label class="font-semibold text-gray-700">Categoría</label>
-                <p-select [options]="listCategories" formControlName="idCategory" optionLabel="name" optionValue="idCategory"
-                    placeholder="Seleccione una categoría" styleClass="w-full p-inputtext-sm"></p-select>
+                <label for="idCategory" class="font-semibold text-gray-700">Categoría</label>
+                <p-select inputId="idCategory" [options]="listCategories" formControlName="idCategory"
+                    optionLabel="name" optionValue="idCategory" placeholder="Seleccione una categoría"
+                    styleClass="w-full p-inputtext-sm"></p-select>
             </div>
             <div class="flex flex-col gap-2">
-                <label class="font-semibold text-gray-700">Nivel</label>
-                <p-select [options]="levelOptions" formControlName="level" optionLabel="label" optionValue="value"
-                    placeholder="Seleccione un nivel" styleClass="w-full p-inputtext-sm"></p-select>
+                <label for="level" class="font-semibold text-gray-700">Nivel</label>
+                <p-select inputId="level" [options]="levelOptions" formControlName="level" optionLabel="label"
+                    optionValue="value" placeholder="Seleccione un nivel" styleClass="w-full p-inputtext-sm"></p-select>
             </div>
         </div>
 
         <div class="grid grid-cols-2 gap-4">
             <div class="flex flex-col gap-2">
-                <label class="font-semibold text-gray-700">Precio (S/)</label>
-                <p-inputNumber formControlName="price" mode="currency" currency="PEN" locale="es-PE" class="w-full p-inputtext-sm"></p-inputNumber>
+                <label for="price" class="font-semibold text-gray-700">Precio (S/)</label>
+                <p-inputNumber inputId="price" formControlName="price" mode="currency" currency="PEN" locale="es-PE"
+                    class="w-full p-inputtext-sm"></p-inputNumber>
             </div>
             <div class="flex flex-col gap-2">
-                <label class="font-semibold text-gray-700">Estado</label>
-                <p-select [options]="[{label:'Borrador', value:'DRAFT'},{label:'Publicado', value:'PUBLISHED'}]" formControlName="status"
-                    optionLabel="label" optionValue="value" styleClass="w-full p-inputtext-sm"></p-select>
+                <label for="status" class="font-semibold text-gray-700">Estado</label>
+                <p-select inputId="status"
+                    [options]="[{label:'Borrador', value:'DRAFT'},{label:'Publicado', value:'PUBLISHED'}]"
+                    formControlName="status" optionLabel="label" optionValue="value"
+                    styleClass="w-full p-inputtext-sm"></p-select>
             </div>
         </div>
 
         <div class="flex flex-col gap-2">
-            <label class="font-semibold text-gray-700">Portada del Curso (Opcional)</label>
-            <input type="file" accept="image/*" (change)="onCoverInputChange($event)" class="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100" />
-            <div *ngIf="coverImagePreview" class="mt-2 relative w-32 h-20 rounded overflow-hidden border border-gray-200">
-                <img [src]="coverImagePreview" class="w-full h-full object-cover" />
+            <label for="coverImage" class="font-semibold text-gray-700">Portada del Curso (Opcional)</label>
+            <input id="coverImage" type="file" accept="image/*" (change)="onCoverInputChange($event)"
+                class="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100" />
+            <div *ngIf="coverImagePreview"
+                class="mt-2 relative w-32 h-20 rounded overflow-hidden border border-gray-200">
+                <img [src]="coverImagePreview" alt="Vista previa de portada" class="w-full h-full object-cover" />
             </div>
         </div>
 
         <div class="flex justify-end gap-2 mt-4">
-            <button pButton type="button" label="Cancelar" icon="pi pi-times" class="p-button-text p-button-secondary" (click)="showEditCourseDialog = false"></button>
-            <button pButton type="submit" label="Guardar Cambios" icon="pi pi-check" style="background:#16a34a; border-color:#16a34a;" [loading]="savingCourse"></button>
+            <button pButton type="button" label="Cancelar" icon="pi pi-times" class="p-button-text p-button-secondary"
+                (click)="showEditCourseDialog = false"></button>
+            <button pButton type="submit" label="Guardar Cambios" icon="pi pi-check"
+                style="background:#16a34a; border-color:#16a34a;" [loading]="savingCourse"></button>
         </div>
     </form>
 </p-dialog>

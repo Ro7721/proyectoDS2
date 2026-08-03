@@ -4,16 +4,16 @@ import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/
 import { provideApiConfiguration } from './api/api-configuration';
 import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
-import { LucideAngularModule, BookOpen, TrendingUp, Award, Heart, LayoutDashboard, Library, PlusCircle, Users, BarChart, GraduationCap, Play, ChevronRight, Plus, DollarSign, Clock } from 'lucide-angular';
+import { LucideAngularModule, BookOpen, TrendingUp, Award, Heart, LayoutDashboard, Library, CirclePlus, Users, ChartBar, GraduationCap, Play, ChevronRight, Plus, DollarSign, Clock } from 'lucide-angular';
 import { environment } from './environments/environment';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { tokenInterceptor } from './core/auth/token.interceptor';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { provideAnimations } from '@angular/platform-browser/animations';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeuix/themes/aura';
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideAnimationsAsync(),
+    provideAnimations(),
     providePrimeNG({
       theme: {
         preset: Aura
@@ -26,7 +26,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withFetch(), withInterceptors([tokenInterceptor])),
     provideClientHydration(withEventReplay()),
     provideApiConfiguration(environment.urlBase),
-    importProvidersFrom(LucideAngularModule.pick({ BookOpen, TrendingUp, Award, Heart, LayoutDashboard, Library, PlusCircle, Users, BarChart, GraduationCap, Play, ChevronRight, Plus, DollarSign, Clock })),
+    importProvidersFrom(LucideAngularModule.pick({ BookOpen, TrendingUp, Award, Heart, LayoutDashboard, Library, CirclePlus, Users, ChartBar, GraduationCap, Play, ChevronRight, Plus, DollarSign, Clock })),
 
   ]
 };

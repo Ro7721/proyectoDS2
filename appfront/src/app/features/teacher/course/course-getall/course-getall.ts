@@ -9,13 +9,11 @@ import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TagModule } from 'primeng/tag';
 import { Toast } from 'primeng/toast';
-import { CourseDetails } from '../course-details/course-details';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { MessageToast } from '../../../../message/message-toast';
 import { CategoryResponse } from '../../../../models/category.model';
 import { SelectModule } from 'primeng/select';
 import { ConfirmationService } from 'primeng/api';
-import { deleteCourse } from '../../../../api/functions';
 
 @Component({
   selector: 'app-course-getall',
@@ -24,9 +22,9 @@ import { deleteCourse } from '../../../../api/functions';
   styleUrl: './course-getall.css',
 })
 export class CourseGetall implements OnInit {
-  private api = inject(Api);
-  private cdr = inject(ChangeDetectorRef);
-  private authService = inject(AuthService);
+  private readonly api = inject(Api);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly authService = inject(AuthService);
 
   // Data
   listCourses: CourseResponse[] = [];
@@ -49,9 +47,9 @@ export class CourseGetall implements OnInit {
   }
 
   constructor(
-    private toastMessage: MessageToast,
-    private Confirmation: ConfirmationService,
-    private router: Router
+    private readonly toastMessage: MessageToast,
+    private readonly Confirmation: ConfirmationService,
+    private readonly router: Router
   ) { }
 
   ngOnInit(): void {

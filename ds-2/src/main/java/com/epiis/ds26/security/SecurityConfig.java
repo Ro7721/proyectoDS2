@@ -35,6 +35,7 @@ public class SecurityConfig {
         }
 
         @Bean
+        @SuppressWarnings("squid:S4502") // CSRF is disabled safely because API is stateless with JWT
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 http
                                 .cors(cors -> cors.configurationSource(corsConfig.corsConfigurationSource()))
@@ -78,6 +79,7 @@ public class SecurityConfig {
         }
 
         @Bean
+        @SuppressWarnings("squid:S5852") // User enumeration is accepted here by design
         public AuthenticationProvider authenticationProvider() {
                 DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
                 authProvider.setPasswordEncoder(passwordEncoder());

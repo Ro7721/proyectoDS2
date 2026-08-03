@@ -1,11 +1,10 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Api } from '../../../api/api';
 import { CourseResponse } from '../../../models/course.model';
 import { getById1, enrollInCourse, EnrollInCourse$Params, checkEnrollment } from '../../../api/functions';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../core/auth/auth.service';
-import { RouterModule } from '@angular/router';
 import { getApiMessage } from '../../../core/utils/api-response';
 
 @Component({
@@ -15,11 +14,11 @@ import { getApiMessage } from '../../../core/utils/api-response';
   styleUrl: './course-detail.css',
 })
 export class CourseDetail implements OnInit {
-  private changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
   constructor(
-    private route: ActivatedRoute,
-    private api: Api,
-    private router: Router,
+    private readonly route: ActivatedRoute,
+    private readonly api: Api,
+    private readonly router: Router,
     public authService: AuthService
   ) { }
   loading = true;

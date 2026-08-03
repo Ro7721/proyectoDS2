@@ -34,7 +34,7 @@ public class CategoryBusiness {
             return null;
         }
         genericResponse.success();
-        genericResponse.listMessage.add("CategorÃ­a creada exitosamente");
+        genericResponse.listMessage.add("Categoría creada exitosamente");
         return categoryRepo.save(entity);
     }
 
@@ -42,12 +42,12 @@ public class CategoryBusiness {
     private boolean validateCategory(String name, String description, GenericResponse genericResponse) {
         if (name == null || name.trim().isEmpty()) {
             genericResponse.warning();
-            genericResponse.listMessage.add("El nombre de la categorÃ­a es requerido");
+            genericResponse.listMessage.add("El nombre de la categoría es requerido");
             return false;
         }
         if (name.trim().matches("^\\d+$")) {
             genericResponse.warning();
-            genericResponse.listMessage.add("El nombre no puede ser solo nÃºmeros");
+            genericResponse.listMessage.add("El nombre no puede ser solo números");
             return false;
         }
         if (name.trim().length() < 3) {
@@ -62,22 +62,22 @@ public class CategoryBusiness {
         }
         if (categoryRepo.existsByNameIgnoreCase(name.trim())) {
             genericResponse.warning();
-            genericResponse.listMessage.add("Ya existe una categorÃ­a con ese nombre");
+            genericResponse.listMessage.add("Ya existe una categoría con ese nombre");
             return false;
         }
         if (description == null || description.trim().isEmpty()) {
             genericResponse.warning();
-            genericResponse.listMessage.add("La descripciÃ³n de la categorÃ­a es requerida");
+            genericResponse.listMessage.add("La descripción de la categoría es requerida");
             return false;
         }
         if (description.trim().length() < 5) {
             genericResponse.warning();
-            genericResponse.listMessage.add("La descripciÃ³n debe tener al menos 5 caracteres");
+            genericResponse.listMessage.add("La descripción debe tener al menos 5 caracteres");
             return false;
         }
         if (description.trim().length() > 200) {
             genericResponse.warning();
-            genericResponse.listMessage.add("La descripciÃ³n no puede exceder los 200 caracteres");
+            genericResponse.listMessage.add("La descripción no puede exceder los 200 caracteres");
             return false;
         }
         return true;
@@ -89,11 +89,11 @@ public class CategoryBusiness {
         if (entity.isPresent()) {
             categoryRepo.delete(entity.get());
             genericResponse.success();
-            genericResponse.listMessage.add("CategorÃ­a eliminada exitosamente");
+            genericResponse.listMessage.add("Categoría eliminada exitosamente");
             return true;
         }
         genericResponse.warning();
-        genericResponse.listMessage.add("CategorÃ­a no encontrada");
+        genericResponse.listMessage.add("Categoría no encontrada");
         return false;
     }
 
@@ -120,11 +120,11 @@ public class CategoryBusiness {
             entity.get().setName(request.getName());
             entity.get().setDescription(request.getDescription());
             genericResponse.success();
-            genericResponse.listMessage.add("CategorÃ­a actualizada exitosamente");
+            genericResponse.listMessage.add("Categoría actualizada exitosamente");
             return mapToResponse(categoryRepo.save(entity.get()));
         }
         genericResponse.warning();
-        genericResponse.listMessage.add("CategorÃ­a no encontrada");
+        genericResponse.listMessage.add("Categoría no encontrada");
         return null;
     }
 
@@ -143,21 +143,21 @@ public class CategoryBusiness {
 
         if (!hasParams) {
             response.warning();
-            response.listMessage.add("Por favor proporcione al menos un parÃ¡metro de bÃºsqueda");
+            response.listMessage.add("Por favor proporcione al menos un parámetro de búsqueda");
             return java.util.Collections.emptyList();
         }
 
         List<CategoryResponse> result = categoryRepo.searchByName(nameParam)
                 .stream()
                 .map(this::mapToResponse)
-                .collect(Collectors.toList());
+                .toList();
 
         if (result.isEmpty()) {
             response.warning();
-            response.listMessage.add("No se encontraron categorÃ­as con los criterios proporcionados");
+            response.listMessage.add("No se encontraron categorías con los criterios proporcionados");
         } else {
             response.success();
-            response.listMessage.add("BÃºsqueda exitosa");
+            response.listMessage.add("Búsqueda exitosa");
         }
 
         return result;

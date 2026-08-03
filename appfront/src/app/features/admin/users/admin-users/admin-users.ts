@@ -91,7 +91,7 @@ export class AdminUsersComponent implements OnInit {
       const parsed = typeof response === 'string' ? JSON.parse(response) : response;
       if (Array.isArray(parsed)) {
         this.users = parsed;
-      } else if (parsed.data) {
+      } else if (parsed.data && Array.isArray(parsed.data)) {
         this.users = parsed.data;
       } else {
         this.users = [];

@@ -178,10 +178,7 @@ class UserBusinessTest {
         sampleRequest.setRole(ERole.ROLE_TEACHER);
         when(userRepo.existsByEmail(any())).thenReturn(false);
         when(passwordHasher.hashPassword(any())).thenReturn("hashed");
-        when(userRepo.save(any(EntityUser.class))).thenAnswer(inv -> {
-            EntityUser u = inv.getArgument(0);
-            return u;
-        });
+        when(userRepo.save(any(EntityUser.class))).thenAnswer(inv -> inv.getArgument(0));
 
         GenericResponse response = new GenericResponse();
         userBusiness.insert(sampleRequest, response);

@@ -57,7 +57,7 @@ public class DashboardBusiness {
         response.setEnrollmentsByMonth(enrollmentsByMonth);
 
         responseWrapper.success();
-        responseWrapper.getListMessage().add("EstadÃ­sticas cargadas correctamente");
+        responseWrapper.getListMessage().add("Estadisticas cargadas correctamente");
 
         return response;
     }

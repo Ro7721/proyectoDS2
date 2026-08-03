@@ -17,13 +17,13 @@ import { ThemeService } from '../../core/services/theme.service';
   styleUrl: './home.css',
 })
 export class Home implements OnInit {
-  private api = inject(Api);
-  private cdr = inject(ChangeDetectorRef);
-  private messageService = inject(MessageService);
-  private platformId = inject(PLATFORM_ID);
-  private router = inject(Router);
-  authService = inject(AuthService);
-  themeService = inject(ThemeService);
+  private readonly api = inject(Api);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly messageService = inject(MessageService);
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly router = inject(Router);
+  readonly authService = inject(AuthService);
+  readonly themeService = inject(ThemeService);
 
   isMenuOpen = false;
   profileOpen = false;

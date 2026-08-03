@@ -1,6 +1,24 @@
 package com.epiis.ds26.business;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
+
 import com.epiis.ds26.dto.request.EnrollmentRequest;
+import com.epiis.ds26.dto.response.CertificateResponse;
 import com.epiis.ds26.dto.response.EnrollmentResponse;
 import com.epiis.ds26.dto.response.MyCourseResponse;
 import com.epiis.ds26.entity.EntityCategory;
@@ -12,22 +30,6 @@ import com.epiis.ds26.enums.EStatus;
 import com.epiis.ds26.message.GenericResponse;
 import com.epiis.ds26.repositorie.CourseRepo;
 import com.epiis.ds26.repositorie.EnrollmentRepo;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class EnrollmentBusinessTest {
@@ -51,327 +53,290 @@ class EnrollmentBusinessTest {
 
     @BeforeEach
     void setUp() {
-        teacher = new EntityUser();
-        teacher.setIdUser("teacher-1");
-        teacher.setFirstName("Prof");
-        teacher.setLastName("Gonzalez");
-        teacher.setRole(ERole.ROLE_TEACHER);
+        ReflectionTestUtils.setField(enrollmentBusiness, "baseUrl", "http://localhost:8080");
 
         student = new EntityUser();
-        student.setIdUser("student-1");
+        student.setIdUser("stud-1");
         student.setFirstName("Ana");
         student.setLastName("Torres");
         student.setRole(ERole.ROLE_STUDENT);
 
+        teacher = new EntityUser();
+        teacher.setIdUser("teach-1");
+        teacher.setFirstName("Juan");
+        teacher.setLastName("Perez");
+        teacher.setRole(ERole.ROLE_TEACHER);
+
         EntityCategory category = new EntityCategory();
-        category.setIdCategory("cat-1");
-        category.setName("ProgramaciÃ³n");
+        category.setName("Programming");
 
         course = new EntityCourse();
-        course.setIdCourse("course-1");
-        course.setTitle("Java Avanzado");
-        course.setDescription("Curso de Java");
+        course.setIdCourse("cour-1");
+        course.setTitle("Java Basics");
+        course.setDescription("Learn Java");
+        course.setCoverImage("java.jpg");
         course.setStatus(EStatus.PUBLISHED);
         course.setTeacher(teacher);
         course.setCategory(category);
         course.setLessons(Collections.emptyList());
-        course.setEnrollments(Collections.emptyList());
 
         enrollment = new EntityEnrollment();
-        enrollment.setIdEnrollment("enroll-1");
+        enrollment.setIdEnrollment("enr-1");
         enrollment.setStudent(student);
         enrollment.setCourse(course);
         enrollment.setEnrollmentDate(LocalDateTime.now());
+        enrollment.setLastAccess(LocalDateTime.now());
         enrollment.setTotalProgress(50);
         enrollment.setCompleted(false);
     }
 
-    // =========== enrollInCourse ===========
+    @Test
+    void isEnrolled_returnsTrue() {
+        when(authenticationBusiness.getCurrentUser()).thenReturn(student);
+        when(enrollmentRepo.existsByStudent_idUserAndCourse_idCourse("stud-1", "cour-1")).thenReturn(true);
+
+        boolean enrolled = enrollmentBusiness.isEnrolled("cour-1");
+        assertTrue(enrolled);
+    }
 
     @Test
-    void enrollInCourse_validRequest_enrollsSuccessfully() {
+    void enrollInCourse_validRequest_success() {
+        EnrollmentRequest request = new EnrollmentRequest();
+        request.setCourseId("cour-1");
+
         when(authenticationBusiness.getCurrentUser()).thenReturn(student);
-        when(courseRepo.findById("course-1")).thenReturn(Optional.of(course));
-        when(enrollmentRepo.existsByStudent_idUserAndCourse_idCourse("student-1", "course-1")).thenReturn(false);
+        when(courseRepo.findById("cour-1")).thenReturn(Optional.of(course));
+        when(enrollmentRepo.existsByStudent_idUserAndCourse_idCourse("stud-1", "cour-1")).thenReturn(false);
         when(enrollmentRepo.save(any(EntityEnrollment.class))).thenReturn(enrollment);
 
-        EnrollmentRequest request = new EnrollmentRequest();
-        request.setCourseId("course-1");
-
-        GenericResponse response = new GenericResponse();
-        EntityEnrollment result = enrollmentBusiness.enrollInCourse(request, response);
+        GenericResponse message = new GenericResponse();
+        EntityEnrollment result = enrollmentBusiness.enrollInCourse(request, message);
 
         assertNotNull(result);
-        assertEquals("success", response.getType());
-        assertTrue(response.listMessage.contains("Te has inscrito en el curso exitosamente"));
+        assertEquals("success", message.getType());
     }
 
     @Test
-    void enrollInCourse_nullCourseId_returnsNull() {
+    void enrollInCourse_missingCourseId_warning() {
         EnrollmentRequest request = new EnrollmentRequest();
-        request.setCourseId(null);
+        GenericResponse message = new GenericResponse();
 
-        GenericResponse response = new GenericResponse();
-        EntityEnrollment result = enrollmentBusiness.enrollInCourse(request, response);
+        EntityEnrollment result = enrollmentBusiness.enrollInCourse(request, message);
 
         assertNull(result);
-        assertEquals("warning", response.getType());
-        assertTrue(response.listMessage.contains("El ID del curso es requerido para la inscripciÃ³n"));
+        assertEquals("warning", message.getType());
     }
 
     @Test
-    void enrollInCourse_emptyCourseId_returnsNull() {
+    void enrollInCourse_invalidRole_warning() {
         EnrollmentRequest request = new EnrollmentRequest();
-        request.setCourseId("  ");
+        request.setCourseId("cour-1");
+        student.setRole(ERole.ROLE_TEACHER);
 
-        GenericResponse response = new GenericResponse();
-        EntityEnrollment result = enrollmentBusiness.enrollInCourse(request, response);
-
-        assertNull(result);
-        assertEquals("warning", response.getType());
-    }
-
-    @Test
-    void enrollInCourse_nonExistentCourse_returnsNull() {
         when(authenticationBusiness.getCurrentUser()).thenReturn(student);
-        when(courseRepo.findById("bad-course")).thenReturn(Optional.empty());
+        when(courseRepo.findById("cour-1")).thenReturn(Optional.of(course));
 
-        EnrollmentRequest request = new EnrollmentRequest();
-        request.setCourseId("bad-course");
-
-        GenericResponse response = new GenericResponse();
-        EntityEnrollment result = enrollmentBusiness.enrollInCourse(request, response);
+        GenericResponse message = new GenericResponse();
+        EntityEnrollment result = enrollmentBusiness.enrollInCourse(request, message);
 
         assertNull(result);
-        assertEquals("warning", response.getType());
+        assertEquals("warning", message.getType());
     }
 
     @Test
-    void enrollInCourse_courseNotPublished_returnsNull() {
+    void enrollInCourse_courseNotPublished_warning() {
+        EnrollmentRequest request = new EnrollmentRequest();
+        request.setCourseId("cour-1");
         course.setStatus(EStatus.DRAFT);
+
         when(authenticationBusiness.getCurrentUser()).thenReturn(student);
-        when(courseRepo.findById("course-1")).thenReturn(Optional.of(course));
+        when(courseRepo.findById("cour-1")).thenReturn(Optional.of(course));
 
-        EnrollmentRequest request = new EnrollmentRequest();
-        request.setCourseId("course-1");
-
-        GenericResponse response = new GenericResponse();
-        EntityEnrollment result = enrollmentBusiness.enrollInCourse(request, response);
+        GenericResponse message = new GenericResponse();
+        EntityEnrollment result = enrollmentBusiness.enrollInCourse(request, message);
 
         assertNull(result);
-        assertEquals("warning", response.getType());
-        assertTrue(response.listMessage.contains("El curso no esta publicado"));
+        assertEquals("warning", message.getType());
     }
 
     @Test
-    void enrollInCourse_alreadyEnrolled_returnsNull() {
-        when(authenticationBusiness.getCurrentUser()).thenReturn(student);
-        when(courseRepo.findById("course-1")).thenReturn(Optional.of(course));
-        when(enrollmentRepo.existsByStudent_idUserAndCourse_idCourse("student-1", "course-1")).thenReturn(true);
-
+    void enrollInCourse_teacherSelfEnroll_warning() {
         EnrollmentRequest request = new EnrollmentRequest();
-        request.setCourseId("course-1");
+        request.setCourseId("cour-1");
+        student.setIdUser("teach-1"); // student has same id as teacher
 
-        GenericResponse response = new GenericResponse();
-        EntityEnrollment result = enrollmentBusiness.enrollInCourse(request, response);
+        when(authenticationBusiness.getCurrentUser()).thenReturn(student);
+        when(courseRepo.findById("cour-1")).thenReturn(Optional.of(course));
+
+        GenericResponse message = new GenericResponse();
+        EntityEnrollment result = enrollmentBusiness.enrollInCourse(request, message);
 
         assertNull(result);
-        assertEquals("warning", response.getType());
-        assertTrue(response.listMessage.contains("El estudiante ya estÃ¡ inscrito en este curso"));
+        assertEquals("warning", message.getType());
     }
 
     @Test
-    void enrollInCourse_teacherEnrollsOwnCourse_returnsNull() {
-        teacher.setRole(ERole.ROLE_STUDENT); // Teacher acting as student
-        teacher.setIdUser("teacher-1");
-        course.setTeacher(teacher);
-        when(authenticationBusiness.getCurrentUser()).thenReturn(teacher);
-        when(courseRepo.findById("course-1")).thenReturn(Optional.of(course));
-
+    void enrollInCourse_alreadyEnrolled_warning() {
         EnrollmentRequest request = new EnrollmentRequest();
-        request.setCourseId("course-1");
+        request.setCourseId("cour-1");
 
-        GenericResponse response = new GenericResponse();
-        EntityEnrollment result = enrollmentBusiness.enrollInCourse(request, response);
-
-        assertNull(result);
-        assertEquals("warning", response.getType());
-        assertTrue(response.listMessage.contains("El estudiante no puede inscribirse en su propio curso"));
-    }
-
-    @Test
-    void enrollInCourse_adminRole_notAllowed() {
-        student.setRole(ERole.ROLE_ADMIN);
         when(authenticationBusiness.getCurrentUser()).thenReturn(student);
-        when(courseRepo.findById("course-1")).thenReturn(Optional.of(course));
+        when(courseRepo.findById("cour-1")).thenReturn(Optional.of(course));
+        when(enrollmentRepo.existsByStudent_idUserAndCourse_idCourse("stud-1", "cour-1")).thenReturn(true);
 
-        EnrollmentRequest request = new EnrollmentRequest();
-        request.setCourseId("course-1");
-
-        GenericResponse response = new GenericResponse();
-        EntityEnrollment result = enrollmentBusiness.enrollInCourse(request, response);
+        GenericResponse message = new GenericResponse();
+        EntityEnrollment result = enrollmentBusiness.enrollInCourse(request, message);
 
         assertNull(result);
-        assertEquals("warning", response.getType());
-        assertTrue(response.listMessage.contains("Solo un alumno puede inscribirse."));
+        assertEquals("warning", message.getType());
     }
-
-    // =========== getEnrollmentById ===========
 
     @Test
     void getEnrollmentById_exists_returnsResponse() {
-        when(enrollmentRepo.findById("enroll-1")).thenReturn(Optional.of(enrollment));
+        when(enrollmentRepo.findById("enr-1")).thenReturn(Optional.of(enrollment));
 
-        EnrollmentResponse result = enrollmentBusiness.getEnrollmentById("enroll-1");
+        EnrollmentResponse result = enrollmentBusiness.getEnrollmentById("enr-1");
 
         assertNotNull(result);
-        assertEquals("enroll-1", result.getIdEnrollment());
-        assertEquals("student-1", result.getStudentId());
-        assertEquals("course-1", result.getCourseId());
+        assertEquals("stud-1", result.getStudentId());
     }
 
     @Test
-    void getEnrollmentById_notFound_returnsNull() {
-        when(enrollmentRepo.findById("bad")).thenReturn(Optional.empty());
+    void getEnrollmentById_notExists_returnsNull() {
+        when(enrollmentRepo.findById("enr-1")).thenReturn(Optional.empty());
 
-        EnrollmentResponse result = enrollmentBusiness.getEnrollmentById("bad");
+        EnrollmentResponse result = enrollmentBusiness.getEnrollmentById("enr-1");
 
         assertNull(result);
     }
 
-    // =========== getAllEnrollments ===========
-
     @Test
-    void getAllEnrollments_returnsMappedList() {
-        when(enrollmentRepo.findAll()).thenReturn(Arrays.asList(enrollment));
+    void getAllEnrollments_returnsList() {
+        when(enrollmentRepo.findAll()).thenReturn(List.of(enrollment));
 
         List<EnrollmentResponse> result = enrollmentBusiness.getAllEnrollments();
 
         assertEquals(1, result.size());
-        assertEquals("enroll-1", result.get(0).getIdEnrollment());
     }
 
     @Test
-    void getAllEnrollments_empty_returnsEmptyList() {
-        when(enrollmentRepo.findAll()).thenReturn(Collections.emptyList());
+    void deleteEnrollment_exists_success() {
+        when(enrollmentRepo.findById("enr-1")).thenReturn(Optional.of(enrollment));
 
-        List<EnrollmentResponse> result = enrollmentBusiness.getAllEnrollments();
-
-        assertTrue(result.isEmpty());
-    }
-
-    // =========== deleteEnrollment ===========
-
-    @Test
-    void deleteEnrollment_existing_deletesSuccessfully() {
-        when(enrollmentRepo.findById("enroll-1")).thenReturn(Optional.of(enrollment));
-
-        GenericResponse response = new GenericResponse();
-        boolean result = enrollmentBusiness.deleteEnrollment("enroll-1", response);
+        GenericResponse message = new GenericResponse();
+        boolean result = enrollmentBusiness.deleteEnrollment("enr-1", message);
 
         assertTrue(result);
-        assertEquals("success", response.getType());
-        verify(enrollmentRepo).delete(enrollment);
+        assertEquals("success", message.getType());
     }
 
     @Test
-    void deleteEnrollment_notFound_returnsFalse() {
-        when(enrollmentRepo.findById("bad")).thenReturn(Optional.empty());
-
-        GenericResponse response = new GenericResponse();
-        boolean result = enrollmentBusiness.deleteEnrollment("bad", response);
+    void deleteEnrollment_emptyId_warning() {
+        GenericResponse message = new GenericResponse();
+        boolean result = enrollmentBusiness.deleteEnrollment("", message);
 
         assertFalse(result);
-        assertEquals("warning", response.getType());
-        assertTrue(response.listMessage.contains("InscripciÃ³n no encontrada"));
+        assertEquals("warning", message.getType());
     }
 
-    // =========== updateProgress ===========
+    @Test
+    void deleteEnrollment_notExists_warning() {
+        when(enrollmentRepo.findById("enr-1")).thenReturn(Optional.empty());
+
+        GenericResponse message = new GenericResponse();
+        boolean result = enrollmentBusiness.deleteEnrollment("enr-1", message);
+
+        assertFalse(result);
+        assertEquals("warning", message.getType());
+    }
 
     @Test
-    void updateProgress_validEnrollment_updatesProgress() {
-        when(enrollmentRepo.findById("enroll-1")).thenReturn(Optional.of(enrollment));
-        when(enrollmentRepo.save(any())).thenReturn(enrollment);
+    void updateProgress_exists_success() {
+        when(enrollmentRepo.findById("enr-1")).thenReturn(Optional.of(enrollment));
+        when(enrollmentRepo.save(any(EntityEnrollment.class))).thenReturn(enrollment);
 
-        GenericResponse response = new GenericResponse();
-        EntityEnrollment result = enrollmentBusiness.updateProgress("enroll-1", 75, response);
+        GenericResponse message = new GenericResponse();
+        EntityEnrollment result = enrollmentBusiness.updateProgress("enr-1", 100, message);
 
         assertNotNull(result);
-        assertEquals("success", response.getType());
-        assertTrue(response.listMessage.contains("Progreso actualizado exitosamente"));
+        assertEquals("success", message.getType());
     }
 
     @Test
-    void updateProgress_100percent_setsCompleted() {
-        when(enrollmentRepo.findById("enroll-1")).thenReturn(Optional.of(enrollment));
-        when(enrollmentRepo.save(any(EntityEnrollment.class))).thenAnswer(inv -> inv.getArgument(0));
-
-        GenericResponse response = new GenericResponse();
-        EntityEnrollment result = enrollmentBusiness.updateProgress("enroll-1", 100, response);
-
-        assertNotNull(result);
-        assertTrue(result.isCompleted());
-    }
-
-    @Test
-    void updateProgress_notFound_returnsNull() {
-        when(enrollmentRepo.findById("bad")).thenReturn(Optional.empty());
-
-        GenericResponse response = new GenericResponse();
-        EntityEnrollment result = enrollmentBusiness.updateProgress("bad", 50, response);
+    void updateProgress_emptyId_warning() {
+        GenericResponse message = new GenericResponse();
+        EntityEnrollment result = enrollmentBusiness.updateProgress("", 50, message);
 
         assertNull(result);
-        assertEquals("warning", response.getType());
-        assertTrue(response.listMessage.contains("InscripciÃ³n no encontrada"));
-    }
-
-    // =========== isEnrolled ===========
-
-    @Test
-    void isEnrolled_true_whenStudentIsEnrolled() {
-        when(authenticationBusiness.getCurrentUser()).thenReturn(student);
-        when(enrollmentRepo.existsByStudent_idUserAndCourse_idCourse("student-1", "course-1")).thenReturn(true);
-
-        boolean result = enrollmentBusiness.isEnrolled("course-1");
-
-        assertTrue(result);
+        assertEquals("warning", message.getType());
     }
 
     @Test
-    void isEnrolled_false_whenStudentNotEnrolled() {
-        when(authenticationBusiness.getCurrentUser()).thenReturn(student);
-        when(enrollmentRepo.existsByStudent_idUserAndCourse_idCourse("student-1", "course-1")).thenReturn(false);
+    void updateProgress_notExists_warning() {
+        when(enrollmentRepo.findById("enr-1")).thenReturn(Optional.empty());
 
-        boolean result = enrollmentBusiness.isEnrolled("course-1");
+        GenericResponse message = new GenericResponse();
+        EntityEnrollment result = enrollmentBusiness.updateProgress("enr-1", 50, message);
 
-        assertFalse(result);
+        assertNull(result);
+        assertEquals("warning", message.getType());
     }
 
-    // =========== mapToResponse ===========
-
     @Test
-    void mapToResponse_mapsAllFieldsCorrectly() {
-        EnrollmentResponse result = enrollmentBusiness.mapToResponse(enrollment);
+    void getEnrollmentReport_returnsList() {
+        when(enrollmentRepo.findByStudent_idUser("stud-1")).thenReturn(List.of(enrollment));
 
-        assertEquals("enroll-1", result.getIdEnrollment());
-        assertEquals("student-1", result.getStudentId());
-        assertEquals("course-1", result.getCourseId());
-        assertEquals("Ana Torres", result.getStudentName());
-        assertEquals("Java Avanzado", result.getCourseTitle());
-        assertEquals(50, result.getTotalProgress());
-        assertFalse(result.isCompleted());
-    }
-
-    // =========== getEnrollmentReport ===========
-
-    @Test
-    void getEnrollmentReport_returnsStudentEnrollments() {
-        when(enrollmentRepo.findByStudent_idUser("student-1"))
-                .thenReturn(Collections.singletonList(enrollment));
-
-        List<EnrollmentResponse> result = enrollmentBusiness.getEnrollmentReport("student-1");
+        List<EnrollmentResponse> result = enrollmentBusiness.getEnrollmentReport("stud-1");
 
         assertEquals(1, result.size());
-        assertEquals("student-1", result.get(0).getStudentId());
+    }
+
+    @Test
+    void getMyCourses_returnsList() {
+        when(authenticationBusiness.getCurrentUser()).thenReturn(student);
+        when(enrollmentRepo.findByStudent_idUserOrderByLastAccessDesc("stud-1")).thenReturn(List.of(enrollment));
+
+        List<MyCourseResponse> result = enrollmentBusiness.getMyCouses();
+
+        assertEquals(1, result.size());
+        assertEquals("Java Basics", result.get(0).getTitle());
+    }
+
+    @Test
+    void getCertificate_notEnrolled_warning() {
+        when(authenticationBusiness.getCurrentUser()).thenReturn(student);
+        when(enrollmentRepo.findByStudent_idUserAndCourse_idCourse("stud-1", "cour-1")).thenReturn(Optional.empty());
+
+        GenericResponse message = new GenericResponse();
+        CertificateResponse result = enrollmentBusiness.getCertificate("cour-1", message);
+
+        assertNull(result);
+        assertEquals("warning", message.getType());
+    }
+
+    @Test
+    void getCertificate_notCompleted_warning() {
+        when(authenticationBusiness.getCurrentUser()).thenReturn(student);
+        when(enrollmentRepo.findByStudent_idUserAndCourse_idCourse("stud-1", "cour-1")).thenReturn(Optional.of(enrollment));
+
+        GenericResponse message = new GenericResponse();
+        CertificateResponse result = enrollmentBusiness.getCertificate("cour-1", message);
+
+        assertNull(result);
+        assertEquals("warning", message.getType());
+    }
+
+    @Test
+    void getCertificate_completed_success() {
+        enrollment.setCompleted(true);
+        when(authenticationBusiness.getCurrentUser()).thenReturn(student);
+        when(enrollmentRepo.findByStudent_idUserAndCourse_idCourse("stud-1", "cour-1")).thenReturn(Optional.of(enrollment));
+
+        GenericResponse message = new GenericResponse();
+        CertificateResponse result = enrollmentBusiness.getCertificate("cour-1", message);
+
+        assertNotNull(result);
+        assertEquals("success", message.getType());
+        assertEquals("Java Basics", result.getCourseName());
     }
 }

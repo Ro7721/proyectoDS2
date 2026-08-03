@@ -11,6 +11,8 @@ import { AuthService } from '../../../../core/auth/auth.service';
 import { CertificateResponse } from '../../../../models/learning.model';
 import { getApiMessage, isApiEnvelope, parseApiPayload, unwrapApiResponse } from '../../../../core/utils/api-response';
 
+type FilterType = 'ALL' | 'IN_PROGRESS' | 'COMPLETED';
+
 @Component({
   selector: 'app-my-courses',
   imports: [CommonModule, FormsModule, CertificateModal],
@@ -19,8 +21,8 @@ import { getApiMessage, isApiEnvelope, parseApiPayload, unwrapApiResponse } from
 })
 export class MyCourses implements OnInit {
 
-  private changeDetector = inject(ChangeDetectorRef);
-  private authService = inject(AuthService);
+  private readonly changeDetector = inject(ChangeDetectorRef);
+  private readonly authService = inject(AuthService);
 
   courses: MyCourseResponse[] = [];
   filtered: MyCourseResponse[] = [];
@@ -28,7 +30,7 @@ export class MyCourses implements OnInit {
 
   // Filters
   searchQuery = '';
-  activeFilter: 'ALL' | 'IN_PROGRESS' | 'COMPLETED' = 'ALL';
+  activeFilter: FilterType = 'ALL';
   sortBy: 'recent' | 'progress' | 'alpha' = 'recent';
 
   statusFilters = [
@@ -58,7 +60,7 @@ export class MyCourses implements OnInit {
     return this.courses.filter(c => !c.completed).length;
   }
 
-  constructor(private api: Api, private toast: MessageToast, private router: Router) { }
+  constructor(private readonly api: Api, private readonly toast: MessageToast, private readonly router: Router) { }
 
   ngOnInit(): void {
     this.loadCourses();
@@ -123,12 +125,12 @@ export class MyCourses implements OnInit {
     this.changeDetector.detectChanges();
   }
 
-  setFilter(value: 'ALL' | 'IN_PROGRESS' | 'COMPLETED'): void {
+  setFilter(value: FilterType): void {
     this.activeFilter = value;
     this.applyFilters();
   }
 
-  getCount(filter: 'ALL' | 'IN_PROGRESS' | 'COMPLETED'): number {
+  getCount(filter: FilterType): number {
     if (filter === 'ALL') return this.courses.length;
     if (filter === 'COMPLETED') return this.completedCount;
     return this.inProgressCount;

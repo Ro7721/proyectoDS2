@@ -4,8 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { AuthService } from '../../../../core/auth/auth.service';
 import { Api } from '../../../../api/api';
 import { CurrentUser } from '../../../../models/auth.model';
-import { updateUser } from '../../../../api/functions';
-import { findByTeacher } from '../../../../api/functions';
+import { updateUser, findByTeacher } from '../../../../api/functions';
 
 @Component({
   selector: 'app-teacher-profile',
@@ -23,10 +22,10 @@ export class TeacherProfile implements OnInit {
   public form: FormGroup;
 
   constructor(
-    private authService: AuthService,
-    private api: Api,
-    private frm: FormBuilder,
-    private cdm: ChangeDetectorRef
+    private readonly authService: AuthService,
+    private readonly api: Api,
+    private readonly frm: FormBuilder,
+    private readonly cdm: ChangeDetectorRef
   ) {
     this.form = this.frm.group({
       firstName: ['', Validators.required],
@@ -58,7 +57,9 @@ export class TeacherProfile implements OnInit {
           const parsed = typeof res === 'string' ? JSON.parse(res) : res;
           const courses = Array.isArray(parsed) ? parsed : (parsed.data ?? []);
           this.courseCount = courses.length;
-        } catch { /* ignore */ }
+        } catch (e) {
+          console.error('Error fetching course count', e);
+        }
       }
     } catch (error) {
       this.showMessage('Error al cargar el perfil', true);

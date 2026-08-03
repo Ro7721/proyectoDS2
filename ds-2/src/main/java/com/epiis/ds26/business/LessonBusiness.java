@@ -59,48 +59,16 @@ public class LessonBusiness {
         }
         if (adjunctFiles != null && adjunctFiles.size() > MAX_ADJUNCT_FILES) {
             response.warning();
-            response.listMessage.add("MÃ¡ximo " + MAX_ADJUNCT_FILES + " archivos adjuntos por lecciÃ³n");
+            response.listMessage.add("Maximo " + MAX_ADJUNCT_FILES + " archivos adjuntos por lección");
             return null;
         }
-        // 2. Asignar el orden automÃ¡ticamente basado en la Ãºltima lecciÃ³n del curso
+        // 2. Asignar el orden automáticamente basado en la última lección del curso
         Integer nextOrder = lessonRepo.findMaxLessonOrderByCourseId(request.getCourseId()) + 1;
         request.setLessonOrder(nextOrder);
-        String videoFileName = null;
-        File savedVideoFile = null;
-
-        // 3. Procesar el video principal de la lecciÃ³n si el tipo es VIDEO
-        if ("VIDEO".equalsIgnoreCase(request.getType())) {
-            if (mainVideoFile == null || mainVideoFile.isEmpty()) {
-                response.warning();
-                response.listMessage.add("El archivo de video principal es requerido para este tipo de lecciÃ³n");
-                return null;
-            }
-
-            if (!isValidVideoFile(mainVideoFile)) {
-                response.warning();
-                response.listMessage.add("El formato del archivo '" + mainVideoFile.getOriginalFilename()
-                        + "' no es un video vÃ¡lido (.mp4, .avi, .mov, .mkv)");
-                return null;
-            }
-            // Guardar el video en la carpeta /lessons/video/
-            videoFileName = saveFileToDisk(mainVideoFile, TYPE_VIDEO, response);
-            if (videoFileName == null)
-                return null;
-
-            Path videoPath = Paths.get(storagePath, FOLDER_LESSONS, TYPE_VIDEO, videoFileName);
-            savedVideoFile = videoPath.toFile();
-
-            // Extraer duraciÃ³n del video automÃ¡ticamente usando JAVE
-            Integer duration = extractVideoDuration(savedVideoFile);
-            if (duration == null) {
-                response.warning();
-                response.listMessage.add("No se pudo analizar la duraciÃ³n del archivo de video");
-                return null;
-            }
-            request.setDurationMinutes(duration);
-            request.setContenUrl(videoFileName); // El contenido de la lecciÃ³n es el nombre del video
+        if (!processMainVideoForInsert(request, mainVideoFile, response)) {
+            return null;
         }
-        // 4. Mapear y guardar la lecciÃ³n en la base de datos
+        // 4. Mapear y guardar la lección en la base de datos
         EntityLesson lesson = mapRequestToEntity(request);
         lesson = lessonRepo.save(lesson);
         // 5. Procesar los archivos adjuntos complementarios (pueden ser PDFs, ZIPs,
@@ -108,9 +76,43 @@ public class LessonBusiness {
             saveAdjunctFiles(lesson, adjunctFiles, response);
         }
         response.success();
-        response.listMessage.add("LecciÃ³n insertada correctamente con su video principal y " +
+        response.listMessage.add("Lección insertada correctamente con su video principal y " +
                 (adjunctFiles != null ? adjunctFiles.size() : 0) + " archivo(s) adjunto(s).");
         return lesson;
+    }
+
+    private boolean processMainVideoForInsert(LessonRequest request, MultipartFile mainVideoFile,
+            GenericResponse response) {
+        if ("VIDEO".equalsIgnoreCase(request.getType())) {
+            if (mainVideoFile == null || mainVideoFile.isEmpty()) {
+                response.warning();
+                response.listMessage.add("El archivo de video principal es requerido para este tipo de lección");
+                return false;
+            }
+
+            if (!isValidVideoFile(mainVideoFile)) {
+                response.warning();
+                response.listMessage.add("El formato del archivo '" + mainVideoFile.getOriginalFilename()
+                        + "' no es un video válido (.mp4, .avi, .mov, .mkv)");
+                return false;
+            }
+            String videoFileName = saveFileToDisk(mainVideoFile, TYPE_VIDEO, response);
+            if (videoFileName == null)
+                return false;
+
+            Path videoPath = Paths.get(storagePath, FOLDER_LESSONS, TYPE_VIDEO, videoFileName);
+            File savedVideoFile = videoPath.toFile();
+
+            Integer duration = extractVideoDuration(savedVideoFile);
+            if (duration == null) {
+                response.warning();
+                response.listMessage.add("No se pudo analizar la duración del archivo de video");
+                return false;
+            }
+            request.setDurationMinutes(duration);
+            request.setContenUrl(videoFileName);
+        }
+        return true;
     }
 
     private Integer extractVideoDuration(File videoFile) {
@@ -227,7 +229,7 @@ public class LessonBusiness {
         EntityLesson lesson = lessonRepo.findById(idLesson).orElse(null);
         if (lesson == null) {
             response.warning();
-            response.listMessage.add("La lecciÃ³n no existe");
+            response.listMessage.add("La lección no existe");
             return null;
         }
 
@@ -244,7 +246,7 @@ public class LessonBusiness {
         }
 
         response.success();
-        response.listMessage.add("LecciÃ³n actualizada correctamente.");
+        response.listMessage.add("Lección actualizada correctamente.");
         return lesson;
     }
 
@@ -264,7 +266,7 @@ public class LessonBusiness {
             }
             if (!isValidVideoFile(mainVideoFile)) {
                 response.warning();
-                response.listMessage.add("El formato de video es invÃ¡lido");
+                response.listMessage.add("El formato de video es inválido");
                 return false;
             }
 
@@ -284,8 +286,10 @@ public class LessonBusiness {
     }
 
     private boolean validateLesson(LessonRequest request, GenericResponse gresponse) {
-        if (!validateLessonBasicFields(request, gresponse)) return false;
-        if (!validateLessonDescription(request, gresponse)) return false;
+        if (!validateLessonBasicFields(request, gresponse))
+            return false;
+        if (!validateLessonDescription(request, gresponse))
+            return false;
 
         if (request.getType() == null || request.getType().trim().isEmpty()) {
             gresponse.warning();
@@ -417,18 +421,18 @@ public class LessonBusiness {
     public boolean deleteLesson(String idLeson, GenericResponse response) {
         if (idLeson.isEmpty()) {
             response.error();
-            response.listMessage.add("El Id de la lecciÃ³n es obligatorio");
+            response.listMessage.add("El Id de la lección es obligatorio");
             return false;
         }
         EntityLesson lesson = lessonRepo.findById(idLeson).orElse(null);
         if (lesson == null) {
             response.warning();
-            response.listMessage.add("La lecciÃ³n no existe");
+            response.listMessage.add("La lección no existe");
             return false;
         }
         lessonRepo.delete(lesson);
         response.success();
-        response.listMessage.add("LecciÃ³n eliminada correctamente");
+        response.listMessage.add("Lección eliminada correctamente");
         return true;
     }
 
@@ -469,7 +473,7 @@ public class LessonBusiness {
 
         if (!hasParams) {
             response.warning();
-            response.listMessage.add("Por favor proporcione al menos un parÃ¡metro de bÃºsqueda");
+            response.listMessage.add("Por favor proporcione al menos un parametro de busqueda");
             return java.util.Collections.emptyList();
         }
 
@@ -483,7 +487,7 @@ public class LessonBusiness {
             response.listMessage.add("No se encontraron lecciones con los criterios proporcionados");
         } else {
             response.success();
-            response.listMessage.add("BÃºsqueda exitosa");
+            response.listMessage.add("Búsqueda exitosa");
         }
 
         return result;

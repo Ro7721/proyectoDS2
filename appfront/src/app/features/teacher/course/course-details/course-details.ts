@@ -99,7 +99,7 @@ export class CourseDetails implements OnInit {
   private loadCategories(): void {
     this.api.invoke(getAll1).then((response: any) => {
       const data = typeof response === 'string' ? JSON.parse(response) : response;
-      this.listCategories = data;
+      this.listCategories = data?.data || data;
     });
   }
 
@@ -179,8 +179,6 @@ export class CourseDetails implements OnInit {
 
   openNewLessonDialog(): void {
     // Indicamos que estamos abriendo la lección para evitar que `close()` limpie el estado
-    this.isOpeningLesson = true;
-
     this.isOpeningLesson = true;
 
     // Abrimos el modal de lecciones
@@ -286,13 +284,22 @@ export class CourseDetails implements OnInit {
     // Find category ID based on category name
     const cat = this.listCategories.find(c => c.name === this.selectedCourse?.categoryName);
 
+    let mappedLevel: string = this.selectedCourse.level;
+    if (['Básico', 'BÁSICO', 'BASICO', 'Principiante', ' Principiante'].includes(mappedLevel)) mappedLevel = 'BASIC';
+    else if (['Intermedio', 'INTERMEDIO'].includes(mappedLevel)) mappedLevel = 'INTERMEDIATE';
+    else if (['Avanzado', 'AVANZADO'].includes(mappedLevel)) mappedLevel = 'ADVANCED';
+
+    let mappedStatus: string = this.selectedCourse.status;
+    if (['Borrador', 'BORRADOR'].includes(mappedStatus)) mappedStatus = 'DRAFT';
+    else if (['Publicado', 'PUBLICADO'].includes(mappedStatus)) mappedStatus = 'PUBLISHED';
+
     this.courseForm.patchValue({
       title: this.selectedCourse.title,
       description: this.selectedCourse.description,
       idCategory: cat ? cat.idCategory : null,
-      level: this.selectedCourse.level,
+      level: mappedLevel,
       price: this.selectedCourse.price,
-      status: this.selectedCourse.status
+      status: mappedStatus
     });
     this.coverImagePreview = this.selectedCourse.coverImage;
     this.coverImageFile = null;

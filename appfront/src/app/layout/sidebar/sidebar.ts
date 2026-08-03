@@ -16,7 +16,7 @@ export class Sidebar {
   @Input() menu: MenuItem[] = [];
   @Input() role: 'ROLE_STUDENT' | 'ROLE_TEACHER' | 'ROLE_ADMIN' = 'ROLE_TEACHER';
   @Input() isCollapsed = false;
-  @Output() onExpand = new EventEmitter<void>();
+  @Output() expand = new EventEmitter<void>();
 
   private openedMenus: Record<string, boolean> = {};
 
@@ -30,14 +30,14 @@ export class Sidebar {
   onItemClick(event: Event) {
     if (this.isCollapsed) {
       event.preventDefault();
-      this.onExpand.emit();
+      this.expand.emit();
     }
   }
 
   toggleSubmenu(label: string, event?: Event): void {
     if (this.isCollapsed) {
       event?.preventDefault();
-      this.onExpand.emit();
+      this.expand.emit();
     } else {
       this.openedMenus[label] = !this.openedMenus[label];
     }

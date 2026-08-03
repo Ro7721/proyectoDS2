@@ -68,7 +68,7 @@ export class LessonInsert implements OnInit, OnChanges {
   @Input() isEditing: boolean = false;
 
   @Output() showDialogChange = new EventEmitter<boolean>();
-  @Output() onSaveLesson = new EventEmitter<LessonFormPayload>();
+  @Output() lessonSave = new EventEmitter<LessonFormPayload>();
 
   frmInserLesson: FormGroup;
   mainVideoFile: File[] = [];
@@ -212,7 +212,7 @@ export class LessonInsert implements OnInit, OnChanges {
       adjunctFiles: this.adjunctFiles.length > 0 ? (this.adjunctFiles as Blob[]) : undefined
     };
 
-    this.onSaveLesson.emit(lessonData);
+    this.lessonSave.emit(lessonData);
     this.frmInserLesson.reset({ type: 'VIDEO', uploadVideo: false, isFree: false });
     this.mainVideoFile = [];
     this.adjunctFiles = [];

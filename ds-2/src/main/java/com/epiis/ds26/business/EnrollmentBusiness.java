@@ -78,7 +78,7 @@ public class EnrollmentBusiness {
                 course.getIdCourse());
         if (isEnrolled) {
             message.warning();
-            message.listMessage.add("El estudiante ya estÃ¡ inscrito en este curso");
+            message.listMessage.add("El estudiante ya esta inscrito en este curso");
             return false;
         }
         return true;
@@ -94,7 +94,7 @@ public class EnrollmentBusiness {
     public EntityEnrollment enrollInCourse(EnrollmentRequest request, GenericResponse message) {
         if (request.getCourseId() == null || request.getCourseId().trim().isEmpty()) {
             message.warning();
-            message.listMessage.add("El ID del curso es requerido para la inscripciÃ³n");
+            message.listMessage.add("El ID del curso es requerido para la inscripción");
             return null;
         }
         EntityUser student = authenticationBusiness.getCurrentUser();
@@ -150,12 +150,12 @@ public class EnrollmentBusiness {
         Optional<EntityEnrollment> optionalEnrollment = enrollmentRepo.findById(idEnrollment);
         if (!optionalEnrollment.isPresent()) {
             message.warning();
-            message.listMessage.add("InscripciÃ³n no encontrada");
+            message.listMessage.add("Inscripción no encontrada");
             return false;
         }
         enrollmentRepo.delete(optionalEnrollment.get());
         message.success();
-        message.listMessage.add("InscripciÃ³n eliminada exitosamente");
+        message.listMessage.add("Inscripción eliminada exitosamente");
         return true;
     }
 
@@ -163,7 +163,7 @@ public class EnrollmentBusiness {
     public EntityEnrollment updateProgress(String idEnrollment, Integer totalProgress, GenericResponse message) {
         if (idEnrollment.isEmpty()) {
             message.warning();
-            message.listMessage.add("El ID de la inscripciÃ³n es requerido");
+            message.listMessage.add("El ID de la inscripción es requerido");
             return null;
         }
         Optional<EntityEnrollment> optionalEnrollment = enrollmentRepo.findById(idEnrollment);
@@ -177,7 +177,7 @@ public class EnrollmentBusiness {
             return enrollmentRepo.save(entity);
         }
         message.warning();
-        message.listMessage.add("InscripciÃ³n no encontrada");
+        message.listMessage.add("Inscripción no encontrada");
         return null;
     }
 
@@ -227,7 +227,7 @@ public class EnrollmentBusiness {
 
         if (!enrollment.isCompleted()) {
             message.warning();
-            message.listMessage.add("No has completado el curso aÃºn");
+            message.listMessage.add("No has completado el curso aún");
             return null;
         }
 

@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from '@angular/common';
-import { Component, inject, PLATFORM_ID, signal } from '@angular/core';
+import { Component, inject, PLATFORM_ID, signal, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ToastModule } from "primeng/toast";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
@@ -9,7 +9,7 @@ import { ConfirmDialogModule } from "primeng/confirmdialog";
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App {
+export class App implements OnInit {
   protected readonly title = signal('appfront');
   private readonly platformId = inject(PLATFORM_ID);
 

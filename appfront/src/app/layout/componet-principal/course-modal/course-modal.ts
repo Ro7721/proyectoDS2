@@ -23,7 +23,7 @@ export class CourseModal {
     return this.isVisible;
   }
 
-  @Output() close = new EventEmitter<void>();
+  @Output() closeModal = new EventEmitter<void>();
   @Output() buy = new EventEmitter<any>();
 
   selectedCourseId: string | null = null;
@@ -36,7 +36,7 @@ export class CourseModal {
   }
   hideModal() {
     this.isVisible = false;
-    this.close.emit();
+    this.closeModal.emit();
   }
   closeOutside(event: any) {
     if (event.target.classList.contains('fixed')) {

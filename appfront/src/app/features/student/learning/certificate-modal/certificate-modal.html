@@ -9,145 +9,125 @@
     (click)="$event.stopPropagation()">
 
     <!-- Certificate design (Left side - Main) -->
-    <div class="flex-1 bg-white p-6 sm:p-12 flex flex-col justify-between items-center relative z-10 h-full">
+    <div class="flex-1 bg-white p-6 sm:p-12 flex flex-col justify-between items-center relative z-10 h-full border-[12px] border-double border-emerald-700/20 m-2 rounded-md">
 
       <!-- Top Logo Area -->
-      <div class="flex items-center gap-4 mt-2 sm:mt-0 mb-6">
-        <!-- Logo Graphic (Book + Person) -->
-        <div class="relative w-20 h-20 text-[#0d276b] flex-shrink-0">
-          <svg viewBox="0 0 100 100" fill="currentColor">
-            <path d="M50 15 A12 12 0 1 0 50 39 A12 12 0 1 0 50 15 Z" />
-            <path d="M10 50 Q 50 30 90 50 L80 90 Q 50 70 20 90 Z" opacity="0.1" />
-            <path d="M20 50 Q 50 30 80 50 L50 85 Z" />
-            <path d="M10 65 Q 50 80 90 65" stroke="currentColor" stroke-width="4" fill="none" />
-            <path d="M20 75 Q 50 90 80 75" stroke="currentColor" stroke-width="4" fill="none" />
-            <text x="50" y="69" font-size="20" font-weight="900" fill="white" text-anchor="middle"
-              font-family="sans-serif">CCD</text>
-          </svg>
+      <div class="flex items-center gap-3 mt-2 sm:mt-0 mb-6">
+        <div class="w-10 h-10 rounded-full bg-emerald-600 flex items-center justify-center text-white shadow-sm">
+          <i class="pi pi-check text-base font-bold"></i>
         </div>
-        <div class="text-[#0d276b] font-black leading-tight text-xl sm:text-2xl tracking-wide text-left">
-          CENTRO DE<br>CAPACITACIÓN<br>Y DESARROLLO
+        <div class="text-emerald-800 font-extrabold leading-tight text-xl tracking-tight text-left">
+          EduLearning
         </div>
       </div>
 
       <!-- Main Titles -->
       <div class="w-full text-center flex-1 flex flex-col justify-center max-w-3xl mx-auto">
-        <h1 class="text-[3rem] sm:text-[4.5rem] font-black text-[#0d276b] tracking-tighter leading-none mb-4">DIPLOMA
-        </h1>
-        <p class="text-[#0d276b] text-sm sm:text-base font-medium mb-1">Otorgado a:</p>
-        <h2 class="text-2xl sm:text-[2.2rem] font-bold text-[#61a0ff] uppercase tracking-wide mb-5 px-4 leading-tight">
+        <h1 class="text-[2.2rem] sm:text-[3.5rem] font-black text-emerald-900 tracking-tighter leading-none mb-4">CERTIFICADO</h1>
+        <p class="text-slate-500 text-xs sm:text-sm font-semibold tracking-wider uppercase mb-1">DE APROBACIÓN</p>
+        <div class="w-16 h-0.5 bg-emerald-600 mx-auto my-3"></div>
+        <p class="text-slate-500 text-xs sm:text-sm font-medium mb-1">Este documento se otorga con orgullo a:</p>
+        <h2 class="text-2xl sm:text-[2.2rem] font-bold text-emerald-600 uppercase tracking-wide mb-5 px-4 leading-tight">
           {{ studentName }}</h2>
-        <p class="text-[#0d276b] text-xs sm:text-sm font-medium mb-2">Por haber concluido con éxito el diploma de alta
-          especialización de:</p>
-        <h3 class="text-xl sm:text-[1.8rem] font-black text-[#0d276b] uppercase leading-tight px-6">{{ courseName }}
+        <p class="text-slate-500 text-xs sm:text-sm font-medium mb-2">Por haber concluido satisfactoriamente el curso de:</p>
+        <h3 class="text-lg sm:text-[1.5rem] font-extrabold text-slate-800 uppercase leading-tight px-6">{{ courseName }}
         </h3>
       </div>
 
       <!-- Description Text -->
-      <div class="text-center text-[0.65rem] sm:text-[0.8rem] text-gray-700 max-w-2xl mx-auto mt-6 mb-8 space-y-1">
-        <p>Emitido por el <strong>Centro de Capacitación y Desarrollo - CCD</strong>, con una duración de {{
-          totalLessons }} lecciones<br>académicas, realizado y culminado el {{ completionDate }}.</p>
-        <p>Por cuanto: Para que conste y sea reconocido, se otorga el presente diploma en calidad de:</p>
-        <p class="text-[#61a0ff] font-bold text-base sm:text-lg mt-2 mb-2">APROBADO</p>
-        <p>Firmado, el {{ completionDate }}.</p>
+      <div class="text-center text-[0.65rem] sm:text-[0.78rem] text-slate-600 max-w-2xl mx-auto mt-6 mb-8 space-y-1">
+        <p>Emitido por la plataforma de educación digital <strong>EduLearning</strong>, con un total de {{
+          totalLessons }} lecciones académicas completadas exitosamente el día {{ completionDate }}.</p>
+        <p class="text-emerald-600 font-semibold tracking-wide mt-2">DIPLOMA DE APROBACIÓN</p>
       </div>
 
       <!-- Footer Signatures -->
       <div class="w-full flex justify-between items-end px-2 sm:px-12 mt-auto mb-2">
-        <!-- Left Stamp -->
+        <!-- Left Signature (Director) -->
         <div class="flex flex-col items-center">
+          <!-- Stamp rotating -->
           <div
-            class="w-20 h-20 sm:w-24 sm:h-24 rounded-full border border-gray-400 relative flex items-center justify-center mb-2">
+            class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border border-emerald-200 relative flex items-center justify-center mb-2">
             <svg viewBox="0 0 100 100" class="absolute inset-0 w-full h-full animate-spin-slow"
               style="animation-duration: 25s;">
               <path id="curve" d="M 10 50 A 40 40 0 1 1 90 50 A 40 40 0 1 1 10 50" fill="transparent" />
-              <text font-size="9" fill="#333" font-weight="bold" letter-spacing="1">
-                <textPath href="#curve">CENTRO DE CAPACITACIÓN Y DESARROLLO -</textPath>
+              <text font-size="9" fill="#047857" font-weight="bold" letter-spacing="1">
+                <textPath href="#curve">EDULEARNING - CERTIFICADO OFICIAL -</textPath>
               </text>
             </svg>
-            <div class="text-[#0d276b] font-black text-sm text-center leading-none z-10 font-sans">CCD</div>
+            <i class="pi pi-verified text-emerald-600 text-lg z-10"></i>
           </div>
           <!-- Fake signature graphic -->
-          <div class="w-32 sm:w-48 h-12 relative -mb-4 opacity-80">
-            <svg viewBox="0 0 100 30" class="w-full h-full" fill="none" stroke="#111" stroke-width="1.5">
+          <div class="w-32 sm:w-40 h-10 relative -mb-3 opacity-80">
+            <svg viewBox="0 0 100 30" class="w-full h-full" fill="none" stroke="#047857" stroke-width="1.5">
               <path d="M 10 25 Q 15 10 20 20 T 30 15 T 40 25 T 50 10 T 60 25 T 70 5 T 80 20 T 90 15" />
             </svg>
           </div>
-          <div class="w-32 sm:w-48 border-b border-black mb-1"></div>
-          <p class="text-[0.55rem] sm:text-[0.65rem] font-bold text-center leading-tight">ING. VICTOR ANDRÉ ARIZA
-            FLORES<br><span class="font-normal text-[0.5rem] sm:text-[0.55rem]">Director Académico - ING<br>CIP -
-              185530</span></p>
+          <div class="w-32 sm:w-40 border-b border-slate-300 mb-1"></div>
+          <p class="text-[0.55rem] sm:text-[0.65rem] font-bold text-slate-800 text-center leading-tight">Victor A. Ariza<br>
+            <span class="font-normal text-slate-500 text-[0.5rem] sm:text-[0.55rem]">Director de EduLearning</span>
+          </p>
         </div>
 
-        <!-- Right Stamp -->
+        <!-- Right Signature (Teacher) -->
         <div class="flex flex-col items-center">
+          <!-- Stamp rotating -->
           <div
-            class="w-20 h-20 sm:w-24 sm:h-24 rounded-full border border-gray-400 relative flex items-center justify-center mb-2">
+            class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border border-emerald-200 relative flex items-center justify-center mb-2">
             <svg viewBox="0 0 100 100" class="absolute inset-0 w-full h-full animate-spin-slow"
               style="animation-duration: 25s; animation-direction: reverse;">
               <path id="curve2" d="M 10 50 A 40 40 0 1 1 90 50 A 40 40 0 1 1 10 50" fill="transparent" />
-              <text font-size="9" fill="#333" font-weight="bold" letter-spacing="1">
-                <textPath href="#curve2">CENTRO DE CAPACITACIÓN Y DESARROLLO -</textPath>
+              <text font-size="9" fill="#0d9488" font-weight="bold" letter-spacing="1">
+                <textPath href="#curve2">INSTRUCTOR CERTIFICADO - REGISTRADO -</textPath>
               </text>
             </svg>
-            <div class="text-[#0d276b] font-black text-sm text-center leading-none z-10 font-sans">CCD</div>
+            <i class="pi pi-check-circle text-teal-600 text-lg z-10"></i>
           </div>
           <!-- Fake signature graphic -->
-          <div class="w-32 sm:w-48 h-12 relative -mb-4 opacity-80">
-            <svg viewBox="0 0 100 30" class="w-full h-full" fill="none" stroke="#111" stroke-width="1">
+          <div class="w-32 sm:w-40 h-10 relative -mb-3 opacity-80">
+            <svg viewBox="0 0 100 30" class="w-full h-full" fill="none" stroke="#0d9488" stroke-width="1.2">
               <path d="M 10 15 Q 20 5 25 15 T 35 15 T 45 25 T 55 5 T 65 25 T 75 10 T 90 15" />
             </svg>
           </div>
-          <div class="w-32 sm:w-48 border-b border-black mb-1 text-center"></div>
-          <p class="text-[0.55rem] sm:text-[0.65rem] font-bold text-center leading-tight">ING. LIDUVINA M. DÍAZ
-            CLAROS<br><span class="font-normal text-[0.5rem] sm:text-[0.55rem]">Coordinador Académico<br>CIP -
-              92173</span></p>
+          <div class="w-32 sm:w-40 border-b border-slate-300 mb-1 text-center"></div>
+          <p class="text-[0.55rem] sm:text-[0.65rem] font-bold text-slate-800 text-center leading-tight">
+            {{ teacherName || 'Instructor del Curso' }}<br>
+            <span class="font-normal text-slate-500 text-[0.5rem] sm:text-[0.55rem]">Instructor Docente</span>
+          </p>
         </div>
       </div>
     </div>
 
-    <!-- Right Sidebar (Blue Area) -->
+    <!-- Right Sidebar (Green/Emerald Gradient Area) -->
     <div
-      class="w-full sm:w-[32%] bg-gradient-to-bl from-[#6bfadc] via-[#3a7afc] to-[#0e2051] flex flex-col items-center p-8 relative z-0 shrink-0 min-h-[300px] sm:min-h-full">
+      class="w-full sm:w-[32%] bg-gradient-to-bl from-emerald-400 via-teal-600 to-slate-900 flex flex-col items-center p-8 relative z-0 shrink-0 min-h-[300px] sm:min-h-full justify-between">
 
       <!-- Top Logo (White) -->
-      <div class="relative w-32 h-32 text-white mt-4 sm:mt-12">
-        <svg viewBox="0 0 100 100" fill="currentColor">
-          <path d="M50 15 A12 12 0 1 0 50 39 A12 12 0 1 0 50 15 Z" />
-          <path d="M10 50 Q 50 30 90 50 L80 90 Q 50 70 20 90 Z" opacity="0.3" />
-          <path d="M20 50 Q 50 30 80 50 L50 85 Z" />
-          <path d="M10 65 Q 50 80 90 65" stroke="currentColor" stroke-width="4" fill="none" />
-          <path d="M20 75 Q 50 90 80 75" stroke="currentColor" stroke-width="4" fill="none" />
-          <text x="50" y="69" font-size="20" font-weight="900" fill="#3a7afc" text-anchor="middle"
-            font-family="sans-serif">CCD</text>
-        </svg>
-      </div>
-
-      <!-- Partner Logo -->
-      <div class="w-full text-center mt-12 mb-auto">
-        <div class="flex items-center justify-center text-white mb-2">
-          <svg viewBox="0 0 160 30" class="h-6" fill="currentColor">
-            <!-- Autodesk 'A' Logo -->
-            <path d="M10 25 L20 5 L30 25 L25 25 L22 18 L18 18 L15 25 Z" fill="currentColor" />
-            <text x="38" y="22" font-size="19" font-family="sans-serif" font-weight="900"
-              letter-spacing="1">AUTODESK</text>
-          </svg>
+      <div class="flex flex-col items-center text-white mt-4 sm:mt-12 gap-2">
+        <div class="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm shadow-inner">
+          <i class="pi pi-check text-2xl font-bold"></i>
         </div>
-        <div class="w-4/5 h-px bg-white/50 mx-auto mb-2"></div>
-        <p class="text-[0.65rem] text-white/90 tracking-wide font-normal">Authorized Training Center</p>
+        <span class="text-xl font-bold tracking-wider">EduLearning</span>
       </div>
 
-      <!-- QR Code -->
-      <div class="mt-auto flex flex-col items-center mb-4 sm:mb-8">
-        <div class="bg-transparent border border-white p-2 mb-2">
+      <!-- Badge Label -->
+      <div class="w-full text-center my-6">
+        <div class="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/95 border border-white/20 backdrop-blur-sm">
+          <i class="pi pi-verified"></i> Certificado Verificado
+        </div>
+      </div>
+
+      <!-- QR Code and ID -->
+      <div class="flex flex-col items-center mb-4 sm:mb-8 gap-4 mt-auto">
+        <div class="bg-white p-2 rounded-xl shadow-md">
           <!-- Fake QR SVG -->
-          <svg viewBox="0 0 100 100" class="w-24 h-24" fill="white">
-            <rect x="0" y="0" width="100" height="100" fill="transparent" />
-            <rect x="10" y="10" width="25" height="25" stroke="white" stroke-width="3" fill="none" />
+          <svg viewBox="0 0 100 100" class="w-20 h-20" fill="#0f172a">
+            <rect x="0" y="0" width="100" height="100" fill="white" />
+            <rect x="10" y="10" width="25" height="25" stroke="black" stroke-width="3" fill="none" />
             <rect x="15" y="15" width="15" height="15" />
-            <rect x="65" y="10" width="25" height="25" stroke="white" stroke-width="3" fill="none" />
+            <rect x="65" y="10" width="25" height="25" stroke="black" stroke-width="3" fill="none" />
             <rect x="70" y="15" width="15" height="15" />
-            <rect x="10" y="65" width="25" height="25" stroke="white" stroke-width="3" fill="none" />
+            <rect x="10" y="65" width="25" height="25" stroke="black" stroke-width="3" fill="none" />
             <rect x="15" y="70" width="15" height="15" />
             <rect x="45" y="10" width="10" height="10" />
             <rect x="45" y="25" width="10" height="10" />
@@ -163,7 +143,10 @@
             <rect x="55" y="85" width="15" height="5" />
           </svg>
         </div>
-        <p class="text-white text-[0.7rem] font-medium tracking-wide">QR de verificación</p>
+        <div class="text-center">
+          <p class="text-white/70 text-[0.6rem] uppercase tracking-widest">Código Único</p>
+          <p class="text-white text-xs font-mono font-bold">{{ certId }}</p>
+        </div>
       </div>
 
     </div>

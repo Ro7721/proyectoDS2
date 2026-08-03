@@ -29,6 +29,9 @@ import { NotFound } from './page/not-found/not-found';
 import { Pricing } from './page/pricing/pricing';
 import { Teachers } from './page/teachers/teachers';
 import { TeacherProfile } from './features/teacher/profile/teacher-profile/teacher-profile';
+import { StudentCertificates } from './features/student/certificates/student-certificates';
+import { TeacherCertificates } from './features/teacher/certificates/teacher-certificates';
+
 export const routes: Routes = [
     { path: '', component: Home },
     { path: 'about', component: About },
@@ -52,12 +55,15 @@ export const routes: Routes = [
             { path: 'course-details/:id', component: CourseDetails, canActivate: [RoleGuard], data: { roles: ['ROLE_TEACHER'] } },
             { path: 'overview-teacher', component: OverviewTeacher, canActivate: [RoleGuard], data: { roles: ['ROLE_TEACHER'] } },
             { path: 'lesson-getall', component: LessonGetall, canActivate: [RoleGuard], data: { roles: ['ROLE_TEACHER'] } },
+            { path: 'lesson-detail/:id', loadComponent: () => import('./features/teacher/lesson/lesson-detail/lesson-detail').then(c => c.LessonDetail), canActivate: [RoleGuard], data: { roles: ['ROLE_TEACHER'] } },
             { path: 'students-enrollments', component: TeacherEnrollments, canActivate: [RoleGuard], data: { roles: ['ROLE_TEACHER'] } },
             { path: 'profile-teacher', component: TeacherProfile, canActivate: [RoleGuard], data: { roles: ['ROLE_TEACHER'] } },
+            { path: 'teacher-certificates', component: TeacherCertificates, canActivate: [RoleGuard], data: { roles: ['ROLE_TEACHER'] } },
 
             { path: 'learning/course/:idCourse', component: LearningCourse, canActivate: [RoleGuard], data: { roles: ['ROLE_STUDENT'] } },
             { path: 'my-courses', component: MyCourses, canActivate: [RoleGuard], data: { roles: ['ROLE_STUDENT'] } },
             { path: 'profile', component: StudentProfile, canActivate: [AuthGuard] },
+            { path: 'student-certificates', component: StudentCertificates, canActivate: [RoleGuard], data: { roles: ['ROLE_STUDENT'] } },
             // Admin routes
             { path: 'admin', component: AdminDashboardComponent, canActivate: [RoleGuard], data: { roles: ['ROLE_ADMIN'] } },
             { path: 'admin/users', component: AdminUsersComponent, canActivate: [RoleGuard], data: { roles: ['ROLE_ADMIN'] } },

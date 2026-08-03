@@ -1,6 +1,5 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Component, OnInit, PLATFORM_ID, inject, HostListener } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { Sidebar } from '../../layout/sidebar/sidebar';
 import { Header } from '../../layout/header/header';
@@ -20,7 +19,7 @@ type Role = 'ROLE_STUDENT' | 'ROLE_TEACHER' | 'ROLE_ADMIN';
   styleUrl: './dashboard-sell.css',
 })
 export class DashboardSell implements OnInit {
-  private platformId = inject(PLATFORM_ID);
+  private readonly platformId = inject(PLATFORM_ID);
   public themeService = inject(ThemeService);
 
   role: Role = 'ROLE_STUDENT';
@@ -29,13 +28,13 @@ export class DashboardSell implements OnInit {
   isMobile = false;
   private sidebarManuallyToggled = false;
 
-  constructor(private toast: MessageToast, private authService: AuthService) { }
+  constructor(private readonly toast: MessageToast, private readonly authService: AuthService) { }
 
   studentMenu: MenuItem[] = [
     { label: 'Panel Principal', icon: 'pi pi-th-large', route: '/dashboard/my-courses' },
     {
       label: 'Mi aprendizaje', icon: 'pi pi-book', items: [
-        { label: 'Certificados', icon: 'pi pi-trophy', route: '#' },
+        { label: 'Certificados', icon: 'pi pi-trophy', route: '/dashboard/student-certificates' },
       ]
     },
     { label: 'Mi perfil', icon: 'pi pi-user', route: '/dashboard/profile' }
@@ -52,14 +51,8 @@ export class DashboardSell implements OnInit {
       ]
     },
     { label: 'Inscripciones', icon: 'pi pi-ticket', route: '/dashboard/students-enrollments' },
-    {
-      label: 'Analíticas', icon: 'pi pi-chart-line', items: [
-        { label: 'Analíticas', icon: 'pi pi-chart-line', route: '#' },
-        { label: 'Reportes', icon: 'pi pi-file-excel', route: '#' },
-      ]
-    },
     { label: 'Mi Perfil', icon: 'pi pi-user', route: '/dashboard/profile-teacher' },
-    { label: 'Certificados', icon: 'pi pi-trophy', route: '#' }
+    { label: 'Certificados', icon: 'pi pi-trophy', route: '/dashboard/teacher-certificates' }
   ];
 
   adminMenu: MenuItem[] = [
@@ -80,7 +73,7 @@ export class DashboardSell implements OnInit {
     return this.role === 'ROLE_TEACHER' ? 'Panel Docente' : 'Mi Aprendizaje';
   }
 
-  async ngOnInit() {
+  ngOnInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
     const user = this.authService.user;

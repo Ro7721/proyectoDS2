@@ -1,0 +1,84 @@
+<section class="space-y-6 max-w-7xl mx-auto p-4 bg-slate-50 min-h-screen">
+  <header
+    class="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm md:flex-row md:items-center md:justify-between">
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Panel docente</p>
+      <h2 class="mt-1 text-2xl font-bold text-slate-900">Certificados Emitidos</h2>
+      <p class="mt-1 text-xs text-slate-500">Visualiza y verifica los diplomas de los estudiantes que han completado tus cursos.</p>
+    </div>
+  </header>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="rounded-2xl border border-slate-200 bg-white p-4 space-y-4 shadow-sm">
+    <div class="h-10 bg-slate-100 animate-pulse rounded-lg w-full"></div>
+    <div class="h-12 bg-slate-100 animate-pulse rounded-lg w-full" *ngFor="let item of [1,2,3]"></div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && completedEnrollments.length === 0"
+    class="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-white py-16 text-center shadow-sm">
+    <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-50 text-slate-400">
+      <i class="pi pi-trophy text-3xl"></i>
+    </div>
+    <h3 class="text-base font-bold text-slate-800">No hay certificados emitidos</h3>
+    <p class="mt-1 max-w-xs text-xs text-slate-500">Cuando tus estudiantes finalicen el 100% de las lecciones de tus cursos, aparecerán listados aquí para visualizar sus diplomas.</p>
+  </div>
+
+  <!-- Certificates Table -->
+  <div *ngIf="!loading && completedEnrollments.length > 0" class="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <table class="w-full text-left text-sm text-slate-600">
+      <thead class="bg-slate-50 text-xs uppercase text-slate-500 border-b border-slate-200">
+        <tr>
+          <th scope="col" class="px-6 py-4 font-semibold">Estudiante</th>
+          <th scope="col" class="px-6 py-4 font-semibold">Curso Completado</th>
+          <th scope="col" class="px-6 py-4 font-semibold">Inscrito el</th>
+          <th scope="col" class="px-6 py-4 font-semibold">Progreso</th>
+          <th scope="col" class="px-6 py-4 font-semibold text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        <tr *ngFor="let enrollment of completedEnrollments" class="hover:bg-slate-50/50 transition">
+          <td class="px-6 py-4">
+            <div class="flex flex-col">
+              <span class="font-bold text-slate-900">{{ enrollment.studentFullName }}</span>
+              <span class="text-xs text-slate-400">{{ enrollment.studentEmail }}</span>
+            </div>
+          </td>
+          <td class="px-6 py-4">
+            <span class="inline-flex items-center rounded-md bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-700 border border-slate-200">
+              {{ enrollment.courseTitle }}
+            </span>
+          </td>
+          <td class="px-6 py-4 text-xs font-medium text-slate-500">
+            {{ formatDate(enrollment.enrollmentDate) }}
+          </td>
+          <td class="px-6 py-4">
+            <div class="flex items-center gap-2">
+              <span class="inline-flex items-center gap-1 rounded-full bg-green-50 px-2.5 py-0.5 text-xs font-semibold text-green-700">
+                <i class="pi pi-check text-[10px]"></i> 100% Completado
+              </span>
+            </div>
+          </td>
+          <td class="px-6 py-4 text-center">
+            <button (click)="openCertificate(enrollment)" type="button"
+              class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-bold rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition cursor-pointer">
+              <i class="pi pi-trophy text-[10px]"></i> Ver Certificado
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- Certificate modal -->
+<app-certificate-modal
+  [visible]="showCertificate"
+  [studentName]="selectedStudentName"
+  [courseName]="selectedCourseName"
+  [teacherName]="selectedTeacherName"
+  [totalLessons]="selectedTotalLessons"
+  [certId]="certificateData?.certificateId || ''"
+  [completedAt]="certificateData?.completionDate || ''"
+  (visibleChange)="showCertificate = $event">
+</app-certificate-modal>

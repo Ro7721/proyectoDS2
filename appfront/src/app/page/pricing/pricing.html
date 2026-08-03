@@ -9,7 +9,7 @@
         </div>
         <span class="text-lg font-bold text-gray-900">EduLearn</span>
       </a>
-      <a routerLink="/catalog" class="text-sm text-gray-500 hover:text-[#3A9E5F] transition">← Explorar cursos</a>
+      <a routerLink="" class="text-sm text-gray-500 hover:text-[#3A9E5F] transition">← Regresar al inicio</a>
     </div>
   </header>
 
@@ -17,7 +17,9 @@
 
     <!-- Hero -->
     <div class="text-center mb-14">
-      <span class="inline-block bg-green-50 text-[#3A9E5F] text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full border border-green-100 mb-4">Planes y precios</span>
+      <span
+        class="inline-block bg-green-50 text-[#3A9E5F] text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full border border-green-100 mb-4">Planes
+        y precios</span>
       <h1 class="text-4xl sm:text-5xl font-black text-gray-900 tracking-tight leading-tight mb-4">
         Elige el plan que<br>
         <span class="text-[#3A9E5F]">impulse tu carrera</span>
@@ -28,15 +30,16 @@
 
       <!-- Toggle anual/mensual -->
       <div class="flex items-center justify-center gap-4 mt-8">
-        <span class="text-sm font-semibold" [class.text-gray-900]="!billingAnnual" [class.text-gray-400]="billingAnnual">Mensual</span>
+        <span class="text-sm font-semibold" [class.text-gray-900]="!billingAnnual"
+          [class.text-gray-400]="billingAnnual">Mensual</span>
         <button (click)="billingAnnual = !billingAnnual"
-          class="relative w-12 h-6 rounded-full transition-colors duration-300"
-          [class.bg-green-500]="billingAnnual"
+          class="relative w-12 h-6 rounded-full transition-colors duration-300" [class.bg-green-500]="billingAnnual"
           [class.bg-gray-200]="!billingAnnual">
           <span class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-300"
             [class.translate-x-6]="billingAnnual" [class.translate-x-0]="!billingAnnual"></span>
         </button>
-        <span class="text-sm font-semibold flex items-center gap-2" [class.text-gray-900]="billingAnnual" [class.text-gray-400]="!billingAnnual">
+        <span class="text-sm font-semibold flex items-center gap-2" [class.text-gray-900]="billingAnnual"
+          [class.text-gray-400]="!billingAnnual">
           Anual
           <span class="bg-amber-100 text-amber-700 text-xs font-bold px-2 py-0.5 rounded-full">Ahorra hasta 35%</span>
         </span>
@@ -45,22 +48,16 @@
 
     <!-- Plans grid -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
-      <div *ngFor="let plan of plans"
-        class="relative rounded-2xl border transition-all duration-200"
-        [class.border-[#3A9E5F]]="plan.featured"
-        [class.shadow-2xl]="plan.featured"
-        [class.shadow-green-100]="plan.featured"
-        [class.scale-105]="plan.featured"
-        [class.border-gray-200]="!plan.featured"
-        [class.shadow-sm]="!plan.featured">
+      <div *ngFor="let plan of plans" class="relative rounded-2xl border transition-all duration-200"
+        [class.border-[#3A9E5F]]="plan.featured" [class.shadow-2xl]="plan.featured"
+        [class.shadow-green-100]="plan.featured" [class.scale-105]="plan.featured"
+        [class.border-gray-200]="!plan.featured" [class.shadow-sm]="!plan.featured">
 
         <!-- Badge -->
         <div *ngIf="plan.badge"
           class="absolute -top-3.5 left-1/2 -translate-x-1/2 text-xs font-bold px-4 py-1 rounded-full border whitespace-nowrap"
-          [class.bg-[#3A9E5F]]="plan.color === 'green'"
-          [class.text-white]="plan.color === 'green'"
-          [class.border-[#3A9E5F]]="plan.color === 'green'"
-          [class.bg-purple-600]="plan.color === 'purple'"
+          [class.bg-[#3A9E5F]]="plan.color === 'green'" [class.text-white]="plan.color === 'green'"
+          [class.border-[#3A9E5F]]="plan.color === 'green'" [class.bg-purple-600]="plan.color === 'purple'"
           [class.border-purple-600]="plan.color === 'purple'">
           {{ plan.badge }}
         </div>
@@ -90,12 +87,9 @@
           <!-- CTA Button -->
           <a [routerLink]="plan.ctaRoute"
             class="block w-full text-center py-3 rounded-xl font-bold text-sm transition-all duration-200 mb-6"
-            [class.bg-[#3A9E5F]]="plan.featured"
-            [class.hover:bg-[#2e7d4a]]="plan.featured"
-            [class.text-white]="plan.featured"
-            [class.shadow-lg]="plan.featured"
-            [class.shadow-green-100]="plan.featured"
-            [class.bg-gray-900]="!plan.featured && plan.color === 'purple'"
+            [class.bg-[#3A9E5F]]="plan.featured" [class.hover:bg-[#2e7d4a]]="plan.featured"
+            [class.text-white]="plan.featured" [class.shadow-lg]="plan.featured"
+            [class.shadow-green-100]="plan.featured" [class.bg-gray-900]="!plan.featured && plan.color === 'purple'"
             [class.hover:bg-gray-700]="!plan.featured && plan.color === 'purple'"
             [class.text-white]="!plan.featured && plan.color === 'purple'"
             [class.border]="!plan.featured && plan.color === 'gray'"
@@ -139,7 +133,8 @@
         </div>
         <div class="bg-gray-50 rounded-xl p-5">
           <p class="font-semibold text-gray-800 mb-1">¿Los certificados son válidos?</p>
-          <p class="text-sm text-gray-500">Sí, todos nuestros certificados son verificables y reconocidos por empresas del sector.</p>
+          <p class="text-sm text-gray-500">Sí, todos nuestros certificados son verificables y reconocidos por empresas
+            del sector.</p>
         </div>
       </div>
     </div>

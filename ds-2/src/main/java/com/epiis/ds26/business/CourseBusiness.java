@@ -32,10 +32,14 @@ import com.epiis.ds26.repositorie.CourseRepo;
 import com.epiis.ds26.repositorie.LessonFileRepo;
 import com.epiis.ds26.repositorie.LessonRepo;
 
+import lombok.extern.slf4j.Slf4j;
 import jakarta.transaction.Transactional;
 
+@Slf4j
 @Service
 public class CourseBusiness {
+
+    private static final String COURSE_NOT_FOUND = "Curso no encontrado";
 
     private final CourseRepo courseRepo;
     private final LessonRepo lessonRepo;
@@ -111,47 +115,51 @@ public class CourseBusiness {
         return courseRepo.save(course);
     }
 
-    private boolean validateCourse(CourseRequest request, GenericResponse response) {
+    private boolean validateTitleAndDescription(CourseRequest request, GenericResponse response) {
         if (request.getTitle() == null || request.getTitle().trim().isEmpty()) {
             response.warning();
-            response.listMessage.add("El tÃ­tulo del curso es requerido");
+            response.listMessage.add("El título del curso es requerido");
             return false;
         }
         if (request.getTitle().trim().matches("^\\d+$")) {
             response.warning();
-            response.listMessage.add("El tÃ­tulo no puede ser solo nÃºmeros");
+            response.listMessage.add("El título no puede ser solo números");
             return false;
         }
         if (request.getTitle().trim().length() < 5) {
             response.warning();
-            response.listMessage.add("El tÃ­tulo debe tener al menos 5 caracteres");
+            response.listMessage.add("El título debe tener al menos 5 caracteres");
             return false;
         }
         if (request.getTitle().trim().length() > 100) {
             response.warning();
-            response.listMessage.add("El tÃ­tulo no puede exceder los 100 caracteres");
+            response.listMessage.add("El título no puede exceder los 100 caracteres");
             return false;
         }
         if (request.getDescription() == null || request.getDescription().trim().isEmpty()) {
             response.warning();
-            response.listMessage.add("La descripciÃ³n del curso es requerida");
+            response.listMessage.add("La descripción del curso es requerida");
             return false;
         }
         if (request.getDescription().trim().matches("^\\d+$")) {
             response.warning();
-            response.listMessage.add("La descripciÃ³n no puede ser solo nÃºmeros");
+            response.listMessage.add("La descripción no puede ser solo números");
             return false;
         }
         if (request.getDescription().trim().length() < 10) {
             response.warning();
-            response.listMessage.add("La descripciÃ³n debe tener al menos 10 caracteres");
+            response.listMessage.add("La descripción debe tener al menos 10 caracteres");
             return false;
         }
         if (request.getDescription().trim().length() > 500) {
             response.warning();
-            response.listMessage.add("La descripciÃ³n no puede exceder los 500 caracteres");
+            response.listMessage.add("La descripción no puede exceder los 500 caracteres");
             return false;
         }
+        return true;
+    }
+
+    private boolean validateImageAndLevel(CourseRequest request, GenericResponse response) {
         if (request.getCoverImage() == null || request.getCoverImage().isEmpty()) {
             response.warning();
             response.listMessage.add("La imagen de portada es requerida");
@@ -172,9 +180,13 @@ public class CourseBusiness {
             ELevel.valueOf(request.getLevel().trim());
         } catch (IllegalArgumentException e) {
             response.warning();
-            response.listMessage.add("El nivel del curso no es vÃ¡lido (BASIC, INTERMEDIATE, ADVANCED)");
+            response.listMessage.add("El nivel del curso no es válido (BASIC, INTERMEDIATE, ADVANCED)");
             return false;
         }
+        return true;
+    }
+
+    private boolean validatePriceAndStatus(CourseRequest request, GenericResponse response) {
         if (request.getPrice() < 0) {
             response.warning();
             response.listMessage.add("El precio debe ser mayor o igual a 0");
@@ -194,7 +206,20 @@ public class CourseBusiness {
             EStatus.valueOf(request.getStatus().trim());
         } catch (IllegalArgumentException e) {
             response.warning();
-            response.listMessage.add("El estado del curso no es vÃ¡lido");
+            response.listMessage.add("El estado del curso no es válido");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validateCourse(CourseRequest request, GenericResponse response) {
+        if (!validateTitleAndDescription(request, response)) {
+            return false;
+        }
+        if (!validateImageAndLevel(request, response)) {
+            return false;
+        }
+        if (!validatePriceAndStatus(request, response)) {
             return false;
         }
         if (request.getIdTeacher() == null || request.getIdTeacher().trim().isEmpty()) {
@@ -204,7 +229,7 @@ public class CourseBusiness {
         }
         if (request.getIdCategory() == null) {
             response.warning();
-            response.listMessage.add("La categorÃ­a es requerida");
+            response.listMessage.add("La categoría es requerida");
             return false;
         }
         return true;
@@ -214,7 +239,7 @@ public class CourseBusiness {
         EntityCourse entity = courseRepo.findById(idCourse).orElse(null);
         if (entity == null) {
             response.warning();
-            response.listMessage.add("Curso no encontrado");
+            response.listMessage.add(COURSE_NOT_FOUND);
             return false;
         }
         long totalLessons = lessonRepo.countByCourse_IdCourse(idCourse);
@@ -234,7 +259,7 @@ public class CourseBusiness {
         EntityCourse entity = courseRepo.findById(idCourse).orElse(null);
         if (entity == null) {
             response.warning();
-            response.listMessage.add("Curso no encontrado");
+            response.listMessage.add(COURSE_NOT_FOUND);
             return false;
         }
         entity.setStatus(EStatus.DRAFT);
@@ -264,7 +289,7 @@ public class CourseBusiness {
         EntityCourse course = courseRepo.findById(idCourse).orElse(null);
         if (course == null) {
             response.warning();
-            response.listMessage.add("Curso no encontrado");
+            response.listMessage.add(COURSE_NOT_FOUND);
             return false;
         }
 
@@ -288,7 +313,7 @@ public class CourseBusiness {
         EntityCourse course = courseRepo.findById(idCourse).orElse(null);
         if (course == null) {
             response.warning();
-            response.listMessage.add("Curso no encontrado");
+            response.listMessage.add(COURSE_NOT_FOUND);
             return null;
         }
         course.setTitle(request.getTitle());
@@ -322,11 +347,11 @@ public class CourseBusiness {
     }
 
     public CourseResponse getById(String idCourse, GenericResponse response) {
-        System.out.println(">>> Buscando curso con ID: '" + idCourse + "'");
+        log.info(">>> Buscando curso con ID: '{}'", idCourse);
         EntityCourse entity = courseRepo.findById(idCourse).orElse(null);
         if (entity == null) {
             response.warning();
-            response.listMessage.add("Curso no encontrado");
+            response.listMessage.add(COURSE_NOT_FOUND);
             return null;
         }
         response.success();
@@ -360,7 +385,7 @@ public class CourseBusiness {
                     filePath,
                     java.nio.file.StandardCopyOption.REPLACE_EXISTING);
 
-            System.out.println("Imagen guardada en: " + filePath);
+            log.info("Imagen guardada en: {}", filePath);
 
             // Solo guardar el nombre en la BD
             return fileName;

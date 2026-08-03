@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { Api } from '../../../../api/api';
-import { findByTeacher, getLessonsByTeacher, delete$ } from '../../../../api/functions';
+import { findByTeacher, getLessonsByTeacher, delete$, updateLesson, create } from '../../../../api/functions';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { MessageToast } from '../../../../message/message-toast';
 import { CourseResponse, FileResponse, LessonResponse } from '../../../../models/course.model';
@@ -22,6 +22,7 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { TooltipModule } from 'primeng/tooltip';
 import { ConfirmationService } from 'primeng/api';
 import { ToastModule } from "primeng/toast";
+import { LessonInsert, LessonFormPayload } from '../../course/lesson-insert/lesson-insert';
 
 interface LessonRow extends LessonResponse {
   courseId: string;
@@ -39,6 +40,7 @@ interface FileRow extends FileResponse {
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     ReactiveFormsModule,
     ToolbarModule,
     ButtonModule,
@@ -52,7 +54,8 @@ interface FileRow extends FileResponse {
     SplitButtonModule,
     PaginatorModule,
     TooltipModule,
-    ToastModule
+    ToastModule,
+    LessonInsert
   ],
   providers: [ConfirmationService],
   templateUrl: './lesson-getall.html',
@@ -81,6 +84,19 @@ export class LessonGetall implements OnInit {
   first = 0;
   rows = 6;
   activeVideoLessonId: string | null = null;
+  showLessonDialog = false;
+  isEditingLesson = false;
+  currentLessonId: string | null = null;
+  currentCourseId: string | null = null;
+  lessonToEdit: any = null;
+
+  // Estado para diálogo de selección de curso al crear lección
+  showCourseSelectDialog = false;
+  selectedCourseForNewLesson: string | null = null;
+
+  // Estado para diálogo de ver lección (solo lectura)
+  showViewLessonDialog = false;
+  viewingLesson: LessonRow | null = null;
 
   readonly lessonTypeOptions = [
     { label: 'Todos los tipos', value: null },
@@ -255,11 +271,98 @@ export class LessonGetall implements OnInit {
   }
 
   viewLesson(lesson: LessonRow): void {
-    this.messageToast.toastInfo('Ver lección', `Preparando vista para "${lesson.title}".`);
+    this.viewingLesson = lesson;
+    this.showViewLessonDialog = true;
+  }
+
+  closeViewLessonDialog(): void {
+    this.showViewLessonDialog = false;
+    this.viewingLesson = null;
   }
 
   editLesson(lesson: LessonRow): void {
-    this.messageToast.toastInfo('Editar lección', `Abre el formulario de edición para "${lesson.title}".`);
+    this.currentLessonId = lesson.idLesson;
+    this.currentCourseId = lesson.courseId;
+    this.lessonToEdit = {
+      title: lesson.title,
+      description: lesson.description,
+      type: lesson.type,
+      contenUrl: lesson.contentUrl,
+      isFree: lesson.isFree ? 'true' : 'false',
+    };
+    this.isEditingLesson = true;
+    this.showLessonDialog = true;
+  }
+
+  onLessonDialogClose(isVisible: boolean): void {
+    this.showLessonDialog = isVisible;
+    if (!isVisible) {
+      this.currentLessonId = null;
+      this.currentCourseId = null;
+      this.lessonToEdit = null;
+    }
+  }
+
+  onSaveLesson(payload: LessonFormPayload): void {
+    if (!this.currentCourseId) return;
+
+    this.loading = true;
+
+    if (this.isEditingLesson && this.currentLessonId) {
+      this.api
+        .invoke<any, any>(updateLesson, {
+          idLesson: this.currentLessonId,
+          body: {
+            title: payload.title,
+            description: payload.description,
+            type: payload.type,
+            contenUrl: payload.contenUrl,
+            free: payload.isFree === 'true' || payload.isFree === true as any,
+            mainVideoFile: payload.mainVideoFile,
+            adjunctFiles: payload.adjunctFiles,
+          }
+        })
+        .then(() => {
+          this.messageToast.toastSuccess('Éxito', 'Lección actualizada correctamente.');
+          this.loadDashboardData();
+        })
+        .catch((error) => {
+          console.error('Error al actualizar lección:', error);
+          this.messageToast.toastError('Error', 'No se pudo actualizar la lección.');
+        })
+        .finally(() => {
+          this.loading = false;
+          this.onLessonDialogClose(false);
+          this.cdr.detectChanges();
+        });
+    } else {
+      this.api
+        .invoke<any, any>(create, {
+          body: {
+            courseId: this.currentCourseId,
+            title: payload.title,
+            description: payload.description,
+            type: payload.type,
+            contenUrl: payload.contenUrl,
+            free: payload.isFree === 'true' || payload.isFree === true as any,
+            mainVideoFile: payload.mainVideoFile,
+            adjunctFiles: payload.adjunctFiles,
+          }
+        })
+        .then(() => {
+          this.messageToast.toastSuccess('Éxito', 'Lección creada correctamente.');
+          this.loadDashboardData();
+        })
+        .catch((error) => {
+          console.error('Error al crear lección:', error);
+          this.messageToast.toastError('Error', 'No se pudo crear la lección.');
+        })
+        .finally(() => {
+          this.loading = false;
+          this.onLessonDialogClose(false);
+          this.cdr.detectChanges();
+        });
+    }
   }
 
   confirmDelete(lesson: LessonRow): void {
@@ -294,7 +397,26 @@ export class LessonGetall implements OnInit {
   }
 
   createLesson(): void {
-    this.messageToast.toastInfo('Nueva lección', 'Abriendo formulario de creación.');
+    this.selectedCourseForNewLesson = null;
+    this.showCourseSelectDialog = true;
+  }
+
+  confirmCourseSelection(): void {
+    if (!this.selectedCourseForNewLesson) {
+      this.messageToast.toastWarn('Selecciona un curso', 'Debes elegir un curso para agregar la lección.');
+      return;
+    }
+    this.showCourseSelectDialog = false;
+    this.currentCourseId = this.selectedCourseForNewLesson;
+    this.currentLessonId = null;
+    this.lessonToEdit = null;
+    this.isEditingLesson = false;
+    this.showLessonDialog = true;
+  }
+
+  cancelCourseSelection(): void {
+    this.showCourseSelectDialog = false;
+    this.selectedCourseForNewLesson = null;
   }
 
   refresh(): void {

@@ -72,10 +72,10 @@
         </div>
         <div class="flex gap-4">
             <div class="w-full relative role-dropdown-container">
-                <label class="block mb-1.5 text-sm font-semibold text-gray-700">Rol</label>
+                <span id="roleLabel" class="block mb-1.5 text-sm font-semibold text-gray-700">Rol</span>
 
                 <!-- Dropdown Header -->
-                <div (click)="toggleRoleDropdown()" (keydown.enter)="toggleRoleDropdown()" tabindex="0"
+                <div role="button" aria-labelledby="roleLabel" (click)="toggleRoleDropdown()" (keydown.enter)="toggleRoleDropdown()" tabindex="0"
                     class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm cursor-pointer flex justify-between items-center transition bg-white"
                     [ngClass]="{'border-green-500 ring-1 ring-green-500': isRoleDropdownOpen, 'text-gray-700': role.value, 'text-gray-400': !role.value}">
                     <span>{{ selectedRoleText }}</span>

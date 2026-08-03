@@ -38,7 +38,7 @@
 
           <div *ngIf="!coverImagePreview"
             class="group flex h-52 w-full cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 transition-all hover:border-green-400 hover:bg-green-50"
-            (click)="coverInput.click()" (keydown.enter)="coverInput.click()" tabindex="0" (dragover)="$event.preventDefault()" (drop)="onCoverDrop($event)">
+            role="button" (click)="coverInput.click()" (keydown.enter)="coverInput.click()" tabindex="0" (dragover)="$event.preventDefault()" (drop)="onCoverDrop($event)">
             <div
               class="flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-gray-200 group-hover:ring-green-300">
               <i class="pi pi-cloud-upload text-xl text-gray-400 group-hover:text-green-500"></i>
@@ -51,7 +51,7 @@
 
           <div *ngIf="coverImagePreview"
             class="group relative h-52 w-full cursor-pointer overflow-hidden rounded-xl border border-gray-200"
-            (click)="coverInput.click()" (keydown.enter)="coverInput.click()" tabindex="0">
+            role="button" (click)="coverInput.click()" (keydown.enter)="coverInput.click()" tabindex="0">
             <img [src]="coverImagePreview" alt="Portada" class="h-full w-full object-cover" />
             <div
               class="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
@@ -124,7 +124,7 @@
                   [ngClass]="{'text-red-500': isFieldInvalid('selectedCategoryId')}">
                   Categoría <span class="text-red-400">*</span>
                 </label>
-                <p-select inputId="selectedCategoryId" formControlName="selectedCategoryId" [options]="listCategories" optionLabel="name"
+                <p-select id="selectedCategoryId" inputId="selectedCategoryId" formControlName="selectedCategoryId" [options]="listCategories" optionLabel="name"
                   optionValue="idCategory" placeholder="Seleccionar" class="w-full"
                   [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('selectedCategoryId')}" />
                 <p *ngIf="isFieldInvalid('selectedCategoryId')" class="mt-1 text-xs text-red-500">
@@ -136,7 +136,7 @@
                   [ngClass]="{'text-red-500': isFieldInvalid('courseLevel')}">
                   Nivel <span class="text-red-400">*</span>
                 </label>
-                <p-select inputId="courseLevel" formControlName="courseLevel" [options]="levelOptions" optionLabel="label" optionValue="value"
+                <p-select id="courseLevel" inputId="courseLevel" formControlName="courseLevel" [options]="levelOptions" optionLabel="label" optionValue="value"
                   placeholder="Seleccionar" class="w-full"
                   [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('courseLevel')}" />
                 <p *ngIf="isFieldInvalid('courseLevel')" class="mt-1 text-xs text-red-500">
@@ -151,7 +151,7 @@
                 [ngClass]="{'text-red-500': isFieldInvalid('coursePrice')}">
                 Precio (USD) <span class="text-red-400">*</span>
               </label>
-              <p-inputNumber inputId="coursePrice" formControlName="coursePrice" mode="currency" currency="USD" locale="en-US" [min]="0"
+              <p-inputNumber id="coursePrice" inputId="coursePrice" formControlName="coursePrice" mode="currency" currency="USD" locale="en-US" [min]="0"
                 placeholder="0.00" class="w-full" [inputStyle]="{'width':'100%'}"
                 [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('coursePrice')}" />
               <div *ngIf="isFieldInvalid('coursePrice')" class="mt-1 space-y-0.5">
@@ -182,7 +182,26 @@
     </div>
 
     <!-- ===== COLUMNA DERECHA: LECCIONES ===== -->
-    <div class="flex flex-1 flex-col bg-gray-50">
+    <div class="relative flex flex-1 flex-col bg-gray-50">
+
+      <!-- Overlay de bloqueo: se muestra mientras NO se haya creado el curso -->
+      <div *ngIf="!courseCreated"
+        class="absolute inset-0 z-10 flex flex-col items-center justify-center bg-gray-100/80 backdrop-blur-[2px]"
+        style="pointer-events: auto;">
+        <div class="flex flex-col items-center gap-4 text-center px-6">
+          <div class="flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-lg ring-1 ring-gray-200">
+            <i class="pi pi-lock text-3xl text-gray-400"></i>
+          </div>
+          <h3 class="text-lg font-bold text-gray-700">Lecciones bloqueadas</h3>
+          <p class="max-w-xs text-sm text-gray-500">
+            Primero guarda el curso (como borrador o publicado) para poder agregar lecciones.
+          </p>
+          <div class="flex items-center gap-2 mt-1">
+            <i class="pi pi-arrow-left text-green-500 text-sm"></i>
+            <span class="text-xs font-semibold text-green-600">Completa y guarda el formulario del curso</span>
+          </div>
+        </div>
+      </div>
 
       <!-- Header lecciones -->
       <div class="flex items-center justify-between border-b border-gray-200 bg-white px-4 py-4 sm:px-8 sm:py-5">
@@ -192,10 +211,6 @@
           </h2>
           <p class="mt-0.5 text-xs text-gray-400">{{ listLessons.length }} lección(es) agregada(s)</p>
         </div>
-        <button (click)="openAddLesson()"
-          class="flex cursor-pointer items-center gap-2 rounded-xl border border-green-500 bg-white px-3 py-2 sm:px-4 sm:py-2.5 text-sm font-semibold text-green-600 transition-all hover:bg-green-500 hover:text-white">
-          <i class="pi pi-plus text-xs"></i> <span class="hidden sm:inline">Agregar lección</span><span class="sm:hidden">Agregar</span>
-        </button>
       </div>
 
       <!-- Cuerpo lecciones -->
@@ -212,8 +227,8 @@
             <p class="mt-1 max-w-[240px] text-sm text-gray-400">Agrega la primera lección para comenzar a estructurar tu
               curso</p>
           </div>
-          <button (click)="openAddLesson()"
-            class="flex cursor-pointer items-center gap-2 rounded-xl border border-green-500 bg-white px-4 py-2.5 text-sm font-semibold text-green-600 transition-all hover:bg-green-500 hover:text-white">
+          <button (click)="openAddLesson()" [disabled]="!courseCreated"
+            class="flex cursor-pointer items-center gap-2 rounded-xl border border-green-500 bg-white px-4 py-2.5 text-sm font-semibold text-green-600 transition-all hover:bg-green-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-50">
             <i class="pi pi-plus text-xs"></i> Agregar primera lección
           </button>
         </div>
@@ -298,5 +313,5 @@
 
 <!-- Integración del componente hijo LessonInsert -->
 <app-lesson-insert *ngIf="showLessonDialog" [lesson]="currentLesson" [isEditing]="editingIndex !== null"
-  [(showDialog)]="showLessonDialog" (onSaveLesson)="handleLessonSave($event)">
+  [(showDialog)]="showLessonDialog" (lessonSave)="handleLessonSave($event)">
 </app-lesson-insert>

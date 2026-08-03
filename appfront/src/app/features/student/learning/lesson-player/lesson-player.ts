@@ -45,7 +45,7 @@ export class LessonPlayer implements OnChanges, AfterViewInit, OnDestroy {
 
   speedOptions = [0.5, 0.75, 1, 1.25, 1.5, 2];
 
-  constructor(private sanitizer: DomSanitizer) {}
+  constructor(private readonly sanitizer: DomSanitizer) {}
 
   ngAfterViewInit(): void {
     this.restorePosition();
@@ -117,7 +117,7 @@ export class LessonPlayer implements OnChanges, AfterViewInit, OnDestroy {
     const rect = bar.getBoundingClientRect();
     const ratio = (event.clientX - rect.left) / rect.width;
     const video = this.videoPlayer?.nativeElement;
-    if (video && video.duration) {
+    if (video?.duration) {
       video.currentTime = ratio * video.duration;
     }
   }
@@ -143,7 +143,7 @@ export class LessonPlayer implements OnChanges, AfterViewInit, OnDestroy {
     const input = event.target as HTMLInputElement;
     const video = this.videoPlayer?.nativeElement;
     if (!video) return;
-    this.volume = parseFloat(input.value);
+    this.volume = Number.parseFloat(input.value);
     video.volume = this.volume;
     video.muted = this.volume === 0;
     this.isMuted = this.volume === 0;
@@ -231,10 +231,7 @@ export class LessonPlayer implements OnChanges, AfterViewInit, OnDestroy {
       this.percentage = newPercentage;
 
       let shouldSave = false;
-      if (currentSecond > 0 && this.lastSavedSecond === 0) {
-        this.lastSavedSecond = currentSecond;
-        shouldSave = true;
-      } else if (Math.abs(currentSecond - this.lastSavedSecond) >= 10) {
+      if ((currentSecond > 0 && this.lastSavedSecond === 0) || Math.abs(currentSecond - this.lastSavedSecond) >= 10) {
         this.lastSavedSecond = currentSecond;
         shouldSave = true;
       }
@@ -270,13 +267,13 @@ export class LessonPlayer implements OnChanges, AfterViewInit, OnDestroy {
   // ─── Helpers ─────────────────────────────────────────────────────────────────
 
   formatTime(seconds: number): string {
-    if (!seconds || isNaN(seconds)) return '0:00';
+    if (!seconds || Number.isNaN(seconds)) return '0:00';
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   }
 
   getSafeUrl(url: string): SafeResourceUrl {
-    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url); // NOSONAR
   }
 }

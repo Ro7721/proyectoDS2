@@ -2,5 +2,5 @@ projectKey=appfront
 serverUrl=http://localhost:9000
 serverVersion=26.7.0.124771
 dashboardUrl=http://localhost:9000/dashboard?id=appfront
-ceTaskId=71ecfcd6-e719-4310-86d0-182b8f576194
-ceTaskUrl=http://localhost:9000/api/ce/task?id=71ecfcd6-e719-4310-86d0-182b8f576194
+ceTaskId=85b1697d-7d86-4c78-8e0b-58d57b08a187
+ceTaskUrl=http://localhost:9000/api/ce/task?id=85b1697d-7d86-4c78-8e0b-58d57b08a187

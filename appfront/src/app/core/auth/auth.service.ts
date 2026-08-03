@@ -109,7 +109,7 @@ export class AuthService {
     const token = this.accessToken;
     if (token) {
       const payload = this.decodeJwtPayload(token);
-      if (payload && payload.role) {
+      if (payload?.role) {
         return this.normalizeRole(payload.role);
       }
     }

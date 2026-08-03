@@ -30,6 +30,10 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping(path = "auth")
 public class AuthController {
+
+    private static final String ERROR_KEY = "error";
+    private static final String MESSAGE_KEY = "message";
+    private static final String UNAUTHORIZED_CODE = "UNAUTHORIZED";
     private final AuthenticationManager authManager;
     private final JwtService jwtService;
     private final UserBusiness userBusiness;
@@ -42,7 +46,7 @@ public class AuthController {
 
     @PostMapping(path = "login", consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
             MediaType.APPLICATION_JSON_VALUE })
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<Object> login(@Valid @RequestBody LoginRequest request) {
         try {
             Authentication authentication = authManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
@@ -80,35 +84,35 @@ public class AuthController {
             return ResponseEntity.ok(response);
         } catch (BadCredentialsException e) {
             Map<String, String> error = new HashMap<>();
-            error.put("error", "PASSWORD_INVALID");
-            error.put("message", "La contraseÃ±a ingresada es incorrecta");
+            error.put(ERROR_KEY, "PASSWORD_INVALID");
+            error.put(MESSAGE_KEY, "La contraseÃ±a ingresada es incorrecta");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
         } catch (UsernameNotFoundException e) {
             Map<String, String> error = new HashMap<>();
-            error.put("error", "EMAIL_NOT_FOUND");
-            error.put("message", "El correo no existe o no estÃ¡ registrado");
+            error.put(ERROR_KEY, "EMAIL_NOT_FOUND");
+            error.put(MESSAGE_KEY, "El correo no existe o no esta registrado");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             Map<String, String> error = new HashMap<>();
-            error.put("error", "AUTH_ERROR");
-            error.put("message", "OcurriÃ³ un error inesperado al iniciar sesiÃ³n");
+            error.put(ERROR_KEY, "AUTH_ERROR");
+            error.put(MESSAGE_KEY, "Ocurrio un error inesperado al iniciar sesion");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
         }
     }
 
     @GetMapping(path = "me", produces = { MediaType.APPLICATION_JSON_VALUE })
-    public ResponseEntity<?> getCurrentUser() {
+    public ResponseEntity<Object> getCurrentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || !auth.isAuthenticated()) {
             Map<String, String> error = new HashMap<>();
-            error.put("error", "UNAUTHORIZED");
-            error.put("message", "No tienes autorizaciÃ³n para acceder a este recurso");
+            error.put(ERROR_KEY, UNAUTHORIZED_CODE);
+            error.put(MESSAGE_KEY, "No tienes autorizaciÃ³n para acceder a este recurso");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
         }
         if (!(auth.getPrincipal() instanceof CustomUserDetails userDetails)) {
             Map<String, String> errorAuth = new HashMap<>();
-            errorAuth.put("error", "UNAUTHORIZED");
-            errorAuth.put("message", "Sesión inválida o expirada");
+            errorAuth.put(ERROR_KEY, UNAUTHORIZED_CODE);
+            errorAuth.put(MESSAGE_KEY, "Sesión inválida o expirada");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorAuth);
         }
         EntityUser user = userDetails.getUser();
@@ -126,13 +130,13 @@ public class AuthController {
 
     @PostMapping(path = "/refresh", consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
             MediaType.APPLICATION_JSON_VALUE })
-    public ResponseEntity<?> refreshToken(@RequestBody Map<String, String> request) {
+    public ResponseEntity<Object> refreshToken(@RequestBody Map<String, String> request) {
         String refreshToken = request.get("refreshToken");
 
         if (refreshToken == null || refreshToken.isBlank()) {
             Map<String, String> error = new HashMap<>();
-            error.put("error", "Token requerido");
-            error.put("message", "El refresh token es obligatorio");
+            error.put(ERROR_KEY, "Token requerido");
+            error.put(MESSAGE_KEY, "El refresh token es obligatorio");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
         }
 
@@ -147,8 +151,8 @@ public class AuthController {
 
             if (!jwtService.isValidToken(refreshToken, userDetails)) {
                 Map<String, String> error = new HashMap<>();
-                error.put("error", "Token invÃ¡lido");
-                error.put("message", "El refresh token ha expirado o es invÃ¡lido");
+                error.put(ERROR_KEY, "Token invalido");
+                error.put(MESSAGE_KEY, "El refresh token ha expirado o es invalido");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
             }
 
@@ -167,10 +171,10 @@ public class AuthController {
 
             return ResponseEntity.ok(response);
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             Map<String, String> error = new HashMap<>();
-            error.put("error", "Token invÃ¡lido");
-            error.put("message", "No se pudo procesar el refresh token");
+            error.put(ERROR_KEY, "Token invalido");
+            error.put(MESSAGE_KEY, "No se pudo procesar el refresh token");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
         }
     }

@@ -73,9 +73,9 @@ export function noWhitespaceOnly(): ValidatorFn {
 })
 export class CourseInsert implements OnInit {
 
-  private cdr = inject(ChangeDetectorRef);
-  private authService = inject(AuthService);
-  private router = inject(Router);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
   // ── Curso ──────────────────────────────────────────────────────────────────
   courseForm: FormGroup;
@@ -105,9 +105,9 @@ export class CourseInsert implements OnInit {
   createdCourseId: string | null = null;
   // ── Constructor ───────────────────────────────────────────────────────────
   constructor(
-    private fb: FormBuilder,
-    private api: Api,
-    private messageToast: MessageToast,
+    private readonly fb: FormBuilder,
+    private readonly api: Api,
+    private readonly messageToast: MessageToast,
   ) {
     this.courseForm = this.fb.group({
       courseTitle: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(100), noNumbers(), noWhitespaceOnly()]],
@@ -122,7 +122,7 @@ export class CourseInsert implements OnInit {
 
   isFieldInvalid(field: string): boolean {
     const ctrl = this.courseForm.get(field);
-    return !!(ctrl && ctrl.invalid && ctrl.touched);
+    return !!(ctrl?.invalid && ctrl?.touched);
   }
 
 
@@ -290,8 +290,7 @@ export class CourseInsert implements OnInit {
     let saved = 0;
     let failed = 0;
 
-    for (let i = 0; i < this.listLessons.length; i++) {
-      const lesson = this.listLessons[i];
+    for (const lesson of this.listLessons) {
       if (lesson.saved) continue;
 
       try {
@@ -308,7 +307,7 @@ export class CourseInsert implements OnInit {
           },
 
         });
-        this.listLessons[i].saved = true;
+        lesson.saved = true;
         saved++;
       } catch (e) {
         console.error(`Error al guardar lección "${lesson.title}":`, e);
