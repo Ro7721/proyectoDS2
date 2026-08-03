@@ -36,6 +36,9 @@
             firstName.hasError('maxlength')) {
             <small class="text-red-500">El nombre debe tener entre 3 y 25 caracteres</small>
             }
+            @if (firstName.touched && firstName.hasError('pattern')) {
+            <small class="text-red-500">El nombre no puede ser numérico</small>
+            }
         </div>
         <div>
             <label for="lastName" class="block mb-1.5 text-sm font-semibold text-gray-700">
@@ -50,6 +53,9 @@
             @if (lastName.touched && lastName.hasError('minlength') || lastName.touched &&
             lastName.hasError('maxlength')) {
             <small class="text-red-500">El apellido debe tener entre 3 y 25 caracteres</small>
+            }
+            @if (lastName.touched && lastName.hasError('pattern')) {
+            <small class="text-red-500">El apellido no puede ser numérico</small>
             }
         </div>
 

@@ -131,6 +131,26 @@ describe('RegisterUserComponent', () => {
     expect(component.passwordError).toBeFalsy(); 
   });
 
+  it('should validate firstName and lastName patterns correctly', () => {
+    component.firstName.setValue('Juan');
+    expect(component.firstName.valid).toBeTruthy();
+    component.lastName.setValue('Salas');
+    expect(component.lastName.valid).toBeTruthy();
+
+    component.firstName.setValue('María José');
+    expect(component.firstName.valid).toBeTruthy();
+    component.lastName.setValue('Álvarez-Gómez');
+    expect(component.lastName.valid).toBeTruthy();
+
+    component.firstName.setValue('Juan123');
+    expect(component.firstName.hasError('pattern')).toBeTruthy();
+    component.lastName.setValue('Salas456');
+    expect(component.lastName.hasError('pattern')).toBeTruthy();
+
+    component.firstName.setValue('12345');
+    expect(component.firstName.hasError('pattern')).toBeTruthy();
+  });
+
   it('should show error toast if form is invalid on submit', () => {
     component.sendInsertUser();
     expect(messageToastSpy.toastError).toHaveBeenCalledWith('Error', 'Por favor, complete todos los campos correctamente');

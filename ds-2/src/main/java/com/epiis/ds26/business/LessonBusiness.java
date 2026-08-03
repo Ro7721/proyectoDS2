@@ -220,9 +220,30 @@ public class LessonBusiness {
         return entity;
     }
 
+    private boolean validateLessonForUpdate(LessonRequest request, GenericResponse gresponse) {
+        if (!validateLessonBasicFields(request, gresponse))
+            return false;
+        if (!validateLessonDescription(request, gresponse))
+            return false;
+
+        if (request.getType() == null || request.getType().trim().isEmpty()) {
+            gresponse.warning();
+            gresponse.listMessage.add("El tipo de lección es requerido");
+            return false;
+        }
+        try {
+            EType.valueOf(request.getType().trim().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            gresponse.warning();
+            gresponse.listMessage.add("El tipo de lección no es válido (VIDEO, PDF)");
+            return false;
+        }
+        return true;
+    }
+
     public EntityLesson updateLesson(String idLesson, LessonRequest request, MultipartFile mainVideoFile,
             List<MultipartFile> adjunctFiles, GenericResponse response) {
-        if (!validateLesson(request, response)) {
+        if (!validateLessonForUpdate(request, response)) {
             return null;
         }
 

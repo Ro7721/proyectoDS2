@@ -33,7 +33,7 @@ export class Login implements OnInit {
       [
         Validators.required,
         Validators.email,
-        Validators.maxLength(100)
+        Validators.maxLength(50)
       ]
     ],
     password: [

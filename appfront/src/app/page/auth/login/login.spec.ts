@@ -112,6 +112,12 @@ describe('LoginComponent', () => {
     expect(authServiceSpy.login).not.toHaveBeenCalled();
   });
 
+  it('should invalidate email if it exceeds 50 characters', () => {
+    const longEmail = 'a'.repeat(42) + '@gmail.com';
+    component.form.controls.email.setValue(longEmail);
+    expect(component.form.controls.email.hasError('maxlength')).toBeTruthy();
+  });
+
   it('should login and navigate to returnUrl if present', async () => {
     component.form.controls.email.setValue('test@test.com');
     component.form.controls.password.setValue('123456');

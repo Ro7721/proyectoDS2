@@ -47,6 +47,10 @@
                 Formato de correo inválido
                 }
 
+                @if(email.errors?.['maxlength']){
+                El correo no puede tener más de 50 caracteres
+                }
+
             </small>
             }
         </div>

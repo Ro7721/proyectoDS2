@@ -305,9 +305,49 @@ public class CourseBusiness {
         return true;
     }
 
+    private boolean validateCourseForUpdate(CourseRequest request, GenericResponse response) {
+        if (!validateTitleAndDescription(request, response)) {
+            return false;
+        }
+        if (request.getCoverImage() != null && !request.getCoverImage().isEmpty()) {
+            String coverName = request.getCoverImage().getOriginalFilename();
+            if (coverName != null && !coverName.toLowerCase().matches(".*\\.(png|jpg|jpeg|webp)$")) {
+                response.warning();
+                response.listMessage.add("La imagen debe ser PNG, JPG, JPEG o WEBP");
+                return false;
+            }
+        }
+        if (request.getLevel() == null || request.getLevel().trim().isEmpty()) {
+            response.warning();
+            response.listMessage.add("El nivel del curso es requerido");
+            return false;
+        }
+        try {
+            ELevel.valueOf(request.getLevel().trim());
+        } catch (IllegalArgumentException e) {
+            response.warning();
+            response.listMessage.add("El nivel del curso no es válido (BASIC, INTERMEDIATE, ADVANCED)");
+            return false;
+        }
+        if (!validatePriceAndStatus(request, response)) {
+            return false;
+        }
+        if (request.getIdTeacher() == null || request.getIdTeacher().trim().isEmpty()) {
+            response.warning();
+            response.listMessage.add("El docente es requerido");
+            return false;
+        }
+        if (request.getIdCategory() == null) {
+            response.warning();
+            response.listMessage.add("La categoría es requerida");
+            return false;
+        }
+        return true;
+    }
+
     @Transactional
     public EntityCourse updateCourse(String idCourse, CourseRequest request, GenericResponse response) {
-        if (!validateCourse(request, response)) {
+        if (!validateCourseForUpdate(request, response)) {
             return null;
         }
         EntityCourse course = courseRepo.findById(idCourse).orElse(null);
@@ -318,8 +358,12 @@ public class CourseBusiness {
         }
         course.setTitle(request.getTitle());
         course.setDescription(request.getDescription());
-        String fileName = saveImage(request.getCoverImage());
-        course.setCoverImage(fileName);
+        if (request.getCoverImage() != null && !request.getCoverImage().isEmpty()) {
+            String fileName = saveImage(request.getCoverImage());
+            if (fileName != null) {
+                course.setCoverImage(fileName);
+            }
+        }
         course.setLevel(ELevel.valueOf(request.getLevel()));
         course.setPrice(request.getPrice());
         course.setStatus(EStatus.valueOf(request.getStatus()));
