@@ -110,9 +110,8 @@ export class LessonInsert implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     const dialogJustOpened =
-      changes['showDialog'] &&
-      changes['showDialog'].currentValue === true &&
-      changes['showDialog'].previousValue === false;
+      changes['showDialog']?.currentValue === true &&
+      changes['showDialog']?.previousValue === false;
 
     const lessonChanged = changes['lesson'] && this.frmInserLesson;
 

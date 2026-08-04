@@ -1,48 +1,97 @@
-<header class="course-header" style="position: relative;">
-    <!-- Botón Volver -->
-    <div style="position: absolute; top: 16px; left: 16px; z-index: 10;">
-        <button type="button" (click)="goBack()" class="flex items-center gap-2 bg-black/30 hover:bg-black/50 text-white px-4 py-2 rounded-lg backdrop-blur-sm transition border-none cursor-pointer">
-            <span class="material-icons" style="font-size: 18px;">arrow_back</span> Volver a mis cursos
-        </button>
+<header class="relative overflow-hidden rounded-2xl bg-white border border-gray-200 shadow-sm">
+  <!-- Cover banner -->
+  <div class="relative h-48 md:h-64 w-full overflow-hidden bg-gradient-to-r from-gray-900 via-gray-800 to-slate-900">
+    @if (course.coverImage && !imageError) {
+      <img
+        [src]="course.coverImage"
+        [alt]="course.title"
+        (error)="onImageError()"
+        class="h-full w-full object-cover object-center opacity-85 transition-transform duration-700 hover:scale-105"
+      />
+    } @else {
+      <!-- Dynamic gradient fallback if cover image is missing or fails to load -->
+      <div 
+        class="absolute inset-0 opacity-90 transition-opacity"
+        [style.background]="'linear-gradient(135deg, ' + categorySpineColor + ' 0%, #1e293b 100%)'">
+      </div>
+    }
+
+    <!-- Dark gradient overlay for text readability -->
+    <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/20"></div>
+
+    <!-- Back button overlay -->
+    <div class="absolute top-4 left-4 z-10">
+      <button 
+        type="button" 
+        (click)="goBack()" 
+        class="flex items-center gap-2 bg-black/40 hover:bg-black/60 text-white px-3.5 py-2 rounded-xl backdrop-blur-md transition-all text-xs md:text-sm font-semibold border border-white/10 shadow-lg cursor-pointer">
+        <span class="material-icons text-base">arrow_back</span>
+        <span>Volver a mis cursos</span>
+      </button>
     </div>
 
-    <div class="course-cover">
-        <img alt="Portada" [src]="course.coverImage" [alt]="course.title">
-        <div class="overlay"></div>
-        <div class="header-content">
-            <span class="category">{{ course.categoryName }}</span>
-            <h1>{{ course.title }}</h1>
-            <div class="teacher">
-                <div class="avatar">{{ teacherInitials }}</div>
-                <div>
-                    <small>Instructor</small>
-                    <strong>{{ course.teacherFullName }}</strong>
-                </div>
-            </div>
+    <!-- Banner header details -->
+    <div class="absolute bottom-0 inset-x-0 p-5 md:p-6 text-white flex flex-col gap-2 z-10">
+      <div class="flex items-center gap-2">
+        <span 
+          class="inline-flex items-center rounded-full px-3 py-1 text-xs font-bold text-white tracking-wide uppercase backdrop-blur-md shadow-sm border border-white/20"
+          [style.backgroundColor]="categorySpineColor + 'cc'">
+          {{ course.categoryName }}
+        </span>
+      </div>
+
+      <h1 class="text-xl md:text-3xl font-black text-white leading-tight tracking-tight drop-shadow-sm max-w-4xl">
+        {{ course.title }}
+      </h1>
+
+      <div class="flex items-center gap-3 mt-1">
+        <div 
+          class="w-9 h-9 rounded-full text-white font-bold flex items-center justify-center text-xs shadow-md border border-white/20"
+          [style.backgroundColor]="categorySpineColor">
+          {{ teacherInitials }}
         </div>
+        <div class="text-xs md:text-sm">
+          <span class="opacity-75 font-normal">Instructor: </span>
+          <span class="font-bold text-white">{{ course.teacherFullName }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cards / Quick stats strip -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-gray-100 bg-white">
+    <div class="flex items-center gap-3 p-4 justify-center sm:justify-start">
+      <div class="w-10 h-10 rounded-xl bg-orange-50 text-[#E8592B] flex items-center justify-center shrink-0">
+        <span class="material-icons text-xl">menu_book</span>
+      </div>
+      <div>
+        <p class="text-sm font-bold text-gray-900 leading-none">{{ course.totalLessons }}</p>
+        <p class="text-xs text-gray-400 font-medium mt-1">Lecciones totales</p>
+      </div>
     </div>
 
-    <div class="course-info">
-        <div class="card">
-            <span class="material-icons">menu_book</span>
-            <div>
-                <strong>{{ course.totalLessons }}</strong>
-                <small>Lecciones</small>
-            </div>
-        </div>
-        <div class="card">
-            <span class="material-icons">trending_up</span>
-            <div>
-                <strong>{{ course.totalProgress }}%</strong>
-                <small>Progreso</small>
-            </div>
-        </div>
-        <div class="card">
-            <span class="material-icons">history</span>
-            <div>
-                <strong>{{ course.lastAccess | date:'dd MMM yyyy'}}</strong>
-                <small>{{ course.lastAccess | date:'HH:mm' }}</small>
-            </div>
-        </div>
+    <div class="flex items-center gap-3 p-4 justify-center sm:justify-start">
+      <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+        <span class="material-icons text-xl">trending_up</span>
+      </div>
+      <div>
+        <p class="text-sm font-bold text-gray-900 leading-none">{{ course.totalProgress }}%</p>
+        <p class="text-xs text-gray-400 font-medium mt-1">Progreso completado</p>
+      </div>
     </div>
-</header>
+
+    <div class="flex items-center gap-3 p-4 justify-center sm:justify-start">
+      <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+        <span class="material-icons text-xl">history</span>
+      </div>
+      <div>
+        <p class="text-sm font-bold text-gray-900 leading-none">
+          {{ course.lastAccess ? (course.lastAccess | date:'dd MMM yyyy') : 'Sin registro' }}
+        </p>
+        <p class="text-xs text-gray-400 font-medium mt-1">
+          {{ course.lastAccess ? (course.lastAccess | date:'HH:mm') : 'Último acceso' }}
+        </p>
+      </div>
+    </div>
+  </div>
+</header>
