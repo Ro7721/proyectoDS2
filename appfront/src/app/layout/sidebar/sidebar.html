@@ -5,7 +5,7 @@
     <!-- Logo + Rol -->
     <div class="py-6 border-b border-gray-100" [ngClass]="isCollapsed? 'px-2' : 'px-6'">
         <div class="flex items-center gap-3 mb-8 cursor-pointer rounded-lg hover:bg-gray-100"
-            [ngClass]="isCollapsed? 'justify-center' : ''" (click)="returnHome()">
+            [ngClass]="isCollapsed? 'justify-center' : ''" (click)="returnHome()" (keyup.enter)="0">
             <div class="w-9 h-9 rounded-full bg-green-500 flex items-center justify-center text-white shadow-sm"
                 [ngClass]="isCollapsed ? '' : 'ml-3'">
                 <i class="pi pi-check text-sm font-bold"></i>
@@ -42,7 +42,7 @@
                             'active-link': isParentActive(item),
                             'justify-center px-0': isCollapsed,
                             'justify-between px-4':!isCollapsed
-                        }" (click)="toggleSubmenu(item.label!, $event)">
+                        }" (click)="toggleSubmenu(item.label!, $event)" (keyup.enter)="0">
 
                         <div class="flex items-center gap-3 min-w-0">
                             <i [class]="item.icon || ''" class="text-lg shrink-0"></i>

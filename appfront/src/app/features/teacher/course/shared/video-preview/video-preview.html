@@ -27,7 +27,7 @@
     </div>
 
     <!-- YouTube / Vimeo iFrame -->
-    <iframe *ngIf="(videoType === 'youtube' || videoType === 'vimeo') && safeUrl"
+    <iframe title="Video preview" *ngIf="(videoType === 'youtube' || videoType === 'vimeo') && safeUrl"
             [src]="safeUrl" 
             class="w-full h-full border-0 absolute inset-0" 
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
@@ -35,7 +35,7 @@
     </iframe>
 
     <!-- Video nativo para local o links directos -->
-    <video *ngIf="videoType === 'local' && localVideoUrl"
+    <video ><track kind="captions" src="" srclang="es" label="Español">*ngIf="videoType === 'local' && localVideoUrl"
            [src]="localVideoUrl" 
            controls 
            class="w-full h-full object-contain absolute inset-0 bg-black outline-none">

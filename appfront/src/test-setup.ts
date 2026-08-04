@@ -1,17 +1,20 @@
 import 'zone.js';
 import 'zone.js/testing';
-const g: any = typeof window !== 'undefined' ? window : globalThis;
-if (typeof g.Zone === 'undefined' && typeof (globalThis as any).Zone !== 'undefined') {
-  g.Zone = (globalThis as any).Zone;
+
+if (typeof window !== 'undefined') {
+  if (!window.matchMedia) {
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: (query: string) => ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addListener: () => {},
+        removeListener: () => {},
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        dispatchEvent: () => false,
+      }),
+    });
+  }
 }
-
-import { getTestBed } from '@angular/core/testing';
-/*import {
-  BrowserTestingModule,
-  platformBrowserTesting,
-} from '@angular/platform-browser/testing';
-
-getTestBed().initTestEnvironment(
-  BrowserTestingModule,
-  platformBrowserTesting()
-);*/

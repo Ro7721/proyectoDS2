@@ -9,6 +9,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class LoginResponse {
+    private static final String BEARER_TOKEN_TYPE = "Bearer";
+
     private String accessToken;
     private String refreshToken;
     private long expiresIn;
@@ -16,15 +18,14 @@ public class LoginResponse {
     private UserInfo user;
 
     public LoginResponse() {
-        this.tokenType = "Bearer";
+        this.tokenType = BEARER_TOKEN_TYPE;
     }
 
     public LoginResponse(String accessToken, String refreshToken, long expiresIn, UserInfo user) {
-        this.tokenType = "Bearer";
+        this.tokenType = BEARER_TOKEN_TYPE;
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.expiresIn = expiresIn;
-        this.tokenType = "Bearer";
         this.user = user;
     }
 

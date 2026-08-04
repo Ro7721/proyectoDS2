@@ -6,8 +6,8 @@ import { AuthService } from '../auth/auth.service';
   providedIn: 'root',
 })
 export class GuestGuard implements CanActivate {
-  private authService = inject(AuthService);
-  private router = inject(Router);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
   canActivate(): boolean | UrlTree | Promise<boolean | UrlTree> {
     if (this.authService.isAuthenticated()) {
@@ -21,7 +21,7 @@ export class GuestGuard implements CanActivate {
     return this.resolveWithRefresh();
   }
 
-  private async resolveWithRefresh(): Promise<boolean | UrlTree> {
+  private readonly async resolveWithRefresh(): Promise<boolean | UrlTree> {
     const authenticated = await this.authService.ensureAuthenticated();
 
     if (!authenticated) {

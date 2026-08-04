@@ -8,7 +8,7 @@ import { LessonProgressEvent } from '../../features/student/course/learning-cour
   providedIn: 'root',
 })
 export class LearningService {
-  constructor(private api: Api) { }
+  constructor(private readonly api: Api) { }
 
   async getCourseContent(idCourse: string): Promise<CourseContentResponse> {
     const response: any = await this.api.invoke(getCourseContent, { idCourse: idCourse });

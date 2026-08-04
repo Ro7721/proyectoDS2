@@ -6,8 +6,8 @@ import { AuthService } from '../auth/auth.service';
   providedIn: 'root',
 })
 export class RoleGuard implements CanActivate {
-  private authService = inject(AuthService);
-  private router = inject(Router);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
   canActivate(
     route: ActivatedRouteSnapshot,
@@ -24,7 +24,7 @@ export class RoleGuard implements CanActivate {
     return this.resolveRoleAccess(route);
   }
 
-  private async resolveWithRefresh(
+  private readonly async resolveWithRefresh(
     route: ActivatedRouteSnapshot,
     returnUrl: string
   ): Promise<boolean | UrlTree> {
@@ -37,7 +37,7 @@ export class RoleGuard implements CanActivate {
     return this.resolveRoleAccess(route);
   }
 
-  private resolveRoleAccess(route: ActivatedRouteSnapshot): boolean | UrlTree {
+  private readonly resolveRoleAccess(route: ActivatedRouteSnapshot): boolean | UrlTree {
     const roles =
       route.data['roles'] as string[];
 
@@ -52,7 +52,7 @@ export class RoleGuard implements CanActivate {
     return this.router.createUrlTree(this.authService.getRoleHomeUrl(currentRole));
   }
 
-  private redirectToLogin(returnUrl: string): UrlTree {
+  private readonly redirectToLogin(returnUrl: string): UrlTree {
     return this.router.createUrlTree(
       ['/auth/login'],
       {

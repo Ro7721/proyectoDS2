@@ -8,6 +8,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
+        private static final String FILE_PREFIX = "file:";
+
         @Value("${app.storage.path}")
         private String storagePath;
 
@@ -15,15 +17,15 @@ public class WebConfig implements WebMvcConfigurer {
         public void addResourceHandlers(ResourceHandlerRegistry registry) {
                 registry.addResourceHandler("/course-images/**")
                                 .addResourceLocations(
-                                                "file:" + storagePath + "/courses/");
+                                                FILE_PREFIX + storagePath + "/courses/");
 
                 registry.addResourceHandler("/lesson-videos/**")
                                 .addResourceLocations(
-                                                "file:" + storagePath + "/lessons/video/");
+                                                FILE_PREFIX + storagePath + "/lessons/video/");
 
                 registry.addResourceHandler("/lesson-files/**")
                                 .addResourceLocations(
-                                                "file:" + storagePath + "/lessons/files/");
+                                                FILE_PREFIX + storagePath + "/lessons/files/");
         }
 
 }

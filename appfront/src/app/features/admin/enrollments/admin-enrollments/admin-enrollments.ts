@@ -5,6 +5,7 @@ import { getAll, delete1 as deleteEnrollment } from '../../../../api/functions';
 import { EnrollmentResponse } from '../../../../api/models/enrollment-response';
 import { MessageToast } from '../../../../message/message-toast';
 import { FormsModule } from '@angular/forms';
+import { PaginationUtil } from '../../../../core/utils/pagination.util';
 
 @Component({
   selector: 'app-admin-enrollments',
@@ -30,7 +31,7 @@ export class AdminEnrollmentsComponent implements OnInit {
   showDeleteModal = false;
   enrollmentToDelete: EnrollmentResponse | null = null;
 
-  constructor(readonly api: Api, private toast: MessageToast, private cdr: ChangeDetectorRef) { }
+  constructor(readonly api: Api, private readonly toast: MessageToast, private readonly cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     Promise.resolve().then(() => this.loadEnrollments());
@@ -78,25 +79,20 @@ export class AdminEnrollmentsComponent implements OnInit {
   }
 
   updatePagination() {
-    this.totalPages = Math.max(1, Math.ceil(this.filteredEnrollments.length / this.pageSize));
+    const res = PaginationUtil.getPaginatedSlice(this.filteredEnrollments, this.currentPage, this.pageSize);
+    this.paginatedEnrollments = res.paginated;
+    this.totalPages = res.totalPages;
     if (this.currentPage > this.totalPages) this.currentPage = this.totalPages;
-    const start = (this.currentPage - 1) * this.pageSize;
-    this.paginatedEnrollments = this.filteredEnrollments.slice(start, start + this.pageSize);
   }
 
-  goToPage(page: number) {
+  goToPage(page: number = 1) {
     if (page < 1 || page > this.totalPages) return;
     this.currentPage = page;
     this.updatePagination();
   }
 
   get pageNumbers(): number[] {
-    const pages: number[] = [];
-    const delta = 2;
-    const left = Math.max(1, this.currentPage - delta);
-    const right = Math.min(this.totalPages, this.currentPage + delta);
-    for (let i = left; i <= right; i++) pages.push(i);
-    return pages;
+    return PaginationUtil.getPageNumbers(this.currentPage, this.totalPages);
   }
 
   onSearch(event: Event) {
@@ -135,8 +131,8 @@ export class AdminEnrollmentsComponent implements OnInit {
     });
   }
 
-  getProgressColor(progress: number | undefined): string {
-    const p = progress || 0;
+  getProgressColor(progress: number = 0): string {
+    const p = progress;
     if (p >= 100) return 'bg-emerald-500';
     if (p >= 50) return 'bg-blue-500';
     return 'bg-purple-400';

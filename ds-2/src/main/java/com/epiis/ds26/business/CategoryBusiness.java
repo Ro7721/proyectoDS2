@@ -3,7 +3,6 @@ package com.epiis.ds26.business;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -129,7 +128,7 @@ public class CategoryBusiness {
     }
 
     public List<CategoryResponse> findAllCategory() {
-        return categoryRepo.findAll().stream().map(this::mapToResponse).collect(Collectors.toList());
+        return categoryRepo.findAll().stream().map(this::mapToResponse).toList();
     }
 
     public List<CategoryResponse> searchCategories(String name, GenericResponse response) {

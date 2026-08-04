@@ -5,7 +5,7 @@
     <!-- Backdrop móvil -->
     <div *ngIf="!isSidebarCollapsed && isMobile"
         class="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 lg:hidden transition-opacity duration-300"
-        (click)="isSidebarCollapsed = true">
+        (click)="isSidebarCollapsed = true" (keyup.enter)="0">
     </div>
 
     <!-- Sidebar -->

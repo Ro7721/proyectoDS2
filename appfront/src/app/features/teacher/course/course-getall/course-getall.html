@@ -119,8 +119,7 @@
         </div>
         <h3 class="text-lg font-bold text-gray-800">Aún no tienes cursos</h3>
         <p class="mt-1 max-w-md text-sm text-gray-500">Crea tu primer curso y empieza a organizar tus lecciones.</p>
-        <a pButton routerLink="/dashboard/course-insert" label="Crear mi primer curso" icon="pi pi-plus"
-            class="p-button-sm mt-5" style="background:#16a34a; border-color:#16a34a;"></a>
+        <a pButton routerLink="/dashboard/course-insert" label="Crear mi primer curso" icon="pi pi-plus" aria-label="Crear mi primer curso" class="p-button-sm mt-5" style="background:#16a34a; border-color:#16a34a;"><span class="ml-2">Crear mi primer curso</span></a>
     </div>
 
     <!-- Empty search result -->
@@ -138,10 +137,10 @@
     <div *ngIf="!loading && filteredCourses.length > 0 && viewMode === 'grid'"
         class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
         <article *ngFor="let course of filteredCourses" (click)="openCourseDetail(course)"
-            class="group flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition duration-200 hover:-translate-y-1 hover:border-emerald-100 hover:shadow-lg">
+            class="group flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition duration-200 hover:-translate-y-1 hover:border-emerald-100 hover:shadow-lg" (keyup.enter)="0">
 
             <div class="relative h-44 overflow-hidden bg-emerald-50">
-                <img *ngIf="course.coverImage" [src]="course.coverImage" [alt]="course.title"
+                <img alt="Portada" *ngIf="course.coverImage" [src]="course.coverImage" [alt]="course.title"
                     class="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
                 <div *ngIf="!course.coverImage"
                     class="flex h-full w-full items-center justify-center bg-gradient-to-br from-emerald-50 to-sky-50">
@@ -195,11 +194,11 @@
     <!-- LIST VIEW -->
     <div *ngIf="!loading && filteredCourses.length > 0 && viewMode === 'list'" class="flex flex-col gap-3">
         <div *ngFor="let course of filteredCourses" (click)="openCourseDetail(course)"
-            class="group flex cursor-pointer items-center gap-4 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+            class="group flex cursor-pointer items-center gap-4 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition hover:border-emerald-200 hover:shadow-md" (keyup.enter)="0">
 
             <!-- Thumbnail -->
             <div class="relative w-24 h-16 rounded-xl overflow-hidden shrink-0 bg-emerald-50">
-                <img *ngIf="course.coverImage" [src]="course.coverImage" [alt]="course.title"
+                <img alt="Portada" *ngIf="course.coverImage" [src]="course.coverImage" [alt]="course.title"
                     class="h-full w-full object-cover group-hover:scale-105 transition duration-500" />
                 <div *ngIf="!course.coverImage" class="flex h-full w-full items-center justify-center">
                     <i class="pi pi-image text-2xl text-emerald-200"></i>

@@ -29,7 +29,7 @@ export class RegisterUser {
   get confirmPassword() { return this.form.controls['confirmPassword']; }
   get role() { return this.form.controls['role']; }
 
-  constructor(private formBuilder: FormBuilder, private api: Api, private toast: MessageToast, private router: Router) {
+  constructor(private readonly formBuilder: FormBuilder, private readonly api: Api, private readonly toast: MessageToast, private readonly router: Router) {
     this.form = this.formBuilder.group({
       firstName: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(25), Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s'-]+$/)]],
       lastName: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(25), Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s'-]+$/)]],

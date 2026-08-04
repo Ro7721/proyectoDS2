@@ -11,7 +11,7 @@ import com.epiis.ds26.entity.EntityUser;
 import org.springframework.security.core.authority.*;
 
 public class CustomUserDetails implements UserDetails {
-    private final EntityUser user;
+    private final transient EntityUser user;
 
     public CustomUserDetails(EntityUser user) {
         this.user = user;

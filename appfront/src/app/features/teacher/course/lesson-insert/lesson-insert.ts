@@ -79,7 +79,7 @@ export class LessonInsert implements OnInit, OnChanges {
     { label: 'Documento', value: 'PDF' }
   ];
 
-  constructor(private fb: FormBuilder, private toastMessage: MessageToast) {
+  constructor(private readonly fb: FormBuilder, private readonly toastMessage: MessageToast) {
     this.frmInserLesson = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(100), noNumbers(), noWhitespaceOnly()]],
       type: ['VIDEO', Validators.required],
@@ -121,7 +121,7 @@ export class LessonInsert implements OnInit, OnChanges {
     }
   }
 
-  private listenToTypeChanges(): void {
+  private readonly listenToTypeChanges(): void {
     this.frmInserLesson.get('type')?.valueChanges.subscribe((type) => {
       if (type !== 'VIDEO') {
         this.mainVideoFile = [];
@@ -130,7 +130,7 @@ export class LessonInsert implements OnInit, OnChanges {
     });
   }
 
-  private updateFormWithLesson(): void {
+  private readonly updateFormWithLesson(): void {
     if (this.lesson) {
       const existingVideoFile = this.lesson.mainVideoFile ? [this.lesson.mainVideoFile as File] : [];
       this.frmInserLesson.patchValue({
@@ -154,7 +154,7 @@ export class LessonInsert implements OnInit, OnChanges {
     }
   }
 
-  private coerceBoolean(value: unknown): boolean {
+  private readonly coerceBoolean(value: unknown): boolean {
     return value === true || value === 'true';
   }
 

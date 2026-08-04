@@ -24,7 +24,7 @@
         <!-- Course info -->
         <div class="flex items-start gap-3 p-4 rounded-xl bg-gray-50 border border-gray-100">
             @if (enrollment.courseImage) {
-            <img [src]="enrollment.courseImage" [alt]="enrollment.courseTitle"
+            <img alt="Portada" [src]="enrollment.courseImage" [alt]="enrollment.courseTitle"
                 class="w-16 h-12 rounded-xl object-cover shrink-0">
             } @else {
             <div class="w-16 h-12 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0">

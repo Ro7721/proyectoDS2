@@ -12,7 +12,7 @@
     <i class="pi pi-search text-green-600"></i>
     <input type="text" [(ngModel)]="value" (input)="onInput()" (focus)="isFocused = true" (blur)="isFocused = false"
       class="flex-1 bg-transparent outline-none px-3 py-1 text-sm rounded-full focus:cursor-pointer"
-      placeholder="Buscar cursos...">
+      placeholder="Buscar cursos..." aria-label="Buscar cursos...">
   </div>
   <!-- el menu que tiene 2 opciones-->
   <nav class="flex items-center gap-8">

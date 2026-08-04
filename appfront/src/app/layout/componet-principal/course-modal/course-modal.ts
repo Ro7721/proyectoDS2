@@ -28,7 +28,7 @@ export class CourseModal {
 
   selectedCourseId: string | null = null;
 
-  constructor(private api: Api, private toast: MessageToast) { }
+  constructor(private readonly api: Api, private readonly toast: MessageToast) { }
   showModal(course: CourseResponse) {
     this.course = course;
     this.isVisible = true;

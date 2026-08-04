@@ -144,7 +144,7 @@ public class AuthController {
             String userEmail = jwtService.extractUsername(refreshToken);
             EntityUser user = userBusiness.findByEmail(userEmail);
             if (user == null) {
-                throw new RuntimeException("Usuario no encontrado");
+                throw new BadCredentialsException("Token invalido");
             }
 
             CustomUserDetails userDetails = new CustomUserDetails(user);

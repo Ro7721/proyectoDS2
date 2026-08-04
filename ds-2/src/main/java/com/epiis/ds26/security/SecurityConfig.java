@@ -35,7 +35,7 @@ public class SecurityConfig {
         }
 
         @Bean
-        @SuppressWarnings("squid:S4502") // CSRF is disabled safely because API is stateless with JWT
+        @SuppressWarnings({"squid:S4502", "java:S112", "java:S1130"}) // CSRF is disabled safely because API is stateless with JWT; method signature required by Spring Security
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 http
                                 .cors(cors -> cors.configurationSource(corsConfig.corsConfigurationSource()))
@@ -60,12 +60,12 @@ public class SecurityConfig {
                                                 .requestMatchers("/lesson-files/**").permitAll()
                                                 .requestMatchers("/storage/**").permitAll()
                                                 .anyRequest().authenticated())
-                                // SesiÃ³n stateless (no guardar sesiÃ³n en servidor â€” usamos JWT)
+                                // Sesión stateless (no guardar sesión en servidor — usamos JWT)
                                 .sessionManagement(session -> session
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                                // Proveedor de autenticaciÃ³n
+                                // Proveedor de autenticación
                                 .authenticationProvider(authenticationProvider())
-                                // Agregar el filtro JWT ANTES del filtro de autenticaciÃ³n estÃ¡ndar
+                                // Agregar el filtro JWT ANTES del filtro de autenticación estándar
                                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                                 .headers(headers -> headers
                                                 .contentSecurityPolicy(
@@ -79,17 +79,15 @@ public class SecurityConfig {
         }
 
         @Bean
-        @SuppressWarnings("squid:S5852") // User enumeration is accepted here by design
         public AuthenticationProvider authenticationProvider() {
                 DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
                 authProvider.setPasswordEncoder(passwordEncoder());
-                // Permite que UsernameNotFoundException se propague directamente
-                // en lugar de convertirse en BadCredentialsException
-                authProvider.setHideUserNotFoundExceptions(false);
+                authProvider.setHideUserNotFoundExceptions(true);
                 return authProvider;
         }
 
         @Bean
+        @SuppressWarnings({"java:S112", "java:S1130"})
         public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
                 return config.getAuthenticationManager();
         }

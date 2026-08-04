@@ -34,9 +34,9 @@ export class AdminCategoriesComponent implements OnInit {
 
   constructor(
     readonly api: Api,
-    private fb: FormBuilder,
-    private toast: MessageToast,
-    private cdr: ChangeDetectorRef
+    private readonly fb: FormBuilder,
+    private readonly toast: MessageToast,
+    private readonly cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {

@@ -2,6 +2,7 @@ package com.epiis.ds26.business;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 import java.util.Collections;
@@ -11,6 +12,8 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -58,9 +61,10 @@ class CategoryBusinessTest {
         verify(categoryRepo, times(1)).save(any(EntityCategory.class));
     }
 
-    @Test
-    void insertToCategory_invalidName_empty() {
-        request.setName("");
+    @ParameterizedTest
+    @ValueSource(strings = { "", "12345", "ab" })
+    void insertToCategory_invalidName(String invalidName) {
+        request.setName(invalidName);
         GenericResponse response = new GenericResponse();
         EntityCategory result = categoryBusiness.insertToCategory(request, response);
 

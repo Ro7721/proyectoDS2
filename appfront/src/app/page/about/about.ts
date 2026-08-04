@@ -11,7 +11,7 @@ import { AuthService } from '../../core/auth/auth.service';
   styleUrl: './about.css',
 })
 export class About {
-  private router = inject(Router);
+  private readonly router = inject(Router);
   authService = inject(AuthService);
 
   isMenuOpen = false;

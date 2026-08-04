@@ -165,7 +165,7 @@ export class CourseInsert implements OnInit {
   onCoverDrop(event: DragEvent): void {
     event.preventDefault();
     const file = event.dataTransfer?.files?.[0];
-    if (file && file.type.startsWith('image/')) {
+    if (file?.type?.startsWith('image/')) {
       this.setCoverImage(file);
     } else {
       this.messageToast.toastError('Archivo no válido', 'Solo se aceptan imágenes (PNG, JPG, WEBP)');

@@ -81,7 +81,7 @@
                 <span id="roleLabel" class="block mb-1.5 text-sm font-semibold text-gray-700">Rol</span>
 
                 <!-- Dropdown Header -->
-                <div role="button" aria-labelledby="roleLabel" (click)="toggleRoleDropdown()" (keydown.enter)="toggleRoleDropdown()" tabindex="0"
+                <div  aria-labelledby="roleLabel" (click)="toggleRoleDropdown()" (keydown.enter)="toggleRoleDropdown()" 
                     class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm cursor-pointer flex justify-between items-center transition bg-white"
                     [ngClass]="{'border-green-500 ring-1 ring-green-500': isRoleDropdownOpen, 'text-gray-700': role.value, 'text-gray-400': !role.value}">
                     <span>{{ selectedRoleText }}</span>
@@ -99,7 +99,7 @@
                     @for (item of roles; track $index) {
                     <div (click)="selectRole(item.key)"
                         class="px-4 py-3 text-sm text-gray-700 hover:bg-green-50 hover:text-green-600 cursor-pointer transition-colors duration-150 border-b border-gray-100 last:border-none"
-                        [ngClass]="{'bg-green-50 text-green-600 font-medium': role.value === item.key}">
+                        [ngClass]="{'bg-green-50 text-green-600 font-medium': role.value === item.key}" (keyup.enter)="0">
                         {{ item.value }}
                     </div>
                     }

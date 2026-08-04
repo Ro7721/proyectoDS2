@@ -38,7 +38,7 @@
 
           <div *ngIf="!coverImagePreview"
             class="group flex h-52 w-full cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 transition-all hover:border-green-400 hover:bg-green-50"
-            role="button" (click)="coverInput.click()" (keydown.enter)="coverInput.click()" tabindex="0" (dragover)="$event.preventDefault()" (drop)="onCoverDrop($event)">
+             (click)="coverInput.click()" (keydown.enter)="coverInput.click()"  (dragover)="$event.preventDefault()" (drop)="onCoverDrop($event)">
             <div
               class="flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-gray-200 group-hover:ring-green-300">
               <i class="pi pi-cloud-upload text-xl text-gray-400 group-hover:text-green-500"></i>
@@ -51,7 +51,7 @@
 
           <div *ngIf="coverImagePreview"
             class="group relative h-52 w-full cursor-pointer overflow-hidden rounded-xl border border-gray-200"
-            role="button" (click)="coverInput.click()" (keydown.enter)="coverInput.click()" tabindex="0">
+             (click)="coverInput.click()" (keydown.enter)="coverInput.click()" >
             <img [src]="coverImagePreview" alt="Portada" class="h-full w-full object-cover" />
             <div
               class="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
@@ -60,7 +60,7 @@
             </div>
           </div>
 
-          <input #coverInput type="file" accept="image/*" class="hidden" (change)="onCoverInputChange($event)" />
+          <input #coverInput type="file" accept="image/*" class="hidden" (change)="onCoverInputChange($event)" / aria-label="Campo de texto">
         </div>
 
         <!-- Sección: Información básica -->

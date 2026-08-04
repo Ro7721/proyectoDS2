@@ -3,7 +3,7 @@
 
   <!-- VIDEO PLAYER -->
   @if (lesson.type === 'VIDEO') {
-  <div role="region" aria-label="Reproductor de video" class="relative bg-black group/player select-none" (keydown)="onKeyDown($event)" tabindex="0">
+  <div  aria-label="Reproductor de video" class="relative bg-black group/player select-none" (keydown)="onKeyDown($event)" >
 
     <!-- Video element -->
     <video
@@ -56,9 +56,9 @@
     <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent px-4 pt-10 pb-3 opacity-0 group-hover/player:opacity-100 transition-opacity duration-300">
 
       <!-- Progress bar -->
-      <div role="slider" aria-label="Barra de progreso" aria-valuenow="0" tabindex="0"
+      <div  aria-label="Barra de progreso" aria-valuenow="0" 
            class="relative w-full h-1 bg-white/30 rounded-full cursor-pointer mb-3 group/bar hover:h-2.5 transition-all duration-150"
-           (click)="seek($event)" (mousemove)="onProgressHover($event)" #progressBar>
+           (click)="seek($event)" (mousemove)="onProgressHover($event)" #progressBar (keyup.enter)="0">
         <!-- Buffered -->
         <div class="absolute inset-y-0 left-0 bg-white/20 rounded-full" [style.width.%]="bufferedPercent"></div>
         <!-- Watched -->

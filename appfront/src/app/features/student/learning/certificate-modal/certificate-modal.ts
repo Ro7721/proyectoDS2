@@ -133,7 +133,7 @@ export class CertificateModal implements OnChanges {
 
   private generateCertId(): string {
     const input = `${this.studentName}-${this.courseName}-${Date.now()}`;
-    const hash = input.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+    const hash = input.split('').reduce((a, c) => a + (c.codePointAt(0) || 0), 0);
     return `CERT-${hash.toString(16).toUpperCase().slice(0, 8)}-${new Date().getFullYear()}`;
   }
 }

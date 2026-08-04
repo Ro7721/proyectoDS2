@@ -35,7 +35,7 @@
       
       <!-- Image/Top -->
       <div class="relative w-full h-36 bg-emerald-50 shrink-0">
-        <img *ngIf="course.coverImage" [src]="course.coverImage" [alt]="course.title" class="w-full h-full object-cover" />
+        <img alt="Portada" *ngIf="course.coverImage" [src]="course.coverImage" [alt]="course.title" class="w-full h-full object-cover" />
         <div *ngIf="!course.coverImage" class="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-50 to-teal-50">
           <i class="pi pi-trophy text-5xl text-emerald-200"></i>
         </div>

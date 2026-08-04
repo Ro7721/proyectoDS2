@@ -6,6 +6,7 @@ import { unpublishCourse } from '../../../../api/fn/course-controller/unpublish-
 import { CourseResponse } from '../../../../api/models/course-response';
 import { MessageToast } from '../../../../message/message-toast';
 import { FormsModule } from '@angular/forms';
+import { PaginationUtil } from '../../../../core/utils/pagination.util';
 
 @Component({
   selector: 'app-admin-courses',
@@ -31,7 +32,7 @@ export class AdminCoursesComponent implements OnInit {
   courseToDelete: CourseResponse | null = null;
   actionLoading = false;
 
-  constructor(readonly api: Api, private toast: MessageToast, private cdr: ChangeDetectorRef) { }
+  constructor(readonly api: Api, private readonly toast: MessageToast, private readonly cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     Promise.resolve().then(() => this.loadCourses());
@@ -78,10 +79,10 @@ export class AdminCoursesComponent implements OnInit {
   }
 
   updatePagination() {
-    this.totalPages = Math.max(1, Math.ceil(this.filteredCourses.length / this.pageSize));
+    const res = PaginationUtil.getPaginatedSlice(this.filteredCourses, this.currentPage, this.pageSize);
+    this.paginatedCourses = res.paginated;
+    this.totalPages = res.totalPages;
     if (this.currentPage > this.totalPages) this.currentPage = this.totalPages;
-    const start = (this.currentPage - 1) * this.pageSize;
-    this.paginatedCourses = this.filteredCourses.slice(start, start + this.pageSize);
   }
 
   goToPage(page: number) {
@@ -91,12 +92,7 @@ export class AdminCoursesComponent implements OnInit {
   }
 
   get pageNumbers(): number[] {
-    const pages: number[] = [];
-    const delta = 2;
-    const left = Math.max(1, this.currentPage - delta);
-    const right = Math.min(this.totalPages, this.currentPage + delta);
-    for (let i = left; i <= right; i++) pages.push(i);
-    return pages;
+    return PaginationUtil.getPageNumbers(this.currentPage, this.totalPages);
   }
 
   onSearch(event: Event) {

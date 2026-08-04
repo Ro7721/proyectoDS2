@@ -6,8 +6,8 @@ import { AuthService } from '../auth/auth.service';
   providedIn: 'root',
 })
 export class AuthGuard implements CanActivate {
-  private authService = inject(AuthService);
-  private router = inject(Router);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
   canActivate(
     route: ActivatedRouteSnapshot,
@@ -25,7 +25,7 @@ export class AuthGuard implements CanActivate {
     return this.resolveWithRefresh(state.url);
   }
 
-  private async resolveWithRefresh(returnUrl: string): Promise<boolean | UrlTree> {
+  private readonly async resolveWithRefresh(returnUrl: string): Promise<boolean | UrlTree> {
     const authenticated = await this.authService.ensureAuthenticated();
 
     if (authenticated) {
@@ -35,7 +35,7 @@ export class AuthGuard implements CanActivate {
     return this.redirectToLogin(returnUrl);
   }
 
-  private redirectToLogin(returnUrl: string): UrlTree {
+  private readonly redirectToLogin(returnUrl: string): UrlTree {
     return this.router.createUrlTree(
       ['/auth/login'],
       {

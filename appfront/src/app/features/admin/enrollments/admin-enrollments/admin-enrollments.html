@@ -16,10 +16,10 @@
     <div class="relative flex-1 min-w-0 sm:min-w-[200px] sm:max-w-xs">
       <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
       <input type="text" [value]="searchQuery" (input)="onSearch($event)" placeholder="Buscar por estudiante o curso..."
-        class="w-full pl-9 pr-4 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500">
+        class="w-full pl-9 pr-4 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500" aria-label="Buscar por estudiante o curso...">
     </div>
-    <select (change)="onFilterStatus($event)"
-      class="py-2 pl-3 pr-8 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none text-gray-700 w-full sm:w-auto">
+    <label for="ae-status-select" class="sr-only">Estado</label><select id="ae-status-select" (change)="onFilterStatus($event)"
+      class="py-2 pl-3 pr-8 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none text-gray-700 w-full sm:w-auto" aria-label="Opciones de selección">
       <option value="">Todos los estados</option>
       <option value="completed">Completados</option>
       <option value="progress">En Progreso</option>
@@ -183,8 +183,8 @@
 </div>
 
 <!-- ============ MODAL: ELIMINAR INSCRIPCIÓN ============ -->
-<div *ngIf="showDeleteModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/40 backdrop-blur-sm" (click)="closeDeleteModal()">
-  <div class="bg-white w-full sm:w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl shadow-2xl" (click)="$event.stopPropagation()">
+<div *ngIf="showDeleteModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/40 backdrop-blur-sm" (click)="closeDeleteModal()" (keyup.enter)="0">
+  <div class="bg-white w-full sm:w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl shadow-2xl" (click)="$event.stopPropagation()" (keyup.enter)="0">
     <div class="p-6 text-center">
       <div class="w-14 h-14 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
         <i class="pi pi-trash text-2xl text-red-500"></i>

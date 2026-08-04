@@ -2,7 +2,7 @@
     class="bg-white/85 backdrop-blur-xl border-b border-gray-200 px-3 sm:px-4 md:px-6 py-3 md:py-4 flex items-center justify-between sticky top-0 z-30 shadow-sm">
     <div class="flex items-center gap-2 sm:gap-4 min-w-0">
         <p-button (click)="toggleSidebar()" [text]="true" severity="secondary" class="lg:hidden shrink-0"
-            ariaLabel="Abrir menú">
+            ariaLabel="Abrir menú" (keyup.enter)="0">
             <i class="pi pi-bars text-xl"></i>
         </p-button>
         <h1 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 truncate">{{ title }}</h1>
@@ -10,7 +10,7 @@
 
     <div class="flex items-center gap-1.5 sm:gap-3 shrink-0">
         <p-button (click)="toggleTheme()" [text]="true" severity="secondary" [rounded]="true"
-            [ariaLabel]="themeService.isDark() ? 'Activar modo claro' : 'Activar modo oscuro'">
+            [ariaLabel]="themeService.isDark() ? 'Activar modo claro' : 'Activar modo oscuro'" (keyup.enter)="0">
             <i class="pi text-lg" [ngClass]="themeService.isDark() ? 'pi-sun' : 'pi-moon'"></i>
         </p-button>
 

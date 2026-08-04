@@ -378,7 +378,7 @@
       <p class="text-sm text-gray-500 mb-1">
         Cambiando rol de <strong class="text-gray-800">{{ userToChangeRole?.firstName }} {{ userToChangeRole?.surName }}</strong>
       </p>
-      <div role="button" class="flex items-center gap-3 p-3 border-2 rounded-xl cursor-pointer transition-all" tabindex="0"
+      <div  class="flex items-center gap-3 p-3 border-2 rounded-xl cursor-pointer transition-all" 
         [ngClass]="newRole === 'ROLE_STUDENT' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'"
         (click)="newRole = 'ROLE_STUDENT'" (keydown.enter)="newRole = 'ROLE_STUDENT'">
         <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 flex-shrink-0">
@@ -393,7 +393,7 @@
           <span *ngIf="newRole === 'ROLE_STUDENT'" class="w-1.5 h-1.5 rounded-full bg-white block"></span>
         </div>
       </div>
-      <div role="button" class="flex items-center gap-3 p-3 border-2 rounded-xl cursor-pointer transition-all" tabindex="0"
+      <div  class="flex items-center gap-3 p-3 border-2 rounded-xl cursor-pointer transition-all" 
         [ngClass]="newRole === 'ROLE_TEACHER' ? 'border-orange-500 bg-orange-50' : 'border-gray-200 hover:border-gray-300'"
         (click)="newRole = 'ROLE_TEACHER'" (keydown.enter)="newRole = 'ROLE_TEACHER'">
         <div class="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-700 flex-shrink-0">
@@ -408,7 +408,7 @@
           <span *ngIf="newRole === 'ROLE_TEACHER'" class="w-1.5 h-1.5 rounded-full bg-white block"></span>
         </div>
       </div>
-      <div role="button" class="flex items-center gap-3 p-3 border-2 rounded-xl cursor-pointer transition-all" tabindex="0"
+      <div  class="flex items-center gap-3 p-3 border-2 rounded-xl cursor-pointer transition-all" 
         [ngClass]="newRole === 'ROLE_ADMIN' ? 'border-purple-500 bg-purple-50' : 'border-gray-200 hover:border-gray-300'"
         (click)="newRole = 'ROLE_ADMIN'" (keydown.enter)="newRole = 'ROLE_ADMIN'">
         <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 flex-shrink-0">

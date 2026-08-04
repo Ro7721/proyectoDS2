@@ -17,6 +17,8 @@ import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -91,6 +93,7 @@ class LessonBusinessTest {
                         .forEach(File::delete);
             }
         } catch (IOException ignored) {
+            // Teardown directory cleanup exception is safely ignored
         }
     }
 
@@ -182,49 +185,19 @@ class LessonBusinessTest {
         assertEquals("warning", response.getType());
     }
 
-    @Test
-    void validateLesson_titleMissing_warning() {
-        sampleRequest.setTitle("");
+    @ParameterizedTest
+    @ValueSource(strings = {"", "12345", "abc"})
+    void validateLesson_invalidTitle_warning(String invalidTitle) {
+        sampleRequest.setTitle(invalidTitle);
         GenericResponse response = new GenericResponse();
         EntityLesson result = lessonBusiness.insert(sampleRequest, null, null, response);
         assertNull(result);
     }
 
-    @Test
-    void validateLesson_titleOnlyNumbers_warning() {
-        sampleRequest.setTitle("12345");
-        GenericResponse response = new GenericResponse();
-        EntityLesson result = lessonBusiness.insert(sampleRequest, null, null, response);
-        assertNull(result);
-    }
-
-    @Test
-    void validateLesson_titleTooShort_warning() {
-        sampleRequest.setTitle("abc");
-        GenericResponse response = new GenericResponse();
-        EntityLesson result = lessonBusiness.insert(sampleRequest, null, null, response);
-        assertNull(result);
-    }
-
-    @Test
-    void validateLesson_descriptionMissing_warning() {
-        sampleRequest.setDescription("");
-        GenericResponse response = new GenericResponse();
-        EntityLesson result = lessonBusiness.insert(sampleRequest, null, null, response);
-        assertNull(result);
-    }
-
-    @Test
-    void validateLesson_descriptionOnlyNumbers_warning() {
-        sampleRequest.setDescription("12345678901");
-        GenericResponse response = new GenericResponse();
-        EntityLesson result = lessonBusiness.insert(sampleRequest, null, null, response);
-        assertNull(result);
-    }
-
-    @Test
-    void validateLesson_descriptionTooShort_warning() {
-        sampleRequest.setDescription("abc");
+    @ParameterizedTest
+    @ValueSource(strings = {"", "12345678901", "abc"})
+    void validateLesson_invalidDescription_warning(String invalidDescription) {
+        sampleRequest.setDescription(invalidDescription);
         GenericResponse response = new GenericResponse();
         EntityLesson result = lessonBusiness.insert(sampleRequest, null, null, response);
         assertNull(result);
@@ -353,5 +326,83 @@ class LessonBusinessTest {
         assertEquals("lesson-123", response.getIdLesson());
         assertEquals(1, response.getFiles().size());
         assertEquals("PDF", response.getFiles().get(0).getFileType());
+    }
+
+    @Test
+    void mapToResponse_textFileType_success() {
+        EntityLessonFile file1 = new EntityLessonFile();
+        file1.setIdFile("file-2");
+        file1.setFileName("doc.txt");
+        file1.setFileType(EType.TEXT);
+        file1.setFileUrl("doc.txt");
+        file1.setFileOrder(1);
+
+        sampleLesson.setType(EType.PDF);
+        when(lessonFileRepo.findByLesson_IdLessonOrderByFileOrderAsc("lesson-123")).thenReturn(List.of(file1));
+
+        LessonResponse response = lessonBusiness.mapToResponse(sampleLesson);
+
+        assertNotNull(response);
+        assertEquals(1, response.getFiles().size());
+        assertEquals("TEXT", response.getFiles().get(0).getFileType());
+    }
+
+    @Test
+    void deleteLesson_success() {
+        when(lessonRepo.findById("lesson-123")).thenReturn(Optional.of(sampleLesson));
+        GenericResponse response = new GenericResponse();
+
+        boolean result = lessonBusiness.deleteLesson("lesson-123", response);
+
+        assertTrue(result);
+        assertEquals("success", response.getType());
+        verify(lessonRepo).delete(sampleLesson);
+    }
+
+    @Test
+    void getLessonsByCourseAndTeacher_returnsList() {
+        when(lessonRepo.findByCourse_IdCourseAndCourse_Teacher_IdUser("course-123", "teach-1"))
+                .thenReturn(List.of(sampleLesson));
+        when(lessonFileRepo.findByLesson_IdLessonOrderByFileOrderAsc("lesson-123")).thenReturn(Collections.emptyList());
+
+        List<LessonResponse> list = lessonBusiness.getLessonsByCourseAndTeacher("course-123", "teach-1");
+
+        assertEquals(1, list.size());
+    }
+
+    @Test
+    void searchLessons_found_success() {
+        when(lessonRepo.searchLessons("title", "title")).thenReturn(List.of(sampleLesson));
+        when(lessonFileRepo.findByLesson_IdLessonOrderByFileOrderAsc("lesson-123")).thenReturn(Collections.emptyList());
+        GenericResponse response = new GenericResponse();
+
+        List<LessonResponse> list = lessonBusiness.searchLessons("title", response);
+
+        assertFalse(list.isEmpty());
+        assertEquals("success", response.getType());
+    }
+
+    @Test
+    void updateLesson_withAdjunctFiles_success() {
+        when(lessonRepo.findById("lesson-123")).thenReturn(Optional.of(sampleLesson));
+        when(lessonRepo.save(any(EntityLesson.class))).thenReturn(sampleLesson);
+        MockMultipartFile adjPdf = new MockMultipartFile("adj", "doc.pdf", "application/pdf", "pdfcontent".getBytes());
+        GenericResponse response = new GenericResponse();
+
+        EntityLesson result = lessonBusiness.updateLesson("lesson-123", sampleRequest, null, List.of(adjPdf), response);
+
+        assertNotNull(result);
+        assertEquals("success", response.getType());
+    }
+
+    @Test
+    void updateLesson_invalidType_returnsNull() {
+        sampleRequest.setType("");
+        GenericResponse response = new GenericResponse();
+
+        EntityLesson result = lessonBusiness.updateLesson("lesson-123", sampleRequest, null, null, response);
+
+        assertNull(result);
+        assertEquals("warning", response.getType());
     }
 }

@@ -3,8 +3,8 @@ import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
-  private platformId = inject(PLATFORM_ID);
-  private isBrowser = isPlatformBrowser(this.platformId);
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly isBrowser = isPlatformBrowser(this.platformId);
 
   // Signal reactivo para el estado del tema
   readonly isDark = signal(false);
@@ -15,7 +15,7 @@ export class ThemeService {
     }
   }
 
-  private initTheme(): void {
+  private readonly initTheme(): void {
     const stored = localStorage.getItem('theme');
     if (stored) {
       // Preferencia guardada por el usuario
@@ -34,7 +34,7 @@ export class ThemeService {
     this.applyTheme(newValue);
   }
 
-  private applyTheme(dark: boolean): void {
+  private readonly applyTheme(dark: boolean): void {
     this.isDark.set(dark);
     if (this.isBrowser) {
       if (dark) {

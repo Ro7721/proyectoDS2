@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidatorFn, ValidationErrors } from '@angular/forms';
+import { PaginationUtil } from '../../../../core/utils/pagination.util';
 import { Api } from '../../../../api/api';
 import { getAllUsers, deleteUser, updateUser } from '../../../../api/functions';
 import { activateUser } from '../../../../api/fn/user-controller/activate-user';
@@ -46,9 +47,9 @@ export class AdminUsersComponent implements OnInit {
 
   constructor(
     readonly api: Api,
-    private fb: FormBuilder,
-    private toast: MessageToast,
-    private cdr: ChangeDetectorRef
+    private readonly fb: FormBuilder,
+    private readonly toast: MessageToast,
+    private readonly cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -129,10 +130,10 @@ export class AdminUsersComponent implements OnInit {
   }
 
   updatePagination() {
-    this.totalPages = Math.max(1, Math.ceil(this.filteredUsers.length / this.pageSize));
+    const res = PaginationUtil.getPaginatedSlice(this.filteredUsers, this.currentPage, this.pageSize);
+    this.paginatedUsers = res.paginated;
+    this.totalPages = res.totalPages;
     if (this.currentPage > this.totalPages) this.currentPage = this.totalPages;
-    const start = (this.currentPage - 1) * this.pageSize;
-    this.paginatedUsers = this.filteredUsers.slice(start, start + this.pageSize);
   }
 
   goToPage(page: number) {
@@ -142,12 +143,7 @@ export class AdminUsersComponent implements OnInit {
   }
 
   get pageNumbers(): number[] {
-    const pages: number[] = [];
-    const delta = 2;
-    const left = Math.max(1, this.currentPage - delta);
-    const right = Math.min(this.totalPages, this.currentPage + delta);
-    for (let i = left; i <= right; i++) pages.push(i);
-    return pages;
+    return PaginationUtil.getPageNumbers(this.currentPage, this.totalPages);
   }
 
   onSearch(event: Event) {

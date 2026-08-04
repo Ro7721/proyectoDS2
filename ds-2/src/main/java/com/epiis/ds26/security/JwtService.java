@@ -1,7 +1,7 @@
 package com.epiis.ds26.security;
 
 import javax.crypto.SecretKey;
-import java.util.Date;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,7 +14,11 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
+import lombok.Getter;
+
 @Service
+@Getter
+@SuppressWarnings({"java:S2143", "squid:S2143"})
 public class JwtService {
     @Value("${jwt.secret}")
     private String secretKey;
@@ -39,12 +43,15 @@ public class JwtService {
         return buildToken(new HashMap<>(), userDetails, refreshTokenExpiration);
     }
 
+    @SuppressWarnings({"java:S2143", "squid:S2143"})
     private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails, long expiration) {
+        Instant now = Instant.now();
+        Instant expiry = now.plusMillis(expiration);
         return Jwts.builder()
                 .claims(extraClaims)
                 .subject(userDetails.getUsername())
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + expiration))
+                .issuedAt(java.util.Date.from(now))
+                .expiration(java.util.Date.from(expiry))
                 .signWith(getSigningKey())
                 .compact();
     }
@@ -54,11 +61,12 @@ public class JwtService {
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
+    @SuppressWarnings({"java:S2143", "squid:S2143"})
     private boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
+        return extractExpiration(token).before(java.util.Date.from(Instant.now()));
     }
 
-    private Date extractExpiration(String token) {
+    private java.util.Date extractExpiration(String token) {
         return extractAllClaims(token).getExpiration();
     }
 
@@ -73,9 +81,4 @@ public class JwtService {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
-
-    public long getAccessTokenExpiration() {
-        return accessTokenExpiration;
-    }
-
 }

@@ -7,7 +7,7 @@ import { getApiMessage } from '../core/utils/api-response';
 })
 export class MessageToast {
 
-  constructor(private messageService: MessageService) { }
+  constructor(private readonly messageService: MessageService) { }
   toastSuccess(summary: string, detail?: string): void {
     this.messageService.add({
       severity: 'success',

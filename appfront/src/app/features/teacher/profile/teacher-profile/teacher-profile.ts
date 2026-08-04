@@ -61,7 +61,7 @@ export class TeacherProfile implements OnInit {
           console.error('Error fetching course count', e);
         }
       }
-    } catch (error) {
+    } catch (error) { console.error("Error profile:", error);
       this.showMessage('Error al cargar el perfil', true);
     } finally {
       this.loading = false;

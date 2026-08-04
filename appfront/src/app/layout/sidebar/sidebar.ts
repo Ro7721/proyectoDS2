@@ -18,9 +18,9 @@ export class Sidebar {
   @Input() isCollapsed = false;
   @Output() expand = new EventEmitter<void>();
 
-  private openedMenus: Record<string, boolean> = {};
+  private readonly openedMenus: Record<string, boolean> = {};
 
-  constructor(private toast: MessageToast, private authService: AuthService, private router: Router) { }
+  constructor(private readonly toast: MessageToast, private readonly authService: AuthService, private readonly router: Router) { }
 
   async logout() {
     this.authService.logout();

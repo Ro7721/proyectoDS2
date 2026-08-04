@@ -15,7 +15,7 @@ export class HeaderCatalog {
   value: string = '';
   isFocused = false;
 
-  constructor(private router: Router) {}
+  constructor(private readonly router: Router) {}
 
   onInput(): void {
     this.searchChange.emit(this.value);

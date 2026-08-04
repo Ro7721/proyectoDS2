@@ -6,10 +6,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.Normalizer;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -79,7 +79,7 @@ public class CourseBusiness {
             category.setIdCategory(request.getIdCategory());
             entity.setCategory(category);
         }
-        entity.setCreatedAt(LocalDateTime.now());
+        entity.setCreatedAt(LocalDateTime.now(ZoneId.systemDefault()));
         entity.setUpdatedAt(entity.getCreatedAt());
 
         return entity;
@@ -159,18 +159,7 @@ public class CourseBusiness {
         return true;
     }
 
-    private boolean validateImageAndLevel(CourseRequest request, GenericResponse response) {
-        if (request.getCoverImage() == null || request.getCoverImage().isEmpty()) {
-            response.warning();
-            response.listMessage.add("La imagen de portada es requerida");
-            return false;
-        }
-        String coverName = request.getCoverImage().getOriginalFilename();
-        if (coverName != null && !coverName.toLowerCase().matches(".*\\.(png|jpg|jpeg|webp)$")) {
-            response.warning();
-            response.listMessage.add("La imagen debe ser PNG, JPG, JPEG o WEBP");
-            return false;
-        }
+    private boolean validateLevel(CourseRequest request, GenericResponse response) {
         if (request.getLevel() == null || request.getLevel().trim().isEmpty()) {
             response.warning();
             response.listMessage.add("El nivel del curso es requerido");
@@ -184,6 +173,45 @@ public class CourseBusiness {
             return false;
         }
         return true;
+    }
+
+    private boolean validateImageFormat(MultipartFile image, GenericResponse response) {
+        if (image == null || image.isEmpty()) {
+            return true;
+        }
+        String coverName = image.getOriginalFilename();
+        if (coverName != null && !coverName.toLowerCase().matches(".*\\.(png|jpg|jpeg|webp)$")) {
+            response.warning();
+            response.listMessage.add("La imagen debe ser PNG, JPG, JPEG o WEBP");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validateTeacherAndCategory(CourseRequest request, GenericResponse response) {
+        if (request.getIdTeacher() == null || request.getIdTeacher().trim().isEmpty()) {
+            response.warning();
+            response.listMessage.add("El docente es requerido");
+            return false;
+        }
+        if (request.getIdCategory() == null) {
+            response.warning();
+            response.listMessage.add("La categoría es requerida");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validateImageAndLevel(CourseRequest request, GenericResponse response) {
+        if (request.getCoverImage() == null || request.getCoverImage().isEmpty()) {
+            response.warning();
+            response.listMessage.add("La imagen de portada es requerida");
+            return false;
+        }
+        if (!validateImageFormat(request.getCoverImage(), response)) {
+            return false;
+        }
+        return validateLevel(request, response);
     }
 
     private boolean validatePriceAndStatus(CourseRequest request, GenericResponse response) {
@@ -222,17 +250,7 @@ public class CourseBusiness {
         if (!validatePriceAndStatus(request, response)) {
             return false;
         }
-        if (request.getIdTeacher() == null || request.getIdTeacher().trim().isEmpty()) {
-            response.warning();
-            response.listMessage.add("El docente es requerido");
-            return false;
-        }
-        if (request.getIdCategory() == null) {
-            response.warning();
-            response.listMessage.add("La categoría es requerida");
-            return false;
-        }
-        return true;
+        return validateTeacherAndCategory(request, response);
     }
 
     public boolean publish(String idCourse, GenericResponse response) {
@@ -271,13 +289,13 @@ public class CourseBusiness {
 
     public List<CourseResponse> findAllCourse() {
         return courseRepo.findAll()
-                .stream().map(this::mapToResponse).collect(Collectors.toList());
+                .stream().map(this::mapToResponse).toList();
     }
 
     @Transactional
     public List<CourseResponse> findByCategoryName(EntityCategory category) {
         return courseRepo.findByCategoryName(category)
-                .stream().map(this::mapToResponse).collect(Collectors.toList());
+                .stream().map(this::mapToResponse).toList();
     }
 
     public boolean deleteCourse(String idCourse, GenericResponse response) {
@@ -309,40 +327,16 @@ public class CourseBusiness {
         if (!validateTitleAndDescription(request, response)) {
             return false;
         }
-        if (request.getCoverImage() != null && !request.getCoverImage().isEmpty()) {
-            String coverName = request.getCoverImage().getOriginalFilename();
-            if (coverName != null && !coverName.toLowerCase().matches(".*\\.(png|jpg|jpeg|webp)$")) {
-                response.warning();
-                response.listMessage.add("La imagen debe ser PNG, JPG, JPEG o WEBP");
-                return false;
-            }
-        }
-        if (request.getLevel() == null || request.getLevel().trim().isEmpty()) {
-            response.warning();
-            response.listMessage.add("El nivel del curso es requerido");
+        if (!validateImageFormat(request.getCoverImage(), response)) {
             return false;
         }
-        try {
-            ELevel.valueOf(request.getLevel().trim());
-        } catch (IllegalArgumentException e) {
-            response.warning();
-            response.listMessage.add("El nivel del curso no es válido (BASIC, INTERMEDIATE, ADVANCED)");
+        if (!validateLevel(request, response)) {
             return false;
         }
         if (!validatePriceAndStatus(request, response)) {
             return false;
         }
-        if (request.getIdTeacher() == null || request.getIdTeacher().trim().isEmpty()) {
-            response.warning();
-            response.listMessage.add("El docente es requerido");
-            return false;
-        }
-        if (request.getIdCategory() == null) {
-            response.warning();
-            response.listMessage.add("La categoría es requerida");
-            return false;
-        }
-        return true;
+        return validateTeacherAndCategory(request, response);
     }
 
     @Transactional
@@ -377,7 +371,7 @@ public class CourseBusiness {
             category.setIdCategory(request.getIdCategory());
             course.setCategory(category);
         }
-        course.setUpdatedAt(LocalDateTime.now());
+        course.setUpdatedAt(LocalDateTime.now(ZoneId.systemDefault()));
         response.success();
         response.listMessage.add("Curso actualizado correctamente");
         return courseRepo.save(course);
@@ -387,7 +381,7 @@ public class CourseBusiness {
         EntityUser teacher = new EntityUser();
         teacher.setIdUser(idTeacher);
         return courseRepo.findByTeacher(teacher)
-                .stream().map(this::mapToResponse).collect(Collectors.toList());
+                .stream().map(this::mapToResponse).toList();
     }
 
     public CourseResponse getById(String idCourse, GenericResponse response) {
@@ -435,7 +429,7 @@ public class CourseBusiness {
             return fileName;
 
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Error al guardar imagen: {}", e.getMessage());
             return null;
         }
 
@@ -444,10 +438,10 @@ public class CourseBusiness {
     public List<CourseResponse> getCoursesWithLessonsAndFilesByTeacher(String teacher, GenericResponse response) {
 
         List<EntityCourse> courses = courseRepo.findByTeacherId(teacher);
-        if (courses == null) {
+        if (courses == null || courses.isEmpty()) {
             response.warning();
             response.listMessage.add("No se encontraron cursos");
-            return null;
+            return List.of();
         }
         response.success();
         response.listMessage.add("Cursos encontrados");
@@ -466,20 +460,20 @@ public class CourseBusiness {
 
                 List<LessonFileResponse> fileResponses = files.stream()
                         .map(this::mapToLessonFileResponse)
-                        .collect(Collectors.toList());
+                        .toList();
 
                 l.setFiles(fileResponses);
 
                 return l;
 
-            }).collect(Collectors.toList());
+            }).toList();
 
             c.setLessons(lessonResponses);
             c.setTotalLessons(lessonResponses.size());
 
             return c;
 
-        }).collect(Collectors.toList());
+        }).toList();
     }
 
     private LessonResponse mapToLessonResponse(EntityLesson lesson) {
@@ -520,7 +514,7 @@ public class CourseBusiness {
             response.setTeacherFullName(course.getTeacher().getFirstName() + " " + course.getTeacher().getLastName());
             response.setTotalLessons(course.getLessons().size());
             return response;
-        }).collect(Collectors.toList());
+        }).toList();
     }
 
     public List<CourseResponse> searchCourses(String value, GenericResponse response) {

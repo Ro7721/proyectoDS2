@@ -2,9 +2,8 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Api } from '../../api/api';
-import { getAllUsers } from '../../api/functions';
+import { getAllUsers, findByTeacher } from '../../api/functions';
 import { UserResponse } from '../../api/models/user-response';
-import { findByTeacher } from '../../api/functions';
 
 interface TeacherCard {
   idUser: string;
@@ -32,7 +31,7 @@ export class Teachers implements OnInit {
   teachers: TeacherCard[] = [];
   searchQuery = '';
 
-  constructor(private api: Api, private cdr: ChangeDetectorRef) {}
+  constructor(private readonly api: Api, private readonly cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.loadTeachers();

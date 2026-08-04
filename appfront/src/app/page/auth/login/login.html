@@ -30,11 +30,11 @@
     <form [formGroup]="form" class="space-y-5" (ngSubmit)="login()">
 
         <div>
-            <label class="block mb-1.5 text-sm font-semibold text-gray-700">
+            <label for="login-email" class="block mb-1.5 text-sm font-semibold text-gray-700">
                 Email
             </label>
 
-            <input type="email" formControlName="email" placeholder="ejem. pepe@gmail.com"
+            <input id="login-email" type="email" formControlName="email" placeholder="ejem. pepe@gmail.com"
                 class="w-full border border-gray-300 rounded-lg px-4 py-3" />
             @if (email.touched && email.invalid) {
             <small class="text-red-500">
@@ -56,11 +56,11 @@
         </div>
 
         <div>
-            <label class="block mb-1.5 text-sm font-semibold text-gray-700">
+            <label for="login-password" class="block mb-1.5 text-sm font-semibold text-gray-700">
                 Contraseña
             </label>
 
-            <input type="password" formControlName="password" placeholder="Ingresa tu contraseña"
+            <input id="login-password" type="password" formControlName="password" placeholder="Ingresa tu contraseña"
                 class="w-full border border-gray-300 rounded-lg px-4 py-3" />
             @if (password.touched && password.invalid) {
             <small class="text-red-500">

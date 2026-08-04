@@ -3,7 +3,6 @@ import { ActivatedRoute } from '@angular/router';
 import { Api } from '../../../../api/api';
 import { CourseContentResponse, LessonContentResponse, CourseProgressResponse, CertificateResponse } from '../../../../models/learning.model';
 import { getCourseContent, saveProgress, getCertificate } from '../../../../api/functions';
-import { environment } from '../../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { CourseProgress } from '../course-progress/course-progress';
 import { LearninHeader } from '../../learning/learnin-header/learnin-header';

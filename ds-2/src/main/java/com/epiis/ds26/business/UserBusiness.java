@@ -63,15 +63,11 @@ public class UserBusiness {
                     passwordHasher.hashPassword(
                             request.getPassword()));
         }
-        if (request.getRole() == ERole.ROLE_TEACHER) {
-            entity.setIsActive(false);
-        } else {
-            entity.setIsActive(true);
-        }
+        entity.setIsActive(request.getRole() != ERole.ROLE_TEACHER);
         entity.setRole(request.getRole());
 
-        entity.setCreatedAt(LocalDateTime.now());
-        entity.setUpdatedAt(LocalDateTime.now());
+        entity.setCreatedAt(LocalDateTime.now(ZoneId.systemDefault()));
+        entity.setUpdatedAt(LocalDateTime.now(ZoneId.systemDefault()));
         return entity;
     }
 
@@ -201,7 +197,7 @@ public class UserBusiness {
             entity.setRole(request.getRole());
         }
 
-        entity.setUpdatedAt(LocalDateTime.now());
+        entity.setUpdatedAt(LocalDateTime.now(ZoneId.systemDefault()));
 
         userRepo.save(entity);
 

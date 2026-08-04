@@ -16,7 +16,7 @@ export class AdminDashboardComponent implements OnInit {
   loading = true;
   error = '';
 
-  constructor(readonly api: Api, private cdr: ChangeDetectorRef) { }
+  constructor(readonly api: Api, private readonly cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     Promise.resolve().then(() => this.loadStats());

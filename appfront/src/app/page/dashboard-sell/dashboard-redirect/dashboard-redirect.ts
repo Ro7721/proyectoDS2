@@ -8,8 +8,8 @@ import { Router } from '@angular/router';
   template: ``,
 })
 export class DashboardRedirect implements OnInit {
-  private authService = inject(AuthService);
-  private router = inject(Router);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
   ngOnInit(): void {
     this.router.navigate(this.authService.getRoleHomeUrl());

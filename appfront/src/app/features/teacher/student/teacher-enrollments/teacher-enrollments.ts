@@ -15,7 +15,7 @@ import { TeacherEnrollmentResponse } from '../../../../models/teacher.model';
 })
 export class TeacherEnrollments implements OnInit {
   readonly enrollmentsService = inject(TeacherEnrollmentsService);
-  private cdr = inject(ChangeDetectorRef);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   // ── State ──
   loading = true;
@@ -36,7 +36,7 @@ export class TeacherEnrollments implements OnInit {
   }
 
   /** Fetch data from the service and compute aggregates */
-  private async load(): Promise<void> {
+  private readonly async load(): Promise<void> {
     this.loading = true;
 
     const data = await this.enrollmentsService.getEnrollments();
@@ -73,7 +73,7 @@ export class TeacherEnrollments implements OnInit {
 
   // ── Filtering (delegated to service) ──
 
-  private applyFilter(): void {
+  private readonly applyFilter(): void {
     this.filtered = this.enrollmentsService.filterEnrollments(
       this.enrollments,
       this.search,

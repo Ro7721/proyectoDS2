@@ -11,15 +11,14 @@ import { DatePipe } from '@angular/common';
 })
 export class LearninHeader {
   @Input({ required: true }) course!: CourseContentResponse;
-  private router = inject(Router);
+  private readonly router = inject(Router);
 
-  /** Paleta acotada para el filete lateral; se elige según la categoría */
-  private static readonly SPINE_PALETTE = [
-    '#E8592B', // accent principal
-    '#178A4C', // success
-    '#2563EB', // azul
-    '#9333EA', // violeta
-    '#C2410C', // ámbar oscuro
+  private readonly SPINE_PALETTE = [
+    '#E8592B',
+    '#178A4C',
+    '#2563EB',
+    '#9333EA',
+    '#C2410C',
   ];
 
   /** Iniciales del docente para el avatar (ej. "Carlos Martínez" -> "CM") */
@@ -35,7 +34,7 @@ export class LearninHeader {
   /** Color estable por categoría, sin depender de un campo extra del backend */
   get categorySpineColor(): string {
     const hash = [...this.course.categoryName].reduce(
-      (acc, char) => acc + char.charCodeAt(0),
+      (acc, char) => acc + (char.codePointAt(0) || 0),
       0
     );
     const palette = LearninHeader.SPINE_PALETTE;
