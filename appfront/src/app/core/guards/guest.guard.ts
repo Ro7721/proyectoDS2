@@ -21,7 +21,7 @@ export class GuestGuard implements CanActivate {
     return this.resolveWithRefresh();
   }
 
-  private readonly async resolveWithRefresh(): Promise<boolean | UrlTree> {
+  private async resolveWithRefresh(): Promise<boolean | UrlTree> {
     const authenticated = await this.authService.ensureAuthenticated();
 
     if (!authenticated) {

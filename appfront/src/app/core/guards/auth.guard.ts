@@ -25,7 +25,7 @@ export class AuthGuard implements CanActivate {
     return this.resolveWithRefresh(state.url);
   }
 
-  private readonly async resolveWithRefresh(returnUrl: string): Promise<boolean | UrlTree> {
+  private async resolveWithRefresh(returnUrl: string): Promise<boolean | UrlTree> {
     const authenticated = await this.authService.ensureAuthenticated();
 
     if (authenticated) {
@@ -35,7 +35,7 @@ export class AuthGuard implements CanActivate {
     return this.redirectToLogin(returnUrl);
   }
 
-  private readonly redirectToLogin(returnUrl: string): UrlTree {
+  private redirectToLogin(returnUrl: string): UrlTree {
     return this.router.createUrlTree(
       ['/auth/login'],
       {

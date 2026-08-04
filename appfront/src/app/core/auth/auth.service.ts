@@ -147,7 +147,7 @@ export class AuthService {
     return this.isBrowser() ? (localStorage.getItem('tokenType') ?? 'Bearer') : 'Bearer';
   }
   // Guarda la sesión del usuario en el localStorage
-  private readonly saveSession(response: LoginResponse): void {
+  private saveSession(response: LoginResponse): void {
     if (!response?.accessToken) {
       throw new Error('Token inválido');
     }
@@ -162,7 +162,7 @@ export class AuthService {
     this.saveTokenExpiration(response.accessToken);
   }
   // Limpia la sesión del usuario
-  private readonly clearSession(): void {
+  private clearSession(): void {
     if (!this.isBrowser()) return;
 
     localStorage.removeItem('accessToken');
@@ -174,7 +174,7 @@ export class AuthService {
     localStorage.removeItem('role');
   }
 
-  private readonly normalizeRole(role: string): AppRole {
+  private normalizeRole(role: string): AppRole {
     const normalized = role.trim().toUpperCase().replace(/^ROLE_/, '');
     const roleMap: Record<string, AppRole> = {
       ADMIN: 'ROLE_ADMIN',
@@ -190,7 +190,7 @@ export class AuthService {
     return roleMap[normalized] ?? 'ROLE_STUDENT';
   }
 
-  private readonly saveTokenExpiration(token: string): void {
+  private saveTokenExpiration(token: string): void {
     if (!this.isBrowser()) return;
 
     const exp = this.getTokenExpiration(token);
@@ -199,21 +199,21 @@ export class AuthService {
     }
   }
 
-  private readonly isTokenExpired(token: string): boolean {
+  private isTokenExpired(token: string): boolean {
     const expiration = this.getTokenExpiration(token);
     if (!expiration) return true;
 
     return expiration.getTime() <= Date.now();
   }
 
-  private readonly getTokenExpiration(token: string): Date | null {
+  private getTokenExpiration(token: string): Date | null {
     const payload = this.decodeJwtPayload(token);
     if (!payload?.exp) return null;
 
     return new Date(payload.exp * 1000);
   }
 
-  private readonly decodeJwtPayload(token: string): { exp?: number, role?: string } | null {
+  private decodeJwtPayload(token: string): { exp?: number, role?: string } | null {
     if (!this.isBrowser()) return null;
 
     try {

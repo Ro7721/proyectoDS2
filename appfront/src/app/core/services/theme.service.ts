@@ -15,7 +15,7 @@ export class ThemeService {
     }
   }
 
-  private readonly initTheme(): void {
+  private initTheme(): void {
     const stored = localStorage.getItem('theme');
     if (stored) {
       // Preferencia guardada por el usuario
@@ -34,7 +34,7 @@ export class ThemeService {
     this.applyTheme(newValue);
   }
 
-  private readonly applyTheme(dark: boolean): void {
+  private applyTheme(dark: boolean): void {
     this.isDark.set(dark);
     if (this.isBrowser) {
       if (dark) {

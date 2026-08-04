@@ -13,7 +13,7 @@ export class LearninHeader {
   @Input({ required: true }) course!: CourseContentResponse;
   private readonly router = inject(Router);
 
-  private readonly SPINE_PALETTE = [
+  private static readonly SPINE_PALETTE = [
     '#E8592B',
     '#178A4C',
     '#2563EB',

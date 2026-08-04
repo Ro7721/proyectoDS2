@@ -24,7 +24,7 @@ export class RoleGuard implements CanActivate {
     return this.resolveRoleAccess(route);
   }
 
-  private readonly async resolveWithRefresh(
+  private async resolveWithRefresh(
     route: ActivatedRouteSnapshot,
     returnUrl: string
   ): Promise<boolean | UrlTree> {
@@ -37,7 +37,7 @@ export class RoleGuard implements CanActivate {
     return this.resolveRoleAccess(route);
   }
 
-  private readonly resolveRoleAccess(route: ActivatedRouteSnapshot): boolean | UrlTree {
+  private resolveRoleAccess(route: ActivatedRouteSnapshot): boolean | UrlTree {
     const roles =
       route.data['roles'] as string[];
 
@@ -52,7 +52,7 @@ export class RoleGuard implements CanActivate {
     return this.router.createUrlTree(this.authService.getRoleHomeUrl(currentRole));
   }
 
-  private readonly redirectToLogin(returnUrl: string): UrlTree {
+  private redirectToLogin(returnUrl: string): UrlTree {
     return this.router.createUrlTree(
       ['/auth/login'],
       {

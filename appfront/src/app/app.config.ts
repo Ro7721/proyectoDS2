@@ -8,7 +8,7 @@ import { LucideAngularModule, BookOpen, TrendingUp, Award, Heart, LayoutDashboar
 import { environment } from './environments/environment';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { tokenInterceptor } from './core/auth/token.interceptor';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeuix/themes/aura';
 export const appConfig: ApplicationConfig = {

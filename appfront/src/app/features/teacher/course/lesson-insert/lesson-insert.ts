@@ -121,7 +121,7 @@ export class LessonInsert implements OnInit, OnChanges {
     }
   }
 
-  private readonly listenToTypeChanges(): void {
+  private listenToTypeChanges(): void {
     this.frmInserLesson.get('type')?.valueChanges.subscribe((type) => {
       if (type !== 'VIDEO') {
         this.mainVideoFile = [];
@@ -130,7 +130,7 @@ export class LessonInsert implements OnInit, OnChanges {
     });
   }
 
-  private readonly updateFormWithLesson(): void {
+  private updateFormWithLesson(): void {
     if (this.lesson) {
       const existingVideoFile = this.lesson.mainVideoFile ? [this.lesson.mainVideoFile as File] : [];
       this.frmInserLesson.patchValue({
@@ -154,7 +154,7 @@ export class LessonInsert implements OnInit, OnChanges {
     }
   }
 
-  private readonly coerceBoolean(value: unknown): boolean {
+  private coerceBoolean(value: unknown): boolean {
     return value === true || value === 'true';
   }
 

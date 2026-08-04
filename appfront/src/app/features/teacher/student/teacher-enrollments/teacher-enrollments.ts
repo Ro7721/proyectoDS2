@@ -36,7 +36,7 @@ export class TeacherEnrollments implements OnInit {
   }
 
   /** Fetch data from the service and compute aggregates */
-  private readonly async load(): Promise<void> {
+  private async load(): Promise<void> {
     this.loading = true;
 
     const data = await this.enrollmentsService.getEnrollments();
@@ -73,7 +73,7 @@ export class TeacherEnrollments implements OnInit {
 
   // ── Filtering (delegated to service) ──
 
-  private readonly applyFilter(): void {
+  private applyFilter(): void {
     this.filtered = this.enrollmentsService.filterEnrollments(
       this.enrollments,
       this.search,
