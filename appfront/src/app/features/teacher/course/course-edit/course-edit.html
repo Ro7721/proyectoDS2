@@ -1,0 +1,62 @@
+<p-dialog header="Editar Curso" [visible]="showDialog" (visibleChange)="showDialogChange.emit($event)" [modal]="true" [style]="{width: '50vw'}"
+    [draggable]="false" [resizable]="false">
+    <form [formGroup]="courseForm" (ngSubmit)="saveUpdateCourse()" class="flex flex-col gap-4 mt-2">
+        <div class="flex flex-col gap-2">
+            <label for="title" class="font-semibold text-gray-700">Título</label>
+            <input id="title" pInputText formControlName="title" placeholder="Ej. Curso de Angular Avanzado"
+                class="w-full p-inputtext-sm" />
+        </div>
+
+        <div class="flex flex-col gap-2">
+            <label for="description" class="font-semibold text-gray-700">Descripción</label>
+            <textarea id="description" pTextarea formControlName="description" rows="4"
+                class="w-full p-inputtext-sm resize-none"></textarea>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div class="flex flex-col gap-2">
+                <label for="idCategory" class="font-semibold text-gray-700">Categoría</label>
+                <p-select inputId="idCategory" [options]="listCategories" formControlName="idCategory"
+                    optionLabel="name" optionValue="idCategory" placeholder="Seleccione una categoría"
+                    styleClass="w-full p-inputtext-sm"></p-select>
+            </div>
+            <div class="flex flex-col gap-2">
+                <label for="level" class="font-semibold text-gray-700">Nivel</label>
+                <p-select inputId="level" [options]="levelOptions" formControlName="level" optionLabel="label"
+                    optionValue="value" placeholder="Seleccione un nivel" styleClass="w-full p-inputtext-sm"></p-select>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div class="flex flex-col gap-2">
+                <label for="price" class="font-semibold text-gray-700">Precio (S/)</label>
+                <p-inputNumber inputId="price" formControlName="price" mode="currency" currency="PEN" locale="es-PE"
+                    class="w-full p-inputtext-sm"></p-inputNumber>
+            </div>
+            <div class="flex flex-col gap-2">
+                <label for="status" class="font-semibold text-gray-700">Estado</label>
+                <p-select inputId="status"
+                    [options]="[{label:'Borrador', value:'DRAFT'},{label:'Publicado', value:'PUBLISHED'}]"
+                    formControlName="status" optionLabel="label" optionValue="value"
+                    styleClass="w-full p-inputtext-sm"></p-select>
+            </div>
+        </div>
+
+        <div class="flex flex-col gap-2">
+            <label for="coverImage" class="font-semibold text-gray-700">Portada del Curso (Opcional)</label>
+            <input id="coverImage" type="file" accept="image/*" (change)="onCoverInputChange($event)"
+                class="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100" />
+            <div *ngIf="coverPreview"
+                class="mt-2 relative w-32 h-20 rounded overflow-hidden border border-gray-200">
+                <img [src]="coverPreview" alt="Vista previa de portada" class="w-full h-full object-cover" />
+            </div>
+        </div>
+
+        <div class="flex justify-end gap-2 mt-4">
+            <button pButton type="button" label="Cancelar" icon="pi pi-times" class="p-button-text p-button-secondary"
+                (click)="closeDialog()"></button>
+            <button pButton type="submit" label="Guardar Cambios" icon="pi pi-check"
+                style="background:#16a34a; border-color:#16a34a;" [loading]="savingCourse"></button>
+        </div>
+    </form>
+</p-dialog>

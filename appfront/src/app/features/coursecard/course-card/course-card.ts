@@ -25,4 +25,17 @@ export class CourseCard {
       currency: 'PEN',
     }).format(price);
   }
+  lessonOptions(level: string): string {
+    switch (level) {
+      case 'BASIC':
+        return 'Basico';
+      case 'INTERMEDIATE':
+        return 'Intermedio';
+      case 'ADVANCED':
+        return 'Avanzado';
+      default:
+        return level;
+    }
+  }
+
 }

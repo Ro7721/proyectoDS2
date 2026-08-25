@@ -59,7 +59,7 @@ export const routes: Routes = [
             { path: 'students-enrollments', component: TeacherEnrollments, canActivate: [RoleGuard], data: { roles: ['ROLE_TEACHER'] } },
             { path: 'profile-teacher', component: TeacherProfile, canActivate: [RoleGuard], data: { roles: ['ROLE_TEACHER'] } },
             { path: 'teacher-certificates', component: TeacherCertificates, canActivate: [RoleGuard], data: { roles: ['ROLE_TEACHER'] } },
-
+            //Student routes
             { path: 'learning/course/:idCourse', component: LearningCourse, canActivate: [RoleGuard], data: { roles: ['ROLE_STUDENT'] } },
             { path: 'my-courses', component: MyCourses, canActivate: [RoleGuard], data: { roles: ['ROLE_STUDENT'] } },
             { path: 'profile', component: StudentProfile, canActivate: [AuthGuard] },

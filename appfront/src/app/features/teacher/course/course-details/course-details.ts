@@ -4,32 +4,26 @@ import {
   Component,
   OnInit,
 } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { InputTextModule } from 'primeng/inputtext';
-import { TextareaModule } from 'primeng/textarea';
-import { SelectModule } from 'primeng/select';
-import { InputNumberModule } from 'primeng/inputnumber';
 import { Api } from '../../../../api/api';
-import { GetById1$Params, getById1, create, Create$Params, deleteCourse, updateCourse, UpdateCourse$Params, getAll1 } from '../../../../api/functions';
+import { GetById1$Params, getById1, create, Create$Params, deleteCourse } from '../../../../api/functions';
 import { LessonInsert, LessonFormPayload } from '../lesson-insert/lesson-insert';
+import { CourseEdit } from '../course-edit/course-edit';
 import { CourseResponse } from '../../../../models/course.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { AccordionModule } from 'primeng/accordion';
 import { ButtonModule } from 'primeng/button';
 import { ChipModule } from 'primeng/chip';
-import { DialogModule } from 'primeng/dialog';
 import { DividerModule } from 'primeng/divider';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TagModule } from 'primeng/tag';
 import { MessageToast } from '../../../../message/message-toast';
-import { AuthService } from '../../../../core/auth/auth.service';
+
 @Component({
   selector: 'app-course-details',
   standalone: true,
   imports: [
     CommonModule,
-    DialogModule,
     ButtonModule,
     TagModule,
     SkeletonModule,
@@ -37,11 +31,7 @@ import { AuthService } from '../../../../core/auth/auth.service';
     DividerModule,
     AccordionModule,
     LessonInsert,
-    ReactiveFormsModule,
-    InputTextModule,
-    TextareaModule,
-    SelectModule,
-    InputNumberModule
+    CourseEdit
   ],
   templateUrl: './course-details.html',
   styleUrl: './course-details.css',
@@ -55,41 +45,18 @@ export class CourseDetails implements OnInit {
   isOpeningLesson = false;
 
   showEditCourseDialog = false;
-  courseForm: FormGroup;
-  listCategories: any[] = [];
-  levelOptions = [
-    { label: 'Principiante', value: 'BASIC' },
-    { label: 'Intermedio', value: 'INTERMEDIATE' },
-    { label: 'Avanzado', value: 'ADVANCED' },
-  ];
-  coverImageFile: Blob | null = null;
-  coverImagePreview: string | null = null;
-  savingCourse = false;
 
   constructor(
     private readonly confirmation: ConfirmationService,
     private readonly toastMessage: MessageToast,
-    private readonly fb: FormBuilder,
     private readonly api: Api,
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly cdr: ChangeDetectorRef,
     private readonly messageService: MessageService,
-    private readonly authService: AuthService,
-  ) {
-    this.courseForm = this.fb.group({
-      title: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(100)]],
-      description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
-      idCategory: [null, Validators.required],
-      level: ['', Validators.required],
-      price: [0, [Validators.required, Validators.min(0)]],
-      status: ['DRAFT', Validators.required]
-    });
-  }
-
+  ) {}
 
   ngOnInit(): void {
-    this.loadCategories();
     this.route.paramMap.subscribe(params => {
       this.courseId = params.get('id');
       if (this.courseId) {
@@ -98,18 +65,11 @@ export class CourseDetails implements OnInit {
     });
   }
 
-  private loadCategories(): void {
-    this.api.invoke(getAll1).then((response: any) => {
-      const data = typeof response === 'string' ? JSON.parse(response) : response;
-      this.listCategories = data?.data || data;
-    });
-  }
-
   goBack(): void {
     this.router.navigate(['/dashboard/course-getall']);
   }
 
-  private loadCourseDetail(idCourse: string): void {
+  loadCourseDetail(idCourse: string): void {
     this.loading = true;
     this.selectedCourse = null;
 
@@ -180,10 +140,7 @@ export class CourseDetails implements OnInit {
   }
 
   openNewLessonDialog(): void {
-    // Indicamos que estamos abriendo la lección para evitar que `close()` limpie el estado
     this.isOpeningLesson = true;
-
-    // Abrimos el modal de lecciones
     this.showLessonDialog = true;
   }
 
@@ -219,7 +176,7 @@ export class CourseDetails implements OnInit {
           summary: 'Éxito',
           detail: 'Lección creada correctamente.',
         });
-        this.loadCourseDetail(this.courseId as string); // Actualiza la lista
+        this.loadCourseDetail(this.courseId as string);
       })
       .catch((error) => {
         console.error('Error al crear lección:', error);
@@ -231,8 +188,6 @@ export class CourseDetails implements OnInit {
       })
       .finally(() => {
         this.loading = false;
-        // Al setear showLessonDialog = false, el HTML llamará a onLessonDialogClose
-        // que se encargará de reabrir el course-details.
         this.onLessonDialogClose(false);
         this.cdr.detectChanges();
       });
@@ -256,6 +211,7 @@ export class CourseDetails implements OnInit {
       }
     });
   }
+
   deleteCourse(): void {
     if (!this.courseId) return;
     this.api.invoke(deleteCourse, { idCourse: this.courseId }).then((response: any) => {
@@ -281,90 +237,6 @@ export class CourseDetails implements OnInit {
   }
 
   openEditCourse(): void {
-    if (!this.selectedCourse) return;
-
-    // Find category ID based on category name
-    const cat = this.listCategories.find(c => c.name === this.selectedCourse?.categoryName);
-
-    let mappedLevel: string = this.selectedCourse.level;
-    if (['Básico', 'BÁSICO', 'BASICO', 'Principiante', ' Principiante'].includes(mappedLevel)) mappedLevel = 'BASIC';
-    else if (['Intermedio', 'INTERMEDIO'].includes(mappedLevel)) mappedLevel = 'INTERMEDIATE';
-    else if (['Avanzado', 'AVANZADO'].includes(mappedLevel)) mappedLevel = 'ADVANCED';
-
-    let mappedStatus: string = this.selectedCourse.status;
-    if (['Borrador', 'BORRADOR'].includes(mappedStatus)) mappedStatus = 'DRAFT';
-    else if (['Publicado', 'PUBLICADO'].includes(mappedStatus)) mappedStatus = 'PUBLISHED';
-
-    this.courseForm.patchValue({
-      title: this.selectedCourse.title,
-      description: this.selectedCourse.description,
-      idCategory: cat ? cat.idCategory : null,
-      level: mappedLevel,
-      price: this.selectedCourse.price,
-      status: mappedStatus
-    });
-    this.coverImagePreview = this.selectedCourse.coverImage;
-    this.coverImageFile = null;
     this.showEditCourseDialog = true;
-  }
-
-  onCoverInputChange(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files?.[0]) {
-      const file = input.files[0];
-      if (file.size > 5 * 1024 * 1024) {
-        this.toastMessage.toastWarn('Imagen muy grande', 'El archivo no debe superar los 5 MB');
-        return;
-      }
-      this.coverImageFile = file;
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        this.coverImagePreview = e.target?.result as string;
-      };
-      reader.readAsDataURL(file);
-    }
-  }
-
-  saveEditedCourse(): void {
-    if (this.courseForm.invalid) {
-      this.courseForm.markAllAsTouched();
-      this.toastMessage.toastWarn('Campos incompletos', 'Completa los campos obligatorios');
-      return;
-    }
-
-    if (!this.courseId) return;
-
-    this.savingCourse = true;
-    const formValue = this.courseForm.value;
-
-    const params: UpdateCourse$Params = {
-      idCourse: this.courseId,
-      body: {
-        title: formValue.title,
-        description: formValue.description,
-        idCategory: formValue.idCategory,
-        level: formValue.level,
-        price: formValue.price,
-        status: formValue.status,
-        idTeacher: this.authService.user?.idUser || undefined,
-        coverImage: this.coverImageFile || undefined
-      } as any
-    };
-
-    this.api.invoke(updateCourse, params).then((response: any) => {
-      const body = typeof response === 'string' ? JSON.parse(response) : response;
-      if (body?.response?.type === 'success' || body?.response?.type === 'SUCCESS') {
-        this.toastMessage.toastSuccess('Éxito', 'Curso actualizado correctamente');
-        this.showEditCourseDialog = false;
-        this.loadCourseDetail(this.courseId!);
-      } else {
-        this.toastMessage.toastWarn('Atención', body?.response?.listMessage?.[0] || 'No se pudo actualizar');
-      }
-    }).catch(e => {
-      this.toastMessage.toastError('Error', 'No se pudo actualizar el curso');
-    }).finally(() => {
-      this.savingCourse = false;
-      this.cdr.detectChanges();
-    });
   }
 }

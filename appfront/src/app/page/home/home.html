@@ -11,7 +11,8 @@
                 <span class="text-[22px] font-bold text-gray-900 tracking-tight">Edulearning</span>
             </a>
 
-            <nav aria-label="Navegación principal" class="hidden lg:flex items-center gap-10 absolute left-1/2 -translate-x-1/2">
+            <nav aria-label="Navegación principal"
+                class="hidden lg:flex items-center gap-10 absolute left-1/2 -translate-x-1/2">
                 <a routerLink="/catalog" class="text-[15px] text-gray-700 hover:text-[#3A9E5F] transition">Cursos</a>
                 <a routerLink="/teachers"
                     class="text-[15px] text-gray-700 hover:text-[#3A9E5F] transition cursor-pointer">Profesores</a>
@@ -103,14 +104,16 @@
 
             <ng-container *ngIf="authService.isAuthenticated()">
                 <div class="h-[1px] bg-gray-100 my-2"></div>
-                <button (click)="goToDashboard(); toggleMenu()" class="block w-full text-left py-2 text-gray-700">{{ dashboardLabel }}</button>
+                <button (click)="goToDashboard(); toggleMenu()" class="block w-full text-left py-2 text-gray-700">{{
+                    dashboardLabel }}</button>
                 <button (click)="logout(); toggleMenu()" class="block w-full text-left py-2 text-red-600">Cerrar
                     Sesión</button>
             </ng-container>
         </nav>
     </div>
 
-    <section aria-label="Sección" class="relative bg-gradient-to-b from-[#F4F9F5] via-[#FCFDFD] to-white pt-8 lg:pt-16 pb-16 lg:pb-24 overflow-hidden">
+    <section aria-label="Sección"
+        class="relative bg-gradient-to-b from-[#F4F9F5] via-[#FCFDFD] to-white pt-8 lg:pt-16 pb-16 lg:pb-24 overflow-hidden">
         <div
             class="absolute top-1/4 right-0 w-96 h-96 bg-emerald-50 rounded-full blur-3xl opacity-60 pointer-events-none -mr-40">
         </div>

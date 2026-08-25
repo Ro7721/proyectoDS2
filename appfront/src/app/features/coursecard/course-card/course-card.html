@@ -19,7 +19,7 @@
                     <mat-icon class="course-card__icon">person</mat-icon>
                     <span class="truncate">{{ course.teacherFullName || 'Docente' }}</span>
                 </span>
-                <span class="shrink-0 font-medium text-[#3A9E5F]">{{ course.level || 'Nivel' }}</span>
+                <span class="shrink-0 font-medium text-[#3A9E5F]">{{ lessonOptions(course.level) || 'Nivel' }}</span>
             </div>
 
             <h3
