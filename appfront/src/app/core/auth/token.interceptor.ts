@@ -24,10 +24,9 @@ export const tokenInterceptor: HttpInterceptorFn = (request, next) => {
         return throwError(() => error);
       }
 
-      if (error.status === 403) {
-        // Only force logout if the user genuinely has no valid token.
-        // A 403 from a business endpoint just means "no access to this resource",
-        // not necessarily that the session expired.
+      if (error.status === 403 && !isPublicAuthRequest) {
+        // A 403 from a protected endpoint must never turn a failed login into
+        // a second, misleading "session expired" notification.
         if (!authService.isAuthenticated()) {
           toastMessage.toastError('Acceso denegado', 'Su sesión expiró o no tiene permisos.');
           authService.logout();

@@ -170,7 +170,24 @@ describe('LoginComponent', () => {
     
     await component.login();
     
-    expect(messageToastSpy.toastError).toHaveBeenCalledWith('Credenciales inválidas', 'El usuario o la contraseña no coinciden');
+    expect(messageToastSpy.toastError).toHaveBeenCalledWith('Credenciales inválidas', 'El correo o la contraseña no coinciden');
+  });
+
+  it('should show a clear message for disabled users', async () => {
+    component.form.controls.email.setValue('test@test.com');
+    component.form.controls.password.setValue('123456');
+
+    authServiceSpy.login.mockRejectedValue({
+      status: 403,
+      error: {
+        error: 'USER_DISABLED',
+        message: 'Tu cuenta está inactiva'
+      }
+    });
+
+    await component.login();
+
+    expect(messageToastSpy.toastError).toHaveBeenCalledWith('Cuenta inactiva', 'Tu cuenta está inactiva');
   });
 
   it('should handle generic login error', async () => {

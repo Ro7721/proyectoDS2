@@ -89,21 +89,45 @@ export class Login implements OnInit {
   }
 
   private handleLoginError(err: HttpErrorResponse): void {
-    if (err.error?.error) {
-      const errorType = err.error.error;
-      const errorMessage = err.error.message;
-      
+    const apiError = this.parseErrorBody(err.error);
+
+    if (apiError?.error) {
+      const errorType = apiError.error;
+      const errorMessage = apiError.message ?? 'No fue posible iniciar sesión';
+
       if (errorType === 'EMAIL_NOT_FOUND') {
         this.toast.toastError('Correo no encontrado', errorMessage);
       } else if (errorType === 'PASSWORD_INVALID') {
-        this.toast.toastError('Contraseña incorrecta', errorMessage);
+        this.toast.toastError('Credenciales inválidas', 'El correo o la contraseña no coinciden');
+      } else if (errorType === 'USER_DISABLED') {
+        this.toast.toastError('Cuenta inactiva', errorMessage);
       } else {
         this.toast.toastError('Error de autenticación', errorMessage);
       }
     } else if (err.status === 401) {
-      this.toast.toastError('Credenciales inválidas', 'El usuario o la contraseña no coinciden');
+      this.toast.toastError('Credenciales inválidas', 'El correo o la contraseña no coinciden');
+    } else if (err.status === 403) {
+      this.toast.toastError('Cuenta sin acceso', 'La cuenta está inactiva o no tiene permisos para ingresar');
+    } else if (err.status === 0) {
+      this.toast.toastError('Servidor no disponible', 'No fue posible conectar con el servidor');
     } else {
       this.toast.toastError('Error', 'No fue posible iniciar sesión');
     }
+  }
+
+  private parseErrorBody(body: unknown): { error?: string; message?: string } | null {
+    if (body && typeof body === 'object') {
+      return body as { error?: string; message?: string };
+    }
+
+    if (typeof body === 'string') {
+      try {
+        return JSON.parse(body) as { error?: string; message?: string };
+      } catch {
+        return null;
+      }
+    }
+
+    return null;
   }
 }

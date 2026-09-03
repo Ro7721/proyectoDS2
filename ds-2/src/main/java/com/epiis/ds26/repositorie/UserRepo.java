@@ -12,6 +12,8 @@ import com.epiis.ds26.entity.EntityUser;
 public interface UserRepo extends JpaRepository<EntityUser, String> {
        Optional<EntityUser> findByEmailAndIsActiveTrue(String email);
 
+       Optional<EntityUser> findByEmailIgnoreCase(String email);
+
        boolean existsByEmail(String email);
 
        @Query("""
