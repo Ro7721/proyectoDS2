@@ -32,8 +32,9 @@ class UserDetailsServiceImplTest {
         user.setEmail("user@example.com");
         user.setPassword("hashed_pwd");
         user.setRole(ERole.ROLE_STUDENT);
+        user.setIsActive(true);
 
-        when(userRepo.findByEmailAndIsActiveTrue("user@example.com")).thenReturn(Optional.of(user));
+        when(userRepo.findByEmailIgnoreCase("user@example.com")).thenReturn(Optional.of(user));
 
         UserDetails userDetails = userDetailsService.loadUserByUsername("user@example.com");
 
@@ -42,8 +43,23 @@ class UserDetailsServiceImplTest {
     }
 
     @Test
+    void loadUserByUsername_inactiveUser_returnsDisabledUserDetails() {
+        EntityUser user = new EntityUser();
+        user.setEmail("inactive@example.com");
+        user.setPassword("hashed_pwd");
+        user.setRole(ERole.ROLE_TEACHER);
+        user.setIsActive(false);
+
+        when(userRepo.findByEmailIgnoreCase("inactive@example.com")).thenReturn(Optional.of(user));
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(" inactive@example.com ");
+
+        assertFalse(userDetails.isEnabled());
+    }
+
+    @Test
     void loadUserByUsername_userNotExists_throwsException() {
-        when(userRepo.findByEmailAndIsActiveTrue("user@example.com")).thenReturn(Optional.empty());
+        when(userRepo.findByEmailIgnoreCase("user@example.com")).thenReturn(Optional.empty());
 
         assertThrows(UsernameNotFoundException.class, () -> {
             userDetailsService.loadUserByUsername("user@example.com");
