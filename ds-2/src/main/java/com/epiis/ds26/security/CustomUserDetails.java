@@ -49,7 +49,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return user.getIsActive();
+        return Boolean.TRUE.equals(user.getIsActive());
     }
 
     public EntityUser getUser() {
