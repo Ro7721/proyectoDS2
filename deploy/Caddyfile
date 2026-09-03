@@ -10,6 +10,10 @@ edulearn-roger.eastus.cloudapp.azure.com {
         path /enrollments/*
         path /learning/*
         path /teacher/*
+        path /messages
+        path /messages/*
+        path /ws-chat
+        path /ws-chat/*
         path /dashboard/stats
         path /course-images/*
         path /lesson-videos/*
