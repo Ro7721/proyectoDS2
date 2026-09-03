@@ -1,3 +1,9 @@
 /storage/
 /scratch/
 /appfront_issues_list.txt
+
+.env
+.env.*
+!.env.example
+**/.scannerwork/
+**/ng-serve*.log
