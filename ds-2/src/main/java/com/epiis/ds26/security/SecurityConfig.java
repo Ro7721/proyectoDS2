@@ -13,7 +13,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 
@@ -35,7 +37,9 @@ public class SecurityConfig {
         }
 
         @Bean
-        @SuppressWarnings({"squid:S4502", "java:S112", "java:S1130"}) // CSRF is disabled safely because API is stateless with JWT; method signature required by Spring Security
+        @SuppressWarnings({ "squid:S4502", "java:S112", "java:S1130" }) // CSRF is disabled safely because API is
+                                                                        // stateless with JWT; method signature required
+                                                                        // by Spring Security
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 http
                                 .cors(cors -> cors.configurationSource(corsConfig.corsConfigurationSource()))
@@ -59,7 +63,12 @@ public class SecurityConfig {
                                                 .requestMatchers("/lesson-videos/**").permitAll()
                                                 .requestMatchers("/lesson-files/**").permitAll()
                                                 .requestMatchers("/storage/**").permitAll()
+                                                .requestMatchers("/ws-chat/**").permitAll()
+                                                .requestMatchers("/messages/**").authenticated()
                                                 .anyRequest().authenticated())
+                                // Devolver 401 para peticiones sin autenticar (no 403)
+                                .exceptionHandling(ex -> ex
+                                                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                                 // Sesión stateless (no guardar sesión en servidor — usamos JWT)
                                 .sessionManagement(session -> session
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -87,7 +96,7 @@ public class SecurityConfig {
         }
 
         @Bean
-        @SuppressWarnings({"java:S112", "java:S1130"})
+        @SuppressWarnings({ "java:S112", "java:S1130" })
         public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
                 return config.getAuthenticationManager();
         }

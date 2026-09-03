@@ -37,7 +37,7 @@ public class CategoryBusiness {
         return categoryRepo.save(entity);
     }
 
-    // esta es la parte de validacÃ³n de categoria
+    // esta es la parte de validación de categoria
     private boolean validateCategory(String name, String description, GenericResponse genericResponse) {
         if (name == null || name.trim().isEmpty()) {
             genericResponse.warning();

@@ -14,9 +14,20 @@
             <i class="pi text-lg" [ngClass]="themeService.isDark() ? 'pi-sun' : 'pi-moon'"></i>
         </p-button>
 
-        <p-button [text]="true" severity="secondary" [rounded]="true" ariaLabel="Notificaciones">
-            <i class="pi pi-bell text-lg"></i>
-        </p-button>
+        <button
+            (click)="goToMessages()"
+            class="relative p-2 rounded-full hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-400"
+            ariaLabel="Mensajes"
+            title="Mensajes"
+            id="header-messages-btn">
+            <i class="pi pi-bell text-lg text-gray-600"></i>
+            @if (unreadMessages.hasUnread()) {
+              <span
+                class="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 bg-[#E8592B] text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none animate-bounce">
+                {{ unreadMessages.unreadCount() > 99 ? '99+' : unreadMessages.unreadCount() }}
+              </span>
+            }
+        </button>
 
         <div
             class="flex items-center gap-2 sm:gap-3 hover:bg-gray-100 rounded-xl p-1.5 sm:p-2 cursor-pointer transition max-w-[52vw] sm:max-w-none">

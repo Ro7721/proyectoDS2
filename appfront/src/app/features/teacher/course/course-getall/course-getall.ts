@@ -8,7 +8,6 @@ import { CourseResponse } from '../../../../models/course.model';
 import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TagModule } from 'primeng/tag';
-import { Toast } from 'primeng/toast';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { MessageToast } from '../../../../message/message-toast';
 import { CategoryResponse } from '../../../../models/category.model';
@@ -17,7 +16,7 @@ import { ConfirmationService } from 'primeng/api';
 
 @Component({
   selector: 'app-course-getall',
-  imports: [CommonModule, RouterLink, FormsModule, ButtonModule, TagModule, SkeletonModule, Toast, SelectModule],
+  imports: [CommonModule, RouterLink, FormsModule, ButtonModule, TagModule, SkeletonModule, SelectModule],
   templateUrl: './course-getall.html',
   styleUrl: './course-getall.css',
 })

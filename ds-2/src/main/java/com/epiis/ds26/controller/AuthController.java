@@ -85,7 +85,7 @@ public class AuthController {
         } catch (BadCredentialsException e) {
             Map<String, String> error = new HashMap<>();
             error.put(ERROR_KEY, "PASSWORD_INVALID");
-            error.put(MESSAGE_KEY, "La contraseÃ±a ingresada es incorrecta");
+            error.put(MESSAGE_KEY, "La contraseña ingresada es incorrecta");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
         } catch (UsernameNotFoundException e) {
             Map<String, String> error = new HashMap<>();
@@ -106,7 +106,7 @@ public class AuthController {
         if (auth == null || !auth.isAuthenticated()) {
             Map<String, String> error = new HashMap<>();
             error.put(ERROR_KEY, UNAUTHORIZED_CODE);
-            error.put(MESSAGE_KEY, "No tienes autorizaciÃ³n para acceder a este recurso");
+            error.put(MESSAGE_KEY, "No tienes autorizacion para acceder a este recurso");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
         }
         if (!(auth.getPrincipal() instanceof CustomUserDetails userDetails)) {

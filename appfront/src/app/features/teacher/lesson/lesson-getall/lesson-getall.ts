@@ -21,7 +21,6 @@ import { TagModule } from 'primeng/tag';
 import { ToolbarModule } from 'primeng/toolbar';
 import { TooltipModule } from 'primeng/tooltip';
 import { ConfirmationService } from 'primeng/api';
-import { ToastModule } from "primeng/toast";
 import { LessonInsert, LessonFormPayload } from '../../course/lesson-insert/lesson-insert';
 
 interface LessonRow extends LessonResponse {
@@ -54,7 +53,6 @@ interface FileRow extends FileResponse {
     SplitButtonModule,
     PaginatorModule,
     TooltipModule,
-    ToastModule,
     LessonInsert
   ],
   providers: [ConfirmationService],

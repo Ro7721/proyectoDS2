@@ -10,7 +10,7 @@ import { LessonInsert, LessonFormPayload } from '../lesson-insert/lesson-insert'
 import { CourseEdit } from '../course-edit/course-edit';
 import { CourseResponse } from '../../../../models/course.model';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService } from 'primeng/api';
 import { AccordionModule } from 'primeng/accordion';
 import { ButtonModule } from 'primeng/button';
 import { ChipModule } from 'primeng/chip';
@@ -53,7 +53,6 @@ export class CourseDetails implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly cdr: ChangeDetectorRef,
-    private readonly messageService: MessageService,
   ) {}
 
   ngOnInit(): void {
@@ -84,11 +83,7 @@ export class CourseDetails implements OnInit {
         console.error('Error al cargar detalle:', error);
         this.loading = false;
         this.goBack();
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'No se pudo cargar el detalle del curso.',
-        });
+        this.toastMessage.toastError('Error', 'No se pudo cargar el detalle del curso.');
         this.cdr.detectChanges();
       });
   }
@@ -171,20 +166,12 @@ export class CourseDetails implements OnInit {
     this.api
       .invoke<Create$Params, any>(create, params)
       .then(() => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Éxito',
-          detail: 'Lección creada correctamente.',
-        });
+        this.toastMessage.toastSuccess('Éxito', 'Lección creada correctamente.');
         this.loadCourseDetail(this.courseId as string);
       })
       .catch((error) => {
         console.error('Error al crear lección:', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'No se pudo crear la lección.',
-        });
+        this.toastMessage.toastError('Error', 'No se pudo crear la lección.');
       })
       .finally(() => {
         this.loading = false;

@@ -10,9 +10,7 @@ import { SelectModule } from 'primeng/select';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
-import { ToastModule } from 'primeng/toast';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { MessageService } from 'primeng/api';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { Api } from '../../../../api/api';
 import {
@@ -63,11 +61,9 @@ export function noWhitespaceOnly(): ValidatorFn {
     InputNumberModule,
     ButtonModule,
     TagModule,
-    ToastModule,
     ProgressSpinnerModule,
     LessonInsert,
   ],
-  providers: [MessageService],
   templateUrl: './course-insert.html',
   styleUrl: './course-insert.css',
 })

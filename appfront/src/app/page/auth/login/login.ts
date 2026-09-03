@@ -3,21 +3,18 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormBuilder, FormsModule, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MessageService } from 'primeng/api';
 import { AuthService } from '../../../core/auth/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ToastModule } from "primeng/toast";
 import { MessageToast } from '../../../message/message-toast';
 
 @Component({
   selector: 'app-login',
-  imports: [MatIconModule, RouterLink, CommonModule, FormsModule, ReactiveFormsModule, ToastModule],
+  imports: [MatIconModule, RouterLink, CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
 export class Login implements OnInit {
   fb = inject(FormBuilder);
-  messageService = inject(MessageService);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
@@ -110,4 +107,3 @@ export class Login implements OnInit {
     }
   }
 }
-

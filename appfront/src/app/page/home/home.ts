@@ -6,9 +6,9 @@ import { Api } from '../../api/api';
 import { getPublicCourses } from '../../api/functions';
 import { CourseCardResponse } from '../../models/course.model';
 import { CourseCard } from '../../features/coursecard/course-card/course-card';
-import { MessageService } from 'primeng/api';
 import { AuthService } from '../../core/auth/auth.service';
 import { ThemeService } from '../../core/services/theme.service';
+import { MessageToast } from '../../message/message-toast';
 
 @Component({
   selector: 'app-home',
@@ -19,7 +19,7 @@ import { ThemeService } from '../../core/services/theme.service';
 export class Home implements OnInit {
   private readonly api = inject(Api);
   private readonly cdr = inject(ChangeDetectorRef);
-  private readonly messageService = inject(MessageService);
+  private readonly toast = inject(MessageToast);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly router = inject(Router);
   readonly authService = inject(AuthService);
@@ -96,11 +96,7 @@ export class Home implements OnInit {
       this.cdr.markForCheck();
     })
       .catch((error) => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Error al cargar cursos publicos',
-        });
+        this.toast.toastError('Error', 'No se pudieron cargar los cursos públicos');
         this.publicCourses = [];
         this.loadingCourses = false;
         this.coursesLoadError = true;
@@ -108,4 +104,3 @@ export class Home implements OnInit {
       });
   }
 }
-

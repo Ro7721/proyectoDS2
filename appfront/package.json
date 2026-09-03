@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "generate:api": "ng-openapi-gen --input http://localhost:8080/v3/api-docs --output src/app/api --endOfLineStyle lf",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:appfront": "node dist/appfront/server/server.mjs"
@@ -36,6 +37,7 @@
     "@angular/router": "^21.0.0",
     "@angular/ssr": "^21.0.3",
     "@primeuix/themes": "^2.0.3",
+    "@stomp/stompjs": "^7.3.0",
     "express": "^5.1.0",
     "html2canvas": "^1.4.1",
     "jspdf": "^4.2.1",
@@ -44,6 +46,7 @@
     "primeicons": "^7.0.0",
     "primeng": "^21.1.9",
     "rxjs": "~7.8.0",
+    "sockjs-client": "^1.6.1",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
@@ -53,6 +56,7 @@
     "@tailwindcss/postcss": "^4.1.12",
     "@types/express": "^5.0.1",
     "@types/node": "^20.17.19",
+    "@types/sockjs-client": "^1.5.4",
     "@vitest/browser-playwright": "^4.1.10",
     "@vitest/coverage-v8": "^4.1.10",
     "jsdom": "^27.1.0",

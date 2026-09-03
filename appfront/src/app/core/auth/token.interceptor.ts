@@ -25,8 +25,13 @@ export const tokenInterceptor: HttpInterceptorFn = (request, next) => {
       }
 
       if (error.status === 403) {
-        toastMessage.toastError('Acceso denegado', 'Su sesión expiró o no tiene permisos.');
-        authService.logout();
+        // Only force logout if the user genuinely has no valid token.
+        // A 403 from a business endpoint just means "no access to this resource",
+        // not necessarily that the session expired.
+        if (!authService.isAuthenticated()) {
+          toastMessage.toastError('Acceso denegado', 'Su sesión expiró o no tiene permisos.');
+          authService.logout();
+        }
         return throwError(() => error);
       }
 

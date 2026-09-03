@@ -31,6 +31,7 @@ import { Teachers } from './page/teachers/teachers';
 import { TeacherProfile } from './features/teacher/profile/teacher-profile/teacher-profile';
 import { StudentCertificates } from './features/student/certificates/student-certificates';
 import { TeacherCertificates } from './features/teacher/certificates/teacher-certificates';
+import { ChatComponent } from './features/chat/chat/chat.component';
 
 export const routes: Routes = [
     { path: '', component: Home },
@@ -64,6 +65,7 @@ export const routes: Routes = [
             { path: 'my-courses', component: MyCourses, canActivate: [RoleGuard], data: { roles: ['ROLE_STUDENT'] } },
             { path: 'profile', component: StudentProfile, canActivate: [AuthGuard] },
             { path: 'student-certificates', component: StudentCertificates, canActivate: [RoleGuard], data: { roles: ['ROLE_STUDENT'] } },
+            { path: 'messages', component: ChatComponent, canActivate: [AuthGuard] },
             // Admin routes
             { path: 'admin', component: AdminDashboardComponent, canActivate: [RoleGuard], data: { roles: ['ROLE_ADMIN'] } },
             { path: 'admin/users', component: AdminUsersComponent, canActivate: [RoleGuard], data: { roles: ['ROLE_ADMIN'] } },

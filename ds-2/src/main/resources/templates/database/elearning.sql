@@ -143,30 +143,67 @@ CREATE TABLE lesson_progress (
     ON DELETE CASCADE
 ) ENGINE=InnoDB;
 -- =======================
--- MENSAJES (Chat instructor–estudiante)
+-- CONVERSATIONS (Conversaciones)
+-- =======================
+CREATE TABLE tconversation (
+    idConversation CHAR(36) NOT NULL PRIMARY KEY,
+    type ENUM('DIRECT', 'COURSE_SUPPORT') NOT NULL DEFAULT 'DIRECT',
+    idCourse CHAR(36) NULL,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fkConversationCourse
+        FOREIGN KEY (idCourse) 
+        REFERENCES tcourse(idCourse)
+        ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- =======================
+-- CONVERSATION PARTICIPANTS (Participantes)
+-- =======================
+CREATE TABLE tconversation_participant (
+    idParticipant CHAR(36) NOT NULL PRIMARY KEY,
+    idConversation CHAR(36) NOT NULL,
+    idUser CHAR(36) NOT NULL,
+    unreadCount INT NOT NULL DEFAULT 0,
+    joinedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    lastReadAt TIMESTAMP NULL,
+
+    CONSTRAINT fkParticipantConversation 
+        FOREIGN KEY (idConversation)
+        REFERENCES tconversation(idConversation)
+        ON DELETE CASCADE,
+    
+    CONSTRAINT fkParticipantUser 
+        FOREIGN KEY (idUser)
+        REFERENCES tuser(idUser)
+        ON DELETE CASCADE,
+
+    CONSTRAINT uqConversationUser 
+        UNIQUE (idConversation, idUser)
+) ENGINE=InnoDB;
+
+-- =======================
+-- MESSAGES (Mensajes)
 -- =======================
 CREATE TABLE tmessage (
-    idMessage   CHAR(36)    NOT NULL PRIMARY KEY COMMENT 'UUID del mensaje',
-    senderId    CHAR(36)    NOT NULL                COMMENT 'FK → tuser.idUser (quién envía)',
-    receiverId  CHAR(36)    NOT NULL                COMMENT 'FK → tuser.idUser (quién recibe)',
-    courseId    CHAR(36)    NULL                    COMMENT 'FK → tcourse.idCourse (contexto de la conversación)',
-    content     TEXT        NOT NULL                COMMENT 'Contenido del mensaje',
-    isRead      BOOLEAN     NOT NULL DEFAULT FALSE  COMMENT 'TRUE si el receptor ya leyó el mensaje',
-    createdAt   TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    idMessage CHAR(36) NOT NULL PRIMARY KEY,
+    idConversation CHAR(36) NOT NULL,
+    senderId CHAR(36) NOT NULL,
+    content TEXT NOT NULL,
+    attachmentUrl VARCHAR(255) NULL,
+    status ENUM('SENT', 'DELIVERED', 'READ') NOT NULL DEFAULT 'SENT',
+    sentAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT fkMsgSender
-        FOREIGN KEY (senderId)
+    CONSTRAINT fkMessageConversation
+        FOREIGN KEY (idConversation) 
+        REFERENCES tconversation(idConversation)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fkMessageSender
+        FOREIGN KEY (senderId) 
         REFERENCES tuser(idUser)
         ON DELETE CASCADE,
 
-    CONSTRAINT fkMsgReceiver
-        FOREIGN KEY (receiverId)
-        REFERENCES tuser(idUser)
-        ON DELETE CASCADE,
-
-    CONSTRAINT fkMsgCourse
-        FOREIGN KEY (courseId)
-        REFERENCES tcourse(idCourse)
-        ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-  COMMENT='Mensajes privados entre instructor y estudiante';
+    INDEX idx_conv_sent_at (idConversation, sentAt)
+) ENGINE=InnoDB;

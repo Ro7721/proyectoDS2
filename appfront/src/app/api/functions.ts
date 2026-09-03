@@ -87,3 +87,14 @@ export type { GetTeacherEnrollmentsByCourse$Params as GetTeacherEnrollmentsByCou
 export { getTeacherEnrollmentsByCourse as getTeacherEnrollmentsByCourse } from './fn/teacher-controller/get-teacher-enrollments-by-course';
 export type { GetDashboardStats$Params as GetDashboardStats$Params } from './fn/dashboard-controller/get-dashboard-stats';
 export { getDashboardStats as getDashboardStats } from './fn/dashboard-controller/get-dashboard-stats';
+
+export type { MarkConversationAsRead$Params as MarkConversationAsRead$Params } from './fn/message-controller/mark-conversation-as-read';
+export { markConversationAsRead as markConversationAsRead } from './fn/message-controller/mark-conversation-as-read';
+export type { SendMessage$Params as SendMessage$Params } from './fn/message-controller/send-message';
+export { sendMessage as sendMessage } from './fn/message-controller/send-message';
+export type { GetMyConversations$Params as GetMyConversations$Params } from './fn/message-controller/get-my-conversations';
+export { getMyConversations as getMyConversations } from './fn/message-controller/get-my-conversations';
+export type { GetOrCreateConversation$Params as GetOrCreateConversation$Params } from './fn/message-controller/get-or-create-conversation';
+export { getOrCreateConversation as getOrCreateConversation } from './fn/message-controller/get-or-create-conversation';
+export type { GetMessagesByConversation$Params as GetMessagesByConversation$Params } from './fn/message-controller/get-messages-by-conversation';
+export { getMessagesByConversation as getMessagesByConversation } from './fn/message-controller/get-messages-by-conversation';

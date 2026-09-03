@@ -93,7 +93,8 @@ describe('HomeComponent', () => {
     expect(messageServiceSpy.add).toHaveBeenCalledWith({
       severity: 'error',
       summary: 'Error',
-      detail: 'Error al cargar cursos publicos',
+      detail: 'No se pudieron cargar los cursos públicos',
+      life: 5000,
     });
     expect(component.publicCourses).toEqual([]);
     expect(component.loadingCourses).toBeFalsy();

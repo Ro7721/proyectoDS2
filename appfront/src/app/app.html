@@ -1,4 +1,10 @@
-<p-toast></p-toast>
+<p-toast
+  position="top-right"
+  [preventDuplicates]="true"
+  [preventOpenDuplicates]="true"
+  [breakpoints]="{'576px': {width: 'calc(100% - 2rem)', right: '1rem', left: '1rem'}}"
+  [pt]="{detail: {class: 'text-black!'}}"
+/>
 <p-confirmDialog />
 <div>
   <router-outlet></router-outlet>

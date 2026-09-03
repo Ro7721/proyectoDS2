@@ -46,3 +46,13 @@ export type { MyCourseResponse } from './models/my-course-response';
 export type { TeacherEnrollmentResponse } from './models/teacher-enrollment-response';
 export type { UserRequest } from './models/user-request';
 export type { UserResponse } from './models/user-response';
+
+export type { ApiResponseConversationSummaryResponse } from './models/api-response-conversation-summary-response';
+export type { ApiResponseListConversationSummaryResponse } from './models/api-response-list-conversation-summary-response';
+export type { ApiResponseListMessageResponse } from './models/api-response-list-message-response';
+export type { ApiResponseMessageResponse } from './models/api-response-message-response';
+export type { ConversationSummaryResponse } from './models/conversation-summary-response';
+export type { CreateConversationRequest } from './models/create-conversation-request';
+export type { MessageResponse } from './models/message-response';
+export type { ParticipantSummaryResponse } from './models/participant-summary-response';
+export type { SendMessageRequest } from './models/send-message-request';

@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { Api } from '../../../../api/api';
 import { getDashboardStats } from '../../../../api/functions';
 import { DashboardResponse } from '../../../../api/models';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './admin-dashboard.html',
   styleUrl: './admin-dashboard.css'
 })
@@ -19,12 +20,11 @@ export class AdminDashboardComponent implements OnInit {
   constructor(readonly api: Api, private readonly cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    Promise.resolve().then(() => this.loadStats());
+    this.loadStats();
   }
 
   loadStats() {
     this.loading = true;
-    this.cdr.detectChanges();
     this.api.invoke(getDashboardStats).then((response: any) => {
       const parsed = typeof response === 'string' ? JSON.parse(response) : response;
       if (parsed.data) {
@@ -35,7 +35,7 @@ export class AdminDashboardComponent implements OnInit {
       console.error(err);
     }).finally(() => {
       this.loading = false;
-      this.cdr.detectChanges();
+      this.cdr.markForCheck();
     });
   }
 }

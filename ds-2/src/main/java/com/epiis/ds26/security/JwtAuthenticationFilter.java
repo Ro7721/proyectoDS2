@@ -48,11 +48,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             userDetails, null, userDetails.getAuthorities());
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+                } else {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write("{\"error\": \"UNAUTHORIZED\", \"message\": \"Token inválido o expirado\"}");
+                    return;
                 }
             }
         } catch (Exception e) {
+            logger.error("Error en la autenticación JWT: " + e.getMessage(), e);
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            logger.debug("Error en la autenticaciÃ³n JWT" + e.getMessage());
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write("{\"error\": \"UNAUTHORIZED\", \"message\": \"" + e.getMessage() + "\"}");
+            return;
         }
         filterChain.doFilter(request, response);
 

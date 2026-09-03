@@ -1,0 +1,93 @@
+<section class="h-[calc(100dvh-10rem)] min-h-[38rem] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+  <div class="grid h-full grid-cols-1 lg:grid-cols-[22rem_minmax(0,1fr)]">
+    <aside class="flex min-h-0 flex-col border-b border-slate-200 lg:border-r lg:border-b-0">
+      <div class="border-b border-slate-100 px-5 py-4">
+        <div class="flex items-center justify-between gap-3"><div><h2 class="text-xl font-bold text-slate-900">Mensajes</h2><p class="mt-0.5 text-sm text-slate-500">Tus conversaciones recientes</p></div><button type="button" (click)="openNewConversation()" class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-emerald-600 text-white shadow-sm transition hover:bg-emerald-700" aria-label="Iniciar nueva conversación"><i class="pi pi-plus"></i></button></div>
+      </div>
+
+      <div class="min-h-0 flex-1 overflow-y-auto">
+        @if (loadingConversations()) {
+          @for (item of [1, 2, 3, 4]; track item) {
+            <div class="flex animate-pulse gap-3 border-b border-slate-100 px-5 py-4">
+              <div class="h-11 w-11 rounded-full bg-slate-200"></div>
+              <div class="min-w-0 flex-1 space-y-2"><div class="h-3 w-2/3 rounded bg-slate-200"></div><div class="h-3 w-full rounded bg-slate-100"></div></div>
+            </div>
+          }
+        } @else {
+          @for (conversation of conversations(); track trackConversation($index, conversation)) {
+            <button type="button" (click)="selectConversation(conversation)"
+              class="flex w-full gap-3 border-b border-slate-100 px-5 py-4 text-left transition hover:bg-emerald-50/60"
+              [class.bg-emerald-50]="selectedConversation()?.conversationId === conversation.conversationId">
+              <div class="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-gradient-to-br from-emerald-400 to-teal-600 font-semibold text-white">
+                {{ initials(conversation) }}
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center justify-between gap-2"><p class="truncate font-semibold text-slate-800">{{ recipientName(conversation) }}</p><span class="shrink-0 text-xs text-slate-400">{{ relativeDate(conversation.updatedAt) }}</span></div>
+                <div class="mt-0.5 flex items-center gap-2"><span class="text-xs text-slate-500">{{ roleLabel(conversation.recipient?.role) }}</span>@if (conversation.type === 'COURSE_SUPPORT' && conversation.courseTitle) { <span class="max-w-28 truncate rounded-full bg-violet-100 px-2 py-0.5 text-[10px] font-semibold text-violet-700">{{ conversation.courseTitle }}</span> }</div>
+                <div class="mt-1 flex items-center gap-2"><p class="min-w-0 flex-1 truncate text-sm text-slate-500">{{ conversation.lastMessageContent || 'Sin mensajes todavía' }}</p>@if ((conversation.unreadCount ?? 0) > 0) { <span class="grid h-5 min-w-5 place-items-center rounded-full bg-emerald-600 px-1 text-[11px] font-bold text-white">{{ conversation.unreadCount }}</span> }</div>
+              </div>
+            </button>
+          } @empty {
+            <div class="px-6 py-12 text-center text-sm text-slate-500"><i class="pi pi-comments mb-3 block text-3xl text-slate-300"></i>Aún no tienes conversaciones.</div>
+          }
+        }
+      </div>
+    </aside>
+
+    @if (selectedConversation(); as conversation) {
+      <div class="flex min-h-0 flex-col">
+        <header class="flex items-center gap-3 border-b border-slate-200 px-5 py-3.5">
+          <div class="grid h-10 w-10 place-items-center rounded-full bg-gradient-to-br from-emerald-400 to-teal-600 font-semibold text-white">{{ initials(conversation) }}</div>
+          <div class="min-w-0 flex-1"><h3 class="truncate font-semibold text-slate-900">{{ recipientName(conversation) }}</h3><p class="truncate text-xs text-slate-500">{{ roleLabel(conversation.recipient?.role) }} · En línea</p></div>
+          @if (conversation.type === 'COURSE_SUPPORT' && conversation.courseTitle) { <span class="hidden rounded-full bg-violet-100 px-3 py-1 text-xs font-medium text-violet-700 sm:block">{{ conversation.courseTitle }}</span> }
+        </header>
+
+        <div #messagesContainer class="min-h-0 flex-1 space-y-3 overflow-y-auto bg-slate-50 px-4 py-5 sm:px-6">
+          @if (loadingMessages()) { <div class="grid h-full place-items-center text-sm text-slate-500"><i class="pi pi-spin pi-spinner mr-2"></i>Cargando mensajes...</div> }
+          @for (message of messages(); track trackMessage($index, message)) {
+            <div class="flex" [class.justify-end]="message.isMine" [class.justify-start]="!message.isMine">
+              <div class="max-w-[85%] rounded-2xl px-4 py-2.5 shadow-sm sm:max-w-[70%]" [class.bg-emerald-600]="message.isMine" [class.text-white]="message.isMine" [class.rounded-br-md]="message.isMine" [class.bg-white]="!message.isMine" [class.text-slate-800]="!message.isMine" [class.rounded-bl-md]="!message.isMine">
+                @if (message.attachmentUrl) { <a [href]="message.attachmentUrl" target="_blank" rel="noopener" class="mb-1 flex items-center gap-2 text-xs underline"><i class="pi pi-paperclip"></i>Ver adjunto</a> }
+                <p class="whitespace-pre-wrap break-words text-sm leading-relaxed">{{ message.content }}</p>
+                <div class="mt-1 flex items-center justify-end gap-1 text-[11px]" [class.text-emerald-100]="message.isMine" [class.text-slate-400]="!message.isMine">{{ message.sentAt | date:'HH:mm' }} @if (message.isMine) { <i class="pi" [class.pi-check]="message.status !== 'READ'" [class.pi-check-circle]="message.status === 'READ'"></i> }</div>
+              </div>
+            </div>
+          } @empty {
+            @if (!loadingMessages()) { <div class="grid h-full place-items-center text-center text-sm text-slate-400"><div><i class="pi pi-comment mb-3 block text-3xl"></i>Inicia la conversación enviando un mensaje.</div></div> }
+          }
+        </div>
+
+        <div class="border-t border-slate-200 bg-white p-3 sm:p-4">
+          @if (attachmentName()) { <div class="mb-2 flex items-center justify-between rounded-lg bg-slate-100 px-3 py-2 text-xs text-slate-600"><span class="truncate"><i class="pi pi-paperclip mr-1"></i>{{ attachmentName() }}</span><span>El backend debe proporcionar la URL del archivo.</span></div> }
+          <div class="flex items-end gap-2"><label class="grid h-11 w-11 shrink-0 cursor-pointer place-items-center rounded-xl text-slate-500 transition hover:bg-slate-100 hover:text-emerald-600"><i class="pi pi-paperclip"></i><input type="file" class="hidden" (change)="onAttachmentSelected($event)"></label><textarea [ngModel]="draft()" (ngModelChange)="draft.set($event)" (keydown)="onComposerKeydown($event)" rows="1" maxlength="5000" placeholder="Escribe un mensaje..." class="max-h-28 min-h-11 flex-1 resize-none rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"></textarea><button type="button" (click)="send()" [disabled]="!draft().trim() || sending()" class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-emerald-600 text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-40"><i class="pi" [class.pi-send]="!sending()" [class.pi-spin]="sending()" [class.pi-spinner]="sending()"></i></button></div>
+          <p class="mt-1.5 pl-1 text-[11px] text-slate-400">Enter para enviar · Shift + Enter para una nueva línea</p>
+        </div>
+      </div>
+    } @else {
+      <div class="hidden place-items-center bg-slate-50 p-8 text-center lg:grid"><div><div class="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-full bg-emerald-100 text-emerald-600"><i class="pi pi-comments text-2xl"></i></div><h3 class="font-semibold text-slate-800">Selecciona una conversación</h3><p class="mt-1 text-sm text-slate-500">Elige un chat de la bandeja para ver sus mensajes.</p></div></div>
+    }
+  </div>
+</section>
+
+@if (newConversationOpen()) {
+  <div class="fixed inset-0 z-50 grid place-items-center bg-slate-950/40 p-4 backdrop-blur-sm" (click)="closeNewConversation()" (keyup.escape)="closeNewConversation()">
+    <section class="max-h-[90dvh] w-full max-w-xl overflow-y-auto rounded-2xl bg-white shadow-2xl" (click)="$event.stopPropagation()" (keyup.enter)="$event.stopPropagation()">
+      <header class="flex items-start justify-between border-b border-slate-100 px-6 py-5"><div><h2 class="text-lg font-bold text-slate-900">Iniciar conversación</h2><p class="mt-1 text-sm text-slate-500">Elige un contacto y, si aplica, el curso relacionado.</p></div><button type="button" (click)="closeNewConversation()" class="grid h-9 w-9 place-items-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="Cerrar"><i class="pi pi-times"></i></button></header>
+
+      @if (loadingNewConversationData()) {
+        <div class="grid min-h-64 place-items-center text-sm text-slate-500"><i class="pi pi-spin pi-spinner mr-2"></i>Cargando contactos...</div>
+      } @else {
+        <div class="space-y-5 px-6 py-5">
+          <div><label class="mb-2 block text-sm font-semibold text-slate-700">Tipo de conversación</label><div class="grid grid-cols-2 gap-3"><button type="button" (click)="conversationType.set('DIRECT'); selectedCourseId.set(null)" class="rounded-xl border p-3 text-left transition" [class.border-emerald-500]="conversationType() === 'DIRECT'" [class.bg-emerald-50]="conversationType() === 'DIRECT'" [class.border-slate-200]="conversationType() !== 'DIRECT'"><i class="pi pi-user mr-2 text-emerald-600"></i><span class="text-sm font-semibold">Directo</span><span class="mt-1 block text-xs text-slate-500">Conversación privada</span></button><button type="button" (click)="conversationType.set('COURSE_SUPPORT')" class="rounded-xl border p-3 text-left transition" [class.border-violet-500]="conversationType() === 'COURSE_SUPPORT'" [class.bg-violet-50]="conversationType() === 'COURSE_SUPPORT'" [class.border-slate-200]="conversationType() !== 'COURSE_SUPPORT'"><i class="pi pi-book mr-2 text-violet-600"></i><span class="text-sm font-semibold">Soporte de curso</span><span class="mt-1 block text-xs text-slate-500">Asociado a un curso</span></button></div></div>
+
+          @if (conversationType() === 'COURSE_SUPPORT') {
+            <div><label for="course" class="mb-2 block text-sm font-semibold text-slate-700">Curso</label><select id="course" [ngModel]="selectedCourseId()" (ngModelChange)="selectedCourseId.set($event)" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-100"><option [ngValue]="null">Selecciona un curso</option>@for (course of availableCourses(); track course.idCourse) { <option [ngValue]="course.idCourse">{{ course.title }}@if (course.teacherFullName) { · {{ course.teacherFullName }} }</option> }</select>@if (!availableCourses().length) { <p class="mt-2 text-xs text-amber-600">No tienes cursos disponibles para asociar.</p> }</div>
+          }
+
+          <div><label for="recipient-search" class="mb-2 block text-sm font-semibold text-slate-700">Destinatario</label><div class="relative"><i class="pi pi-search absolute left-3 top-3 text-sm text-slate-400"></i><input id="recipient-search" type="search" [ngModel]="recipientSearch()" (ngModelChange)="recipientSearch.set($event)" placeholder="Busca por nombre o correo" class="w-full rounded-xl border border-slate-200 py-2.5 pl-9 pr-3 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"></div><div class="mt-2 max-h-48 overflow-y-auto rounded-xl border border-slate-200">@for (recipient of filteredRecipients(); track recipient.idUser) { <button type="button" (click)="selectRecipient(recipient.idUser)" class="flex w-full items-center gap-3 px-3 py-3 text-left transition hover:bg-slate-50" [class.bg-emerald-50]="selectedRecipientId() === recipient.idUser"><div class="grid h-9 w-9 place-items-center rounded-full bg-slate-200 text-xs font-bold text-slate-600">{{ (recipient.firstName?.[0] ?? '') + (recipient.surName?.[0] ?? '') }}</div><div class="min-w-0 flex-1"><p class="truncate text-sm font-semibold text-slate-800">{{ recipient.firstName }} {{ recipient.surName }}</p><p class="truncate text-xs text-slate-500">{{ recipient.email }} · {{ roleLabel(recipient.role) }}</p></div>@if (selectedRecipientId() === recipient.idUser) { <i class="pi pi-check-circle text-emerald-600"></i> }</button> } @empty { <p class="px-4 py-6 text-center text-sm text-slate-500">No se encontraron usuarios.</p> }</div></div>
+        </div>
+        <footer class="flex justify-end gap-3 border-t border-slate-100 px-6 py-4"><button type="button" (click)="closeNewConversation()" class="rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100">Cancelar</button><button type="button" (click)="createConversation()" [disabled]="startingConversation()" class="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-50">@if (startingConversation()) { <i class="pi pi-spin pi-spinner mr-2"></i>Creando... } @else { Iniciar chat }</button></footer>
+      }
+    </section>
+  </div>
+}

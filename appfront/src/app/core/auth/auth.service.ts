@@ -15,6 +15,7 @@ export class AuthService {
   private readonly router = inject(Router);
   private readonly plataformId = inject(PLATFORM_ID);
   private readonly isBrowser = () => isPlatformBrowser(this.plataformId);
+  private authenticationCheck: Promise<boolean> | null = null;
   constructor(private readonly api: Api) { }
 
   async login(email: string, password: string): Promise<LoginResponse> {
@@ -39,12 +40,21 @@ export class AuthService {
     if (this.isAuthenticated()) return true;
     if (!this.refreshToken) return false;
 
+    // Los guards padre e hijo pueden ejecutarse casi al mismo tiempo. Compartir
+    // la misma promesa evita dos refresh y estados intermedios contradictorios.
+    this.authenticationCheck ??= this.restoreSession();
+    return this.authenticationCheck;
+  }
+
+  private async restoreSession(): Promise<boolean> {
     try {
       const response = await this.refreshAccessToken();
       return Boolean(response?.accessToken);
     } catch {
       this.clearSession();
       return false;
+    } finally {
+      this.authenticationCheck = null;
     }
   }
   //Refresh token 
