@@ -19,8 +19,14 @@ fi
 sudo -n true
 
 cd "${APP_DIR}"
-git checkout master
-git pull --ff-only origin master
+git fetch origin master:refs/remotes/origin/master
+
+if git show-ref --verify --quiet refs/heads/master; then
+  git checkout master
+  git merge --ff-only origin/master
+else
+  git checkout --track -b master origin/master
+fi
 
 sudo docker compose --env-file "${ENV_FILE}" -f "${COMPOSE_FILE}" build --pull backend frontend
 sudo docker compose --env-file "${ENV_FILE}" -f "${COMPOSE_FILE}" up -d --no-deps backend frontend caddy
