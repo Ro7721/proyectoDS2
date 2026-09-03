@@ -37,4 +37,5 @@ jobs:
           AZURE_VM_HOST: ${{ secrets.AZURE_VM_HOST }}
           AZURE_VM_USER: ${{ secrets.AZURE_VM_USER }}
         run: |
-          ssh -i "$HOME/.ssh/azure_vm_key" -o BatchMode=yes -o StrictHostKeyChecking=yes "$AZURE_VM_USER@$AZURE_VM_HOST" "bash /home/azureuser/proyectoDS2/deploy/deploy.sh"
+          REMOTE_COMMAND='cd /home/azureuser/proyectoDS2 && git fetch origin master:refs/remotes/origin/master && if git show-ref --verify --quiet refs/heads/master; then git checkout master && git merge --ff-only origin/master; else git checkout --no-track -b master refs/remotes/origin/master; fi && bash deploy/deploy.sh'
+          ssh -i "$HOME/.ssh/azure_vm_key" -o BatchMode=yes -o StrictHostKeyChecking=yes "$AZURE_VM_USER@$AZURE_VM_HOST" "$REMOTE_COMMAND"

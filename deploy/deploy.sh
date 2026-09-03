@@ -25,7 +25,7 @@ if git show-ref --verify --quiet refs/heads/master; then
   git checkout master
   git merge --ff-only origin/master
 else
-  git checkout --track -b master origin/master
+  git checkout --no-track -b master refs/remotes/origin/master
 fi
 
 sudo docker compose --env-file "${ENV_FILE}" -f "${COMPOSE_FILE}" build --pull backend frontend
