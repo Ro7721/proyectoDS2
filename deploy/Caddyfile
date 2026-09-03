@@ -1,0 +1,30 @@
+edulearn-roger.eastus.cloudapp.azure.com {
+    encode gzip zstd
+
+    @backend {
+        path /auth/*
+        path /users/*
+        path /categories/*
+        path /courses/*
+        path /lessons/*
+        path /enrollments/*
+        path /learning/*
+        path /teacher/*
+        path /dashboard/stats
+        path /course-images/*
+        path /lesson-videos/*
+        path /lesson-files/*
+        path /v3/api-docs/*
+        path /swagger-ui/*
+        path /swagger-ui.html
+        path /actuator/*
+    }
+
+    handle @backend {
+        reverse_proxy backend:8080
+    }
+
+    handle {
+        reverse_proxy frontend:80
+    }
+}
