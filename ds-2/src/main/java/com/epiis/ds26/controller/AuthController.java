@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -82,6 +83,11 @@ public class AuthController {
                     jwtService.getAccessTokenExpiration(),
                     userInfo);
             return ResponseEntity.ok(response);
+        } catch (DisabledException e) {
+            Map<String, String> error = new HashMap<>();
+            error.put(ERROR_KEY, "USER_DISABLED");
+            error.put(MESSAGE_KEY, "Tu cuenta está inactiva. Solicita su activación al administrador");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
         } catch (BadCredentialsException e) {
             Map<String, String> error = new HashMap<>();
             error.put(ERROR_KEY, "PASSWORD_INVALID");

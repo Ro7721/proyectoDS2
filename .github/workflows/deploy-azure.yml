@@ -1,0 +1,41 @@
+name: Deploy Azure VM
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: proyecto-ds2-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy frontend and backend
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Configure SSH
+        env:
+          AZURE_VM_SSH_KEY: ${{ secrets.AZURE_VM_SSH_KEY }}
+          AZURE_VM_KNOWN_HOSTS: ${{ secrets.AZURE_VM_KNOWN_HOSTS }}
+        run: |
+          install -d -m 700 "$HOME/.ssh"
+          printf '%s\n' "$AZURE_VM_SSH_KEY" | tr -d '\r' > "$HOME/.ssh/azure_vm_key"
+          chmod 600 "$HOME/.ssh/azure_vm_key"
+          printf '%s\n' "$AZURE_VM_KNOWN_HOSTS" | tr -d '\r' > "$HOME/.ssh/known_hosts"
+          chmod 600 "$HOME/.ssh/known_hosts"
+          ssh-keygen -y -f "$HOME/.ssh/azure_vm_key" >/dev/null
+
+      - name: Deploy on the VM
+        env:
+          AZURE_VM_HOST: ${{ secrets.AZURE_VM_HOST }}
+          AZURE_VM_USER: ${{ secrets.AZURE_VM_USER }}
+        run: |
+          REMOTE_COMMAND='cd /home/azureuser/proyectoDS2 && git fetch origin master:refs/remotes/origin/master && if git show-ref --verify --quiet refs/heads/master; then git checkout master && git merge --ff-only origin/master; else git checkout --no-track -b master refs/remotes/origin/master; fi && bash deploy/deploy.sh'
+          ssh -i "$HOME/.ssh/azure_vm_key" -o BatchMode=yes -o StrictHostKeyChecking=yes "$AZURE_VM_USER@$AZURE_VM_HOST" "$REMOTE_COMMAND"

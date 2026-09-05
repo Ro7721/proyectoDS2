@@ -1,0 +1,59 @@
+name: proyecto-roger-azure
+
+services:
+  backend:
+    build:
+      context: ../ds-2
+    container_name: roger-backend
+    restart: unless-stopped
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/${MYSQL_DATABASE}?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=America/Lima
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
+      SPRING_JPA_SHOW_SQL: "false"
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_ACCESS_TOKEN_EXPIRATION: ${JWT_ACCESS_TOKEN_EXPIRATION}
+      JWT_REFRESH_TOKEN_EXPIRATION: ${JWT_REFRESH_TOKEN_EXPIRATION}
+      APP_BASE_URL: ${APP_BASE_URL}
+      APP_STORAGE_PATH: /app/storage
+      TZ: America/Lima
+    volumes:
+      - app_storage:/app/storage
+
+  frontend:
+    build:
+      context: ../appfront
+    container_name: roger-frontend
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: roger-web
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - frontend
+      - backend
+
+volumes:
+  app_storage:
+    external: true
+    name: proyecto-roger-azure_app_storage
+  caddy_data:
+    external: true
+    name: proyecto-roger-azure_caddy_data
+  caddy_config:
+    external: true
+    name: proyecto-roger-azure_caddy_config
+
+networks:
+  default:
+    external: true
+    name: proyecto-roger-azure_default
