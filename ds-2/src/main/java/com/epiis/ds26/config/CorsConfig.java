@@ -20,7 +20,8 @@ public class CorsConfig implements WebMvcConfigurer {
         configuration.setAllowedOriginPatterns(Arrays.asList(
                 "http://localhost:*",
                 "http://127.0.0.1:*",
-                "https://thunderous-cascaron-70f158.netlify.app"));
+                "https://thunderous-cascaron-70f158.netlify.app",
+                "https://edulearn-roger.eastus.cloudapp.azure.com"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "Origin",
                 "X-Requested-With"));
