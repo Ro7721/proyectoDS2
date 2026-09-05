@@ -75,6 +75,7 @@ for _ in $(seq 1 36); do
   status_code="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' \
     --connect-timeout 5 --max-time 10 \
     --request POST "${APP_URL}/auth/login" \
+    --header "Origin: ${APP_URL}" \
     --header 'Content-Type: application/json' \
     --data '{"email":"deployment-healthcheck@invalid.test","password":"invalid"}' || true)"
 
