@@ -142,6 +142,8 @@ CREATE TABLE lesson_progress (
     REFERENCES tlesson(idLesson)
     ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+-- tablas nuevas
 -- =======================
 -- CONVERSATIONS (Conversaciones)
 -- =======================
