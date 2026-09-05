@@ -17,7 +17,7 @@ jobs:
   deploy:
     name: Deploy frontend and backend
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
 
     steps:
       - name: Configure SSH
@@ -38,4 +38,10 @@ jobs:
           AZURE_VM_USER: ${{ secrets.AZURE_VM_USER }}
         run: |
           REMOTE_COMMAND='cd /home/azureuser/proyectoDS2 && git fetch origin master:refs/remotes/origin/master && if git show-ref --verify --quiet refs/heads/master; then git checkout master && git merge --ff-only origin/master; else git checkout --no-track -b master refs/remotes/origin/master; fi && bash deploy/deploy.sh'
-          ssh -i "$HOME/.ssh/azure_vm_key" -o BatchMode=yes -o StrictHostKeyChecking=yes "$AZURE_VM_USER@$AZURE_VM_HOST" "$REMOTE_COMMAND"
+          ssh -i "$HOME/.ssh/azure_vm_key" \
+            -o BatchMode=yes \
+            -o StrictHostKeyChecking=yes \
+            -o ConnectTimeout=15 \
+            -o ServerAliveInterval=30 \
+            -o ServerAliveCountMax=10 \
+            "$AZURE_VM_USER@$AZURE_VM_HOST" "$REMOTE_COMMAND"
